@@ -1,0 +1,36 @@
+{
+  "name": "myths-portfolio",
+  "version": "1.0.0",
+  "description": "Dark cinematic personal developer portfolio for Richard Germain, known as myths.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "keywords": ["portfolio", "react", "vite", "typescript", "tailwind"],
+  "author": "Richard Germain",
+  "license": "MIT",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.110.1",
+    "@vitejs/plugin-react": "^6.0.3",
+    "lucide-react": "^1.23.0",
+    "motion": "^12.42.2",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "typescript": "^6.0.3",
+    "vite": "^8.1.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@tailwindcss/vite": "^4.3.2",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "eslint": "^10.6.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.3",
+    "tailwindcss": "^4.3.2",
+    "typescript-eslint": "^8.63.0"
+  }
+}
