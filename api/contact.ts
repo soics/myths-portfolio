@@ -37,8 +37,16 @@ function trackGlobal() {
   global.count++
 }
 
-const allowedOrigin = 'https://myths-portfolio.vercel.app'
+const allowedOrigins = [
+  'https://myths-portfolio.vercel.app',
+]
 const honeypotField = 'website'
+
+function originAllowed(origin: string): boolean {
+  if (allowedOrigins.includes(origin)) return true
+  if (origin.endsWith('.vercel.app')) return true
+  return false
+}
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const requestId = crypto.randomUUID().slice(0, 8)
@@ -49,12 +57,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const origin = req.headers.origin as string | undefined
-  if (origin && origin !== allowedOrigin) {
+  if (origin && !originAllowed(origin)) {
     console.warn(`[${requestId}] Blocked origin: ${origin}`)
     return res.status(403).json({ error: 'Forbidden' })
   }
 
-  res.setHeader('Access-Control-Allow-Origin', allowedOrigin)
+  res.setHeader('Access-Control-Allow-Origin', origin || '*')
   res.setHeader('Access-Control-Allow-Methods', 'POST')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
   res.setHeader('Vary', 'Origin')
