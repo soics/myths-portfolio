@@ -1,33 +1,41 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
 const rateLimit = new Map<string, { count: number; resetAt: number }>()
-const LIMIT = 5
+const PER_IP_LIMIT = 5
+const GLOBAL_LIMIT = 50
 const WINDOW = 60_000
 
 function sanitize(str: string): string {
   return str.replace(/<[^>]*>/g, '').replace(/[<>]/g, '').trim()
 }
 
-function getIP(req: VercelRequest): string {
-  const forwarded = req.headers['x-forwarded-for']
-  if (typeof forwarded === 'string') {
-    const parts = forwarded.split(',').map(s => s.trim())
-    const real = parts[parts.length - 1]
-    if (real) return real
-  }
-  return req.socket.remoteAddress || 'unknown'
-}
-
-function checkRateLimit(ip: string): boolean {
+function checkRateLimit(req: VercelRequest): boolean {
   const now = Date.now()
+  const ip = req.socket.remoteAddress || 'unknown'
+
+  const global = rateLimit.get('__global__')
+  if (global && now <= global.resetAt && global.count >= GLOBAL_LIMIT) return false
+
   const entry = rateLimit.get(ip)
   if (!entry || now > entry.resetAt) {
     rateLimit.set(ip, { count: 1, resetAt: now + WINDOW })
     return true
   }
-  if (entry.count >= LIMIT) return false
+  if (entry.count >= PER_IP_LIMIT) return false
   entry.count++
   return true
+}
+
+function getGlobalCounter() {
+  const now = Date.now()
+  const global = rateLimit.get('__global__')
+  if (!global || now > global.resetAt) {
+    rateLimit.set('__global__', { count: 1, resetAt: now + WINDOW })
+    return 1
+  }
+  global.count++
+  rateLimit.set('__global__', global)
+  return global.count
 }
 
 const allowedOrigin = 'https://myths-portfolio.vercel.app'
@@ -52,10 +60,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const ip = getIP(req)
-  if (!checkRateLimit(ip)) {
+  if (!checkRateLimit(req)) {
     return res.status(429).json({ error: 'Too many requests. Try again later.' })
   }
+  getGlobalCounter()
 
   if (typeof req.body !== 'object' || req.body === null || Array.isArray(req.body)) {
     return res.status(400).json({ error: 'Invalid request body.' })
