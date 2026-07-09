@@ -4,8 +4,18 @@ const rateLimit = new Map<string, { count: number; resetAt: number }>()
 const LIMIT = 5
 const WINDOW = 60_000
 
+function sanitize(str: string): string {
+  return str.replace(/<[^>]*>/g, '').replace(/[<>]/g, '').trim()
+}
+
 function getIP(req: VercelRequest): string {
-  return (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() || req.socket.remoteAddress || 'unknown'
+  const forwarded = req.headers['x-forwarded-for']
+  if (typeof forwarded === 'string') {
+    const parts = forwarded.split(',').map(s => s.trim())
+    const real = parts[parts.length - 1]
+    if (real) return real
+  }
+  return req.socket.remoteAddress || 'unknown'
 }
 
 function checkRateLimit(ip: string): boolean {
@@ -20,7 +30,23 @@ function checkRateLimit(ip: string): boolean {
   return true
 }
 
+const allowedOrigin = 'https://myths-portfolio.vercel.app'
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  const origin = req.headers.origin as string | undefined
+  if (origin && origin !== allowedOrigin) {
+    return res.status(403).json({ error: 'Forbidden' })
+  }
+
+  res.setHeader('Access-Control-Allow-Origin', allowedOrigin)
+  res.setHeader('Access-Control-Allow-Methods', 'POST')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+  res.setHeader('Vary', 'Origin')
+
+  if (req.method === 'OPTIONS') {
+    return res.status(204).end()
+  }
+
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST')
     return res.status(405).json({ error: 'Method not allowed' })
@@ -31,16 +57,29 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(429).json({ error: 'Too many requests. Try again later.' })
   }
 
-  const { name, email, message } = req.body || {}
+  if (typeof req.body !== 'object' || req.body === null || Array.isArray(req.body)) {
+    return res.status(400).json({ error: 'Invalid request body.' })
+  }
 
-  if (typeof name !== 'string' || name.length < 2 || name.length > 80) {
+  const rawName = typeof req.body.name === 'string' ? req.body.name.trim() : ''
+  const rawEmail = typeof req.body.email === 'string' ? req.body.email.trim().toLowerCase() : ''
+  const rawMessage = typeof req.body.message === 'string' ? req.body.message.trim() : ''
+
+  const name = sanitize(rawName)
+  const email = sanitize(rawEmail)
+  const message = sanitize(rawMessage)
+
+  if (name.length < 2 || name.length > 80) {
     return res.status(400).json({ error: 'Name must be between 2-80 characters.' })
   }
-  if (typeof email !== 'string' || !email.includes('@') || email.length > 120) {
+  if (!email.includes('@') || email.length > 120) {
     return res.status(400).json({ error: 'Invalid email.' })
   }
-  if (typeof message !== 'string' || message.length < 10 || message.length > 2000) {
+  if (message.length < 10 || message.length > 2000) {
     return res.status(400).json({ error: 'Message must be between 10-2000 characters.' })
+  }
+  if (name !== rawName || email !== rawEmail || message !== rawMessage) {
+    return res.status(400).json({ error: 'Invalid characters detected.' })
   }
 
   const supabaseUrl = process.env.SUPABASE_URL
@@ -50,9 +89,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const { createClient } = await import('@supabase/supabase-js')
     const supabase = createClient(supabaseUrl, supabaseKey)
     const { error } = await supabase.from('contact_messages').insert({
-      name: name.trim(),
-      email: email.trim().toLowerCase(),
-      message: message.trim(),
+      name,
+      email,
+      message,
       user_agent: (req.headers['user-agent'] as string)?.slice(0, 500) || null,
     })
     if (error) {
@@ -62,6 +101,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(200).json({ ok: true })
   }
 
-  console.log('Contact form submission (no Supabase):', { name, email })
+  console.log('Contact submission (no Supabase):', { name, email })
   return res.status(200).json({ ok: true })
 }
