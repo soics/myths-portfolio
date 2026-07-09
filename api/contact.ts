@@ -69,6 +69,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).json({ error: 'Invalid request body.' })
   }
 
+  const dangerous = ['__proto__', 'constructor', 'prototype']
+  for (const key of dangerous) {
+    if (Object.prototype.hasOwnProperty.call(req.body, key)) {
+      return res.status(400).json({ error: 'Invalid fields detected.' })
+    }
+  }
+
   const rawName = typeof req.body.name === 'string' ? req.body.name.trim() : ''
   const rawEmail = typeof req.body.email === 'string' ? req.body.email.trim().toLowerCase() : ''
   const rawMessage = typeof req.body.message === 'string' ? req.body.message.trim() : ''
