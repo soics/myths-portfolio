@@ -1,12 +1,49 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { createClient } from '@supabase/supabase-js'
 
+function escapeHtml(s: string): string {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+}
+
 const rateLimit = new Map<string, { count: number; resetAt: number }>()
 const PER_IP_LIMIT = 5
 const GLOBAL_LIMIT = 50
 const WINDOW = 60_000
 const MAX_BODY_BYTES = 65_536
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+
+async function sendNotification(name: string, email: string, message: string, requestId: string) {
+  const apiKey = process.env.RESEND_API_KEY
+  if (!apiKey) {
+    console.log(`[${requestId}] No RESEND_API_KEY — skipping notification`)
+    return
+  }
+  try {
+    const safeName = escapeHtml(name)
+    const safeMsg = escapeHtml(message)
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: 'myths-portfolio <onboarding@resend.dev>',
+        to: ['richardgermain29@gmail.com'],
+        subject: `Portfolio contact: ${safeName} (${email})`,
+        html: `<p><strong>Name:</strong> ${safeName}</p><p><strong>Email:</strong> ${escapeHtml(email)}</p><p><strong>Message:</strong></p><p>${safeMsg}</p><hr><p style="color:#888;font-size:12px">Sent via myths-portfolio &middot; request ${requestId}</p>`,
+      }),
+    })
+    if (!res.ok) {
+      const body = await res.text()
+      console.error(`[${requestId}] Resend error ${res.status}: ${body}`)
+    } else {
+      console.log(`[${requestId}] Notification sent to richardgermain29@gmail.com`)
+    }
+  } catch (err) {
+    console.error(`[${requestId}] Notification error:`, err)
+  }
+}
 
 function sanitize(str: string): string {
   return str.replace(/<[^>]*>/g, '').replace(/[<>]/g, '').replace(/[^\x20-\x7E\x0A]/g, '').trim()
@@ -135,6 +172,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(500).json({ error: 'Failed to save message.' })
     }
     console.log(`[${requestId}] Message stored from ${email}`)
+    sendNotification(name, email, message, requestId)
     return res.status(200).json({ ok: true, request_id: requestId })
   }
 
