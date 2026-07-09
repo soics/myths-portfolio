@@ -18,7 +18,7 @@ export function Header() {
   return (
     <motion.header style={{ backgroundColor: bg, borderColor: border }} className="fixed left-0 right-0 top-0 z-30 border-b border-transparent px-4 py-4 backdrop-blur-xl">
       <nav className="mx-auto flex max-w-6xl items-center justify-between gap-4 rounded-full px-4 py-3 text-sm text-white/80">
-        <a className="focus-ring rounded-full font-semibold tracking-[-0.04em] text-white" href="#top" aria-label="Back to top">{site.name}</a>
+        <a className="focus-ring flex items-center gap-2 rounded-full font-semibold tracking-[-0.04em] text-white" href="#top" aria-label="Back to top"><img src="/sackboy.png" alt="" className="h-8 w-8 rounded-full object-cover" />{site.name}</a>
         <div className="hidden items-center gap-1 md:flex">
           {links.map(([number, label, href]) => (
             <a key={href} href={href} className="focus-ring rounded-full px-3 py-2 transition hover:bg-white/10 hover:text-white">
