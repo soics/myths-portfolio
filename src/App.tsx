@@ -3,7 +3,7 @@ import { motion, useScroll, useTransform, useSpring, useInView } from 'motion/re
 import { ArrowRight, Code2, ExternalLink, GitBranch, Loader2, Send, ShieldCheck, Star } from 'lucide-react'
 import { chapters, learningSkills, site, strengths } from './data/site'
 import { getGitHubData, type GitHubProfile, type GitHubRepo } from './lib/github'
-import { supabase } from './lib/supabase'
+
 import { Header, SectionTitle, SocialLinks } from './components/Primitives'
 import './styles/globals.css'
 
@@ -275,14 +275,19 @@ function Contact() {
       setStatus('error')
       return
     }
-    if (!supabase) {
-      window.location.href = `mailto:${site.email}?subject=Portfolio contact from ${encodeURIComponent(payload.name)}&body=${encodeURIComponent(payload.message)}`
-      return
-    }
     setStatus('loading')
-    const { error } = await supabase.from('contact_messages').insert(payload)
-    setStatus(error ? 'error' : 'success')
-    if (!error) event.currentTarget.reset()
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      if (!res.ok) throw new Error()
+      setStatus('success')
+      event.currentTarget.reset()
+    } catch {
+      setStatus('error')
+    }
   }
 
   return (

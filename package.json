@@ -9,7 +9,13 @@
     "lint": "eslint .",
     "preview": "vite preview"
   },
-  "keywords": ["portfolio", "react", "vite", "typescript", "tailwind"],
+  "keywords": [
+    "portfolio",
+    "react",
+    "vite",
+    "typescript",
+    "tailwind"
+  ],
   "author": "Richard Germain",
   "license": "MIT",
   "dependencies": {
@@ -27,6 +33,7 @@
     "@tailwindcss/vite": "^4.3.2",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
+    "@vercel/node": "^5.8.23",
     "eslint": "^10.6.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.3",
