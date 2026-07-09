@@ -2,10 +2,10 @@ export const site = {
   name: 'myths',
   realName: 'Richard Germain',
   title: 'Aspiring Full-Stack Developer & Scripter',
-  githubUser: 'myths11v',
+  githubUser: 'soics',
   email: 'richardgermain29@gmail.com',
   instagram: 'https://instagram.com/mv.lls/',
-  github: 'https://github.com/myths11v',
+  github: 'https://github.com/soics',
   tiktok: 'oycc',
   phrases: ['Building. Learning. Becoming.', 'Creating my future one line of code at a time.', 'I am not finished. I am building.'],
 }

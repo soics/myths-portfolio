@@ -21,7 +21,7 @@ export type GitHubRepo = {
   archived: boolean
 }
 
-const base = 'https://api.github.com/users/myths11v'
+const base = 'https://api.github.com/users/soics'
 
 export async function getGitHubData() {
   const [profileResponse, reposResponse] = await Promise.all([

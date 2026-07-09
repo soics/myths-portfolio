@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { motion, useScroll, useTransform } from 'motion/react'
+import { useEffect, useRef, useState } from 'react'
+import { motion, useScroll, useTransform, useSpring, useInView } from 'motion/react'
 import { ArrowRight, Code2, ExternalLink, GitBranch, Loader2, Send, ShieldCheck, Star } from 'lucide-react'
 import { chapters, learningSkills, site, strengths } from './data/site'
 import { getGitHubData, type GitHubProfile, type GitHubRepo } from './lib/github'
@@ -8,14 +8,31 @@ import { Header, SectionTitle, SocialLinks } from './components/Primitives'
 import './styles/globals.css'
 
 type GitHubState = { profile: GitHubProfile | null; repos: GitHubRepo[]; loading: boolean; error: string | null }
-
 type FormState = 'idle' | 'loading' | 'success' | 'error'
 
-function AnimatedBackground() {
+const spring = { type: 'spring' as const, stiffness: 200, damping: 20 }
+const softSpring = { type: 'spring' as const, stiffness: 100, damping: 25 }
+
+function ScrollProgress() {
+  const { scrollYProgress } = useScroll()
+  const scaleX = useSpring(scrollYProgress, { stiffness: 200, damping: 30 })
+  return <motion.div style={{ scaleX }} className="fixed left-0 top-0 z-50 h-[2px] origin-left bg-gradient-to-r from-blue-300 to-blue-100" />
+}
+
+function FloatingOrbs() {
   return (
     <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-      <motion.div animate={{ opacity: [0.25, 0.45, 0.25], scale: [1, 1.08, 1] }} transition={{ duration: 10, repeat: Infinity }} className="absolute left-1/2 top-1/4 h-96 w-96 -translate-x-1/2 rounded-full bg-blue-400/10 blur-3xl" />
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:72px_72px] [mask-image:radial-gradient(circle_at_center,black,transparent_75%)]" />
+      <motion.div
+        animate={{ x: [0, 30, -20, 0], y: [0, -40, 20, 0] }}
+        transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+        className="absolute left-1/4 top-1/5 h-[30rem] w-[30rem] rounded-full bg-blue-400/8 blur-[120px]"
+      />
+      <motion.div
+        animate={{ x: [0, -20, 40, 0], y: [0, 30, -30, 0] }}
+        transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
+        className="absolute right-1/4 top-2/5 h-[25rem] w-[25rem] rounded-full bg-purple-400/6 blur-[100px]"
+      />
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:72px_72px] [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]" />
     </div>
   )
 }
@@ -23,64 +40,120 @@ function AnimatedBackground() {
 function Hero() {
   const { scrollY } = useScroll()
   const y = useTransform(scrollY, [0, 600], [0, 120])
+  const opacity = useTransform(scrollY, [0, 500], [1, 0])
+  const scale = useTransform(scrollY, [0, 500], [1, 0.92])
 
   return (
-    <section id="top" className="relative flex min-h-screen items-center px-5 pt-28">
+    <motion.section id="top" style={{ opacity, scale }} className="relative flex min-h-screen items-center px-5 pt-28">
       <motion.div style={{ y }} className="mx-auto grid max-w-6xl gap-10 py-24 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
         <div>
-          <motion.p initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="mb-5 text-sm uppercase tracking-[0.45em] text-white/45">Richard Germain</motion.p>
-          <motion.h1 initial={{ opacity: 0, y: 30, filter: 'blur(10px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} transition={{ duration: 0.8 }} className="text-balance text-7xl font-black tracking-[-0.1em] text-white sm:text-8xl md:text-9xl">{site.name}</motion.h1>
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.35 }} className="mt-6 max-w-2xl text-xl leading-8 text-white/64 md:text-2xl">{site.title}. {site.phrases[0]}</motion.p>
-          <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }} className="mt-10 flex flex-wrap gap-4">
-            <a className="focus-ring group inline-flex items-center gap-3 rounded-full bg-white px-6 py-4 font-semibold text-black transition hover:scale-[1.02]" href="#journey">View the journey <ArrowRight className="transition group-hover:translate-x-1" size={18} /></a>
-            <a className="focus-ring glass inline-flex items-center gap-3 rounded-full px-6 py-4 font-semibold text-white/85 transition hover:text-white" href={site.github} target="_blank" rel="noreferrer"><GitBranch size={18} /> GitHub</a>
+          <motion.p initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.1 }} className="mb-5 text-sm uppercase tracking-[0.45em] text-white/45">{site.realName}</motion.p>
+          <motion.h1 initial={{ opacity: 0, y: 30, filter: 'blur(14px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} transition={{ duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94], delay: 0.2 }} className="text-balance text-7xl font-black tracking-[-0.1em] text-white sm:text-8xl md:text-9xl">{site.name}</motion.h1>
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="mt-6 max-w-2xl text-xl leading-8 text-white/64 md:text-2xl">{site.title}</motion.p>
+          <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.65 }} className="mt-2 text-base text-white/40">{site.phrases[2]}</motion.p>
+          <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }} className="mt-10 flex flex-wrap gap-4">
+            <a className="focus-ring group inline-flex items-center gap-3 rounded-full bg-white px-6 py-4 font-semibold text-black transition-all hover:scale-[1.03] hover:shadow-[0_0_30px_rgba(255,255,255,0.15)] active:scale-[0.98]" href="#journey">View the journey <ArrowRight className="transition group-hover:translate-x-1" size={18} /></a>
+            <a className="focus-ring glass inline-flex items-center gap-3 rounded-full px-6 py-4 font-semibold text-white/85 transition-all hover:scale-[1.03] hover:text-white" href={site.github} target="_blank" rel="noreferrer"><GitBranch size={18} /> GitHub</a>
           </motion.div>
         </div>
-        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="glass rounded-[2rem] p-6">
+        <motion.div initial={{ opacity: 0, y: 40, scale: 0.94 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ ...softSpring, delay: 0.35 }} className="glass rounded-[2rem] p-6">
           <p className="text-sm uppercase tracking-[0.35em] text-white/35">Status</p>
           <p className="mt-5 text-3xl font-semibold tracking-[-0.05em] text-white">I am not finished. I am building.</p>
           <div className="mt-8 grid gap-3 text-sm text-white/60">
-            {['Learning full-stack development', 'Writing scripts and experiments', 'Building a foundation publicly'].map((item) => <div key={item} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4"><span className="h-2 w-2 rounded-full bg-blue-300" />{item}</div>)}
+            {['Learning full-stack development', 'Writing scripts and experiments', 'Building a foundation publicly'].map((item, i) => (
+              <motion.div
+                key={item}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.9 + i * 0.12 }}
+                className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4 backdrop-blur-sm transition hover:border-white/20 hover:bg-white/[0.06]"
+              >
+                <span className="h-2 w-2 rounded-full bg-blue-300" />{item}
+              </motion.div>
+            ))}
           </div>
         </motion.div>
       </motion.div>
-    </section>
+    </motion.section>
   )
 }
 
 function About() {
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, margin: '-80px' })
+
   return (
     <section id="about" className="px-5 py-24">
       <div className="mx-auto max-w-6xl">
         <SectionTitle eyebrow="About" title="A beginner, but not casual." text="I am learning full-stack development and scripting with a focus on steady growth, practical projects, and becoming useful enough to build real things." />
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {strengths.slice(0, 8).map((strength) => <motion.div key={strength} whileHover={{ y: -6 }} className="glass rounded-3xl p-5 text-white/75"><Star className="mb-6 text-blue-200/70" size={18} />{strength}</motion.div>)}
-        </div>
+        <motion.div ref={ref} className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {strengths.slice(0, 8).map((strength, i) => (
+            <motion.div
+              key={strength}
+              initial={{ opacity: 0, y: 30 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ delay: i * 0.08, ...softSpring }}
+              whileHover={{ y: -8, scale: 1.02 }}
+              className="glass rounded-3xl p-5 text-white/75 transition-all hover:border-white/20 hover:shadow-[0_8px_30px_rgba(0,0,0,0.4)]"
+            >
+              <Star className="mb-6 text-blue-200/70" size={18} />
+              {strength}
+            </motion.div>
+          ))}
+        </motion.div>
       </div>
     </section>
   )
 }
 
 function Skills() {
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, margin: '-80px' })
+
   return (
     <section id="skills" className="px-5 py-24">
       <div className="mx-auto max-w-6xl">
         <SectionTitle eyebrow="Skills" title="Learning the stack without pretending mastery." text="No fake percentages. Just the tools I am actively learning and the personal strengths I am building around them." />
-        <div className="grid gap-6 lg:grid-cols-2">
-          <SkillPanel title="Learning" items={learningSkills} />
-          <SkillPanel title="Personal strengths" items={strengths} />
-        </div>
+        <motion.div ref={ref} className="grid gap-6 lg:grid-cols-2">
+          <SkillPanel title="Learning" items={learningSkills} inView={inView} index={0} />
+          <SkillPanel title="Personal strengths" items={strengths} inView={inView} index={1} />
+        </motion.div>
       </div>
     </section>
   )
 }
 
-function SkillPanel({ title, items }: { title: string; items: string[] }) {
-  return <div className="glass rounded-[2rem] p-6"><h3 className="mb-5 text-2xl font-semibold tracking-[-0.04em]">{title}</h3><div className="flex flex-wrap gap-3">{items.map((item) => <span key={item} className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm text-white/70">{item}</span>)}</div></div>
+function SkillPanel({ title, items, inView, index }: { title: string; items: string[]; inView: boolean; index: number }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ delay: index * 0.15, ...softSpring }}
+      className="glass rounded-[2rem] p-6"
+    >
+      <h3 className="mb-5 text-2xl font-semibold tracking-[-0.04em]">{title}</h3>
+      <div className="flex flex-wrap gap-3">
+        {items.map((item, i) => (
+          <motion.span
+            key={item}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={inView ? { opacity: 1, scale: 1 } : {}}
+            transition={{ delay: index * 0.15 + i * 0.05 }}
+            whileHover={{ scale: 1.08, y: -2 }}
+            className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm text-white/70 transition hover:border-blue-200/30 hover:bg-white/[0.08]"
+          >
+            {item}
+          </motion.span>
+        ))}
+      </div>
+    </motion.div>
+  )
 }
 
-function Projects() {
+function ProjectsSection() {
   const [state, setState] = useState<GitHubState>({ profile: null, repos: [], loading: true, error: null })
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, margin: '-80px' })
 
   useEffect(() => {
     getGitHubData().then((data) => setState({ ...data, loading: false, error: null })).catch((error: Error) => setState({ profile: null, repos: [], loading: false, error: error.message }))
@@ -90,32 +163,96 @@ function Projects() {
     <section id="projects" className="px-5 py-24">
       <div className="mx-auto max-w-6xl">
         <SectionTitle eyebrow="Projects" title="Projects loading. Foundation first." text="GitHub updates automatically. When new repositories are created, this section grows with the journey." />
-        {state.loading && <div className="glass rounded-[2rem] p-8 text-white/60"><Loader2 className="mb-4 animate-spin" /> Loading GitHub activity...</div>}
+        {state.loading && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="glass rounded-[2rem] p-8 text-white/60">
+            <Loader2 className="mb-4 animate-spin" /> Loading GitHub activity...
+          </motion.div>
+        )}
         {state.error && <div className="glass rounded-[2rem] p-8 text-white/60">GitHub is unavailable right now. The journey still continues.</div>}
-        {!state.loading && !state.error && state.repos.length === 0 && <EmptyProjects profile={state.profile} />}
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {state.repos.map((repo) => <RepoCard key={repo.id} repo={repo} />)}
-        </div>
+        {!state.loading && !state.error && state.repos.length === 0 && <EmptyProjects profile={state.profile} inView={inView} />}
+        <motion.div ref={ref} className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {state.repos.map((repo, i) => (
+            <RepoCard key={repo.id} repo={repo} inView={inView} index={i} />
+          ))}
+        </motion.div>
       </div>
     </section>
   )
 }
 
-function EmptyProjects({ profile }: { profile: GitHubProfile | null }) {
-  return <div className="glass rounded-[2rem] p-8"><Code2 className="mb-6 text-blue-200/70" /><h3 className="text-3xl font-semibold tracking-[-0.05em]">Building my first projects...</h3><p className="mt-4 max-w-2xl text-white/58">Currently building my foundation. This empty state is temporary by design. Repositories will appear here automatically from GitHub.</p><p className="mt-6 text-sm text-white/35">Public repos: {profile?.public_repos ?? 0}</p></div>
+function EmptyProjects({ profile, inView }: { profile: GitHubProfile | null; inView: boolean }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={softSpring}
+      className="glass rounded-[2rem] p-8"
+    >
+      <Code2 className="mb-6 text-blue-200/70" />
+      <h3 className="text-3xl font-semibold tracking-[-0.05em]">Building my first projects...</h3>
+      <p className="mt-4 max-w-2xl text-white/58">Currently building my foundation. This empty state is temporary by design. Repositories will appear here automatically from GitHub.</p>
+      <p className="mt-6 text-sm text-white/35">Public repos: {profile?.public_repos ?? 0}</p>
+    </motion.div>
+  )
 }
 
-function RepoCard({ repo }: { repo: GitHubRepo }) {
-  return <motion.a whileHover={{ y: -8 }} className="focus-ring glass block rounded-[2rem] p-6" href={repo.html_url} target="_blank" rel="noreferrer"><div className="mb-10 flex items-center justify-between"><Code2 className="text-blue-200/70" /><ExternalLink className="text-white/35" size={18} /></div><h3 className="text-2xl font-semibold tracking-[-0.05em]">{repo.name}</h3><p className="mt-3 min-h-14 text-sm leading-6 text-white/55">{repo.description || 'A public repository from the building phase.'}</p><div className="mt-6 flex items-center justify-between text-xs uppercase tracking-[0.25em] text-white/35"><span>{repo.language || 'Code'}</span><span>{new Date(repo.updated_at).getFullYear()}</span></div></motion.a>
+function RepoCard({ repo, inView, index }: { repo: GitHubRepo; inView: boolean; index: number }) {
+  return (
+    <motion.a
+      initial={{ opacity: 0, y: 30 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ delay: index * 0.08, ...softSpring }}
+      whileHover={{ y: -10, scale: 1.02 }}
+      className="focus-ring glass block rounded-[2rem] p-6 transition-all hover:border-white/20 hover:shadow-[0_12px_40px_rgba(0,0,0,0.5)]"
+      href={repo.html_url}
+      target="_blank"
+      rel="noreferrer"
+    >
+      <div className="mb-10 flex items-center justify-between">
+        <Code2 className="text-blue-200/70" />
+        <ExternalLink className="text-white/35 transition group-hover:text-white" size={18} />
+      </div>
+      <h3 className="text-2xl font-semibold tracking-[-0.05em]">{repo.name}</h3>
+      <p className="mt-3 min-h-14 text-sm leading-6 text-white/55">{repo.description || 'A public repository from the building phase.'}</p>
+      <div className="mt-6 flex items-center justify-between text-xs uppercase tracking-[0.25em] text-white/35">
+        <span>{repo.language || 'Code'}</span>
+        <span>{new Date(repo.updated_at).getFullYear()}</span>
+      </div>
+    </motion.a>
+  )
 }
 
 function Journey() {
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, margin: '-80px' })
+
   return (
     <section id="journey" className="px-5 py-24">
       <div className="mx-auto max-w-6xl">
         <SectionTitle eyebrow="Journey" title="A timeline for becoming." text="The path is intentionally simple: learn, build, connect the pieces, repeat." />
-        <div className="grid gap-5">
-          {chapters.map((chapter) => <motion.article key={chapter.number} whileHover={{ x: 8 }} className="glass grid gap-5 rounded-[2rem] p-6 md:grid-cols-[140px_1fr]"><span className="text-5xl font-black tracking-[-0.08em] text-white/18">{chapter.number}</span><div><h3 className="text-2xl font-semibold tracking-[-0.04em]">{chapter.title}</h3><p className="mt-3 text-white/58">{chapter.text}</p></div></motion.article>)}
+        <div ref={ref} className="relative grid gap-5 before:absolute before:left-[22px] before:top-12 before:h-[calc(100%-6rem)] before:w-px before:bg-gradient-to-b before:from-white/20 before:via-white/10 before:to-transparent">
+          {chapters.map((chapter, i) => (
+            <motion.article
+              key={chapter.number}
+              initial={{ opacity: 0, x: -30 }}
+              animate={inView ? { opacity: 1, x: 0 } : {}}
+              transition={{ delay: i * 0.15, ...softSpring }}
+              whileHover={{ x: 12 }}
+              className="glass relative grid gap-5 rounded-[2rem] p-6 transition-all hover:border-white/20 md:grid-cols-[140px_1fr]"
+            >
+              <motion.span
+                initial={{ scale: 0 }}
+                animate={inView ? { scale: 1 } : {}}
+                transition={{ delay: i * 0.15 + 0.1, type: 'spring', stiffness: 300 }}
+                className="absolute left-3 top-6 hidden h-4 w-4 rounded-full border-2 border-blue-200/50 bg-blue-200/20 md:block"
+              />
+              <span className="text-5xl font-black tracking-[-0.08em] text-white/18 md:pl-8">{chapter.number}</span>
+              <div>
+                <h3 className="text-2xl font-semibold tracking-[-0.04em]">{chapter.title}</h3>
+                <p className="mt-3 text-white/58">{chapter.text}</p>
+              </div>
+            </motion.article>
+          ))}
         </div>
       </div>
     </section>
@@ -152,15 +289,37 @@ function Contact() {
     <section id="contact" className="px-5 py-24">
       <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[0.9fr_1.1fr]">
         <div><SectionTitle eyebrow="Contact" title="Say something real." text="Open to advice, feedback, beginner-friendly opportunities, collaborations, and people who care about building." /><SocialLinks /></div>
-        <form onSubmit={submit} className="glass rounded-[2rem] p-6" aria-label="Contact form">
+        <motion.form
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={softSpring}
+          onSubmit={submit}
+          className="glass rounded-[2rem] p-6"
+          aria-label="Contact form"
+        >
           <input className="hidden" name="company" tabIndex={-1} autoComplete="off" />
-          <label className="mb-4 block text-sm text-white/60">Name<input required minLength={2} maxLength={80} name="name" className="focus-ring mt-2 w-full rounded-2xl border border-white/10 bg-black/35 px-4 py-3 text-white" /></label>
-          <label className="mb-4 block text-sm text-white/60">Email<input required type="email" maxLength={120} name="email" className="focus-ring mt-2 w-full rounded-2xl border border-white/10 bg-black/35 px-4 py-3 text-white" /></label>
-          <label className="mb-5 block text-sm text-white/60">Message<textarea required minLength={10} maxLength={2000} name="message" rows={6} className="focus-ring mt-2 w-full resize-none rounded-2xl border border-white/10 bg-black/35 px-4 py-3 text-white" /></label>
-          <button disabled={status === 'loading'} className="focus-ring inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-white px-5 py-4 font-semibold text-black transition hover:scale-[1.01] disabled:opacity-60" type="submit">{status === 'loading' ? <Loader2 className="animate-spin" /> : <Send size={18} />} Send message</button>
-          {status === 'success' && <p className="mt-4 flex items-center gap-2 text-sm text-green-200"><ShieldCheck size={16} /> Message stored securely.</p>}
-          {status === 'error' && <p className="mt-4 text-sm text-red-200">Check the form and try again.</p>}
-        </form>
+          <label className="mb-4 block text-sm text-white/60">Name
+            <input required minLength={2} maxLength={80} name="name" className="focus-ring mt-2 w-full rounded-2xl border border-white/10 bg-black/35 px-4 py-3 text-white transition focus:border-blue-200/40 focus:shadow-[0_0_20px_rgba(122,167,255,0.08)]" />
+          </label>
+          <label className="mb-4 block text-sm text-white/60">Email
+            <input required type="email" maxLength={120} name="email" className="focus-ring mt-2 w-full rounded-2xl border border-white/10 bg-black/35 px-4 py-3 text-white transition focus:border-blue-200/40 focus:shadow-[0_0_20px_rgba(122,167,255,0.08)]" />
+          </label>
+          <label className="mb-5 block text-sm text-white/60">Message
+            <textarea required minLength={10} maxLength={2000} name="message" rows={6} className="focus-ring mt-2 w-full resize-none rounded-2xl border border-white/10 bg-black/35 px-4 py-3 text-white transition focus:border-blue-200/40 focus:shadow-[0_0_20px_rgba(122,167,255,0.08)]" />
+          </label>
+          <motion.button
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.98 }}
+            disabled={status === 'loading'}
+            className="focus-ring inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-white px-5 py-4 font-semibold text-black transition hover:shadow-[0_0_30px_rgba(255,255,255,0.12)] disabled:opacity-60"
+            type="submit"
+          >
+            {status === 'loading' ? <Loader2 className="animate-spin" /> : <Send size={18} />} Send message
+          </motion.button>
+          {status === 'success' && <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mt-4 flex items-center gap-2 text-sm text-green-200"><ShieldCheck size={16} /> Message stored securely.</motion.p>}
+          {status === 'error' && <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mt-4 text-sm text-red-200">Check the form and try again.</motion.p>}
+        </motion.form>
       </div>
     </section>
   )
@@ -169,13 +328,14 @@ function Contact() {
 function App() {
   return (
     <>
-      <AnimatedBackground />
+      <ScrollProgress />
+      <FloatingOrbs />
       <Header />
       <main>
         <Hero />
         <About />
         <Skills />
-        <Projects />
+        <ProjectsSection />
         <Journey />
         <Contact />
       </main>
