@@ -1,21 +1,22 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
+import { createClient } from '@supabase/supabase-js'
 
 const rateLimit = new Map<string, { count: number; resetAt: number }>()
 const PER_IP_LIMIT = 5
 const GLOBAL_LIMIT = 50
 const WINDOW = 60_000
+const MAX_BODY_BYTES = 65_536
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
 function sanitize(str: string): string {
-  return str.replace(/<[^>]*>/g, '').replace(/[<>]/g, '').trim()
+  return str.replace(/<[^>]*>/g, '').replace(/[<>]/g, '').replace(/[^\x20-\x7E\x0A]/g, '').trim()
 }
 
 function checkRateLimit(req: VercelRequest): boolean {
   const now = Date.now()
   const ip = req.socket.remoteAddress || 'unknown'
-
   const global = rateLimit.get('__global__')
   if (global && now <= global.resetAt && global.count >= GLOBAL_LIMIT) return false
-
   const entry = rateLimit.get(ip)
   if (!entry || now > entry.resetAt) {
     rateLimit.set(ip, { count: 1, resetAt: now + WINDOW })
@@ -26,23 +27,30 @@ function checkRateLimit(req: VercelRequest): boolean {
   return true
 }
 
-function getGlobalCounter() {
+function trackGlobal() {
   const now = Date.now()
   const global = rateLimit.get('__global__')
   if (!global || now > global.resetAt) {
     rateLimit.set('__global__', { count: 1, resetAt: now + WINDOW })
-    return 1
+    return
   }
   global.count++
-  rateLimit.set('__global__', global)
-  return global.count
 }
 
 const allowedOrigin = 'https://myths-portfolio.vercel.app'
+const honeypotField = 'website'
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  const requestId = crypto.randomUUID().slice(0, 8)
+
+  if (typeof req.headers['content-length'] === 'string' && Number.parseInt(req.headers['content-length']) > MAX_BODY_BYTES) {
+    console.warn(`[${requestId}] Payload too large: ${req.headers['content-length']} bytes`)
+    return res.status(413).json({ error: 'Payload too large.' })
+  }
+
   const origin = req.headers.origin as string | undefined
   if (origin && origin !== allowedOrigin) {
+    console.warn(`[${requestId}] Blocked origin: ${origin}`)
     return res.status(403).json({ error: 'Forbidden' })
   }
 
@@ -50,20 +58,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Methods', 'POST')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
   res.setHeader('Vary', 'Origin')
+  res.setHeader('X-Request-Id', requestId)
 
-  if (req.method === 'OPTIONS') {
-    return res.status(204).end()
-  }
-
+  if (req.method === 'OPTIONS') return res.status(204).end()
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST')
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
   if (!checkRateLimit(req)) {
+    console.warn(`[${requestId}] Rate limited`)
     return res.status(429).json({ error: 'Too many requests. Try again later.' })
   }
-  getGlobalCounter()
+  trackGlobal()
 
   if (typeof req.body !== 'object' || req.body === null || Array.isArray(req.body)) {
     return res.status(400).json({ error: 'Invalid request body.' })
@@ -72,8 +79,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const dangerous = ['__proto__', 'constructor', 'prototype']
   for (const key of dangerous) {
     if (Object.prototype.hasOwnProperty.call(req.body, key)) {
+      console.warn(`[${requestId}] Dangerous key: ${key}`)
       return res.status(400).json({ error: 'Invalid fields detected.' })
     }
+  }
+
+  if (String(req.body[honeypotField] || '').trim()) {
+    return res.status(200).json({ ok: true })
   }
 
   const rawName = typeof req.body.name === 'string' ? req.body.name.trim() : ''
@@ -87,13 +99,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (name.length < 2 || name.length > 80) {
     return res.status(400).json({ error: 'Name must be between 2-80 characters.' })
   }
-  if (!email.includes('@') || email.length > 120) {
+  if (!EMAIL_RE.test(email) || email.length > 120) {
     return res.status(400).json({ error: 'Invalid email.' })
   }
   if (message.length < 10 || message.length > 2000) {
     return res.status(400).json({ error: 'Message must be between 10-2000 characters.' })
   }
   if (name !== rawName || email !== rawEmail || message !== rawMessage) {
+    console.warn(`[${requestId}] Sanitization changed input`, { name, rawName })
     return res.status(400).json({ error: 'Invalid characters detected.' })
   }
 
@@ -101,21 +114,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const supabaseKey = process.env.SUPABASE_SERVICE_KEY
 
   if (supabaseUrl && supabaseKey) {
-    const { createClient } = await import('@supabase/supabase-js')
     const supabase = createClient(supabaseUrl, supabaseKey)
     const { error } = await supabase.from('contact_messages').insert({
       name,
       email,
       message,
+      request_id: requestId,
       user_agent: (req.headers['user-agent'] as string)?.slice(0, 500) || null,
     })
     if (error) {
-      console.error('Supabase insert error:', error)
+      console.error(`[${requestId}] Supabase insert error:`, error.message)
       return res.status(500).json({ error: 'Failed to save message.' })
     }
-    return res.status(200).json({ ok: true })
+    console.log(`[${requestId}] Message stored from ${email}`)
+    return res.status(200).json({ ok: true, request_id: requestId })
   }
 
-  console.log('Contact submission (no Supabase):', { name, email })
-  return res.status(200).json({ ok: true })
+  console.log(`[${requestId}] No Supabase configured — logged message from ${email}`)
+  return res.status(200).json({ ok: true, request_id: requestId })
 }

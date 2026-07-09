@@ -15,8 +15,6 @@ export default tseslint.config(
         document: 'readonly',
         console: 'readonly',
         fetch: 'readonly',
-        HTMLElement: 'readonly',
-        HTMLInputElement: 'readonly',
       },
     },
     plugins: {

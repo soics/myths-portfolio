@@ -303,7 +303,7 @@ function Contact() {
           className="glass rounded-[2rem] p-6"
           aria-label="Contact form"
         >
-          <input className="hidden" name="company" tabIndex={-1} autoComplete="off" />
+          <input className="hidden" name="website" tabIndex={-1} autoComplete="off" />
           <label className="mb-4 block text-sm text-white/60">Name
             <input required minLength={2} maxLength={80} name="name" className="focus-ring mt-2 w-full rounded-2xl border border-white/10 bg-black/35 px-4 py-3 text-white transition focus:border-blue-200/40 focus:shadow-[0_0_20px_rgba(122,167,255,0.08)]" />
           </label>
