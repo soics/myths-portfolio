@@ -40,6 +40,35 @@ function useActiveSection(ids: string[]) {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Sackboy secret (click 10 times → glitch)                          */
+/* ------------------------------------------------------------------ */
+function SackboyButton() {
+  const countRef = useRef(0)
+
+  const handleClick = useCallback(() => {
+    countRef.current++
+    if (countRef.current >= 10) {
+      countRef.current = 0
+      const w = window as unknown as Record<string, () => void>
+      w.__triggerGlitch?.()
+    }
+  }, [])
+
+  return (
+    <a
+      className="focus-ring block shrink-0"
+      href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+      target="_blank"
+      rel="noreferrer"
+      aria-label="Surprise"
+      onClick={handleClick}
+    >
+      <img src="/sackboy.png" alt="" className="block h-9 w-auto transition duration-300 hover:scale-105" />
+    </a>
+  )
+}
+
+/* ------------------------------------------------------------------ */
 /*  Header                                                            */
 /* ------------------------------------------------------------------ */
 
@@ -88,15 +117,7 @@ export function Header() {
         >
           <nav className="flex items-center justify-between gap-4 text-sm text-white/75">
             {/* Sackboy */}
-            <a
-              className="focus-ring block shrink-0"
-              href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="Surprise"
-            >
-              <img src="/sackboy.png" alt="" className="block h-9 w-auto transition duration-300 hover:scale-105" />
-            </a>
+            <SackboyButton />
 
             {/* Desktop nav */}
             <div className="hidden items-center gap-0.5 md:flex">

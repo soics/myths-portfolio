@@ -1,6 +1,6 @@
-import { useRef } from 'react'
 import { motion, useInView } from 'motion/react'
 import { learningSkills, strengths } from '../data/site'
+import { useTilt } from '../hooks/useTilt'
 
 /* ------------------------------------------------------------------ */
 /*  Accent colours (rotating palette for skill dots)                  */
@@ -50,16 +50,17 @@ function SkillNode({ item, index, stagger }: { item: string; index: number; stag
 /*  SkillPanel — category card with header + staggered nodes          */
 /* ------------------------------------------------------------------ */
 function SkillPanel({ title, items, panelIndex }: { title: string; items: string[]; panelIndex: number }) {
-  const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-60px' })
+  const tiltRef = useTilt(6)
+  const inView = useInView(tiltRef, { once: true, margin: '-60px' })
 
   return (
     <motion.div
-      ref={ref}
+      ref={tiltRef}
       initial={{ opacity: 0, y: 20 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ delay: panelIndex * 0.12, type: 'spring', stiffness: 100, damping: 26 }}
       className="glass-lift group relative overflow-hidden rounded-2xl"
+      style={{ transformStyle: 'preserve-3d' }}
     >
       <div className="flex items-center justify-between border-b border-white/[0.05] px-5 py-3.5">
         <span className="text-xs font-semibold uppercase tracking-[0.2em] text-white/35">{title}</span>

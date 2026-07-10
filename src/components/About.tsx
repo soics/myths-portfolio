@@ -1,6 +1,7 @@
 import { motion } from 'motion/react'
 import { ArrowUpRight, Terminal } from 'lucide-react'
 import { site, strengths } from '../data/site'
+import { useTilt } from '../hooks/useTilt'
 
 const highlightWords = ['curiosity', 'mistakes', 'building things', 'thousands of juniors', 'unlearn']
 
@@ -101,7 +102,7 @@ export function About() {
               className="lg:w-[38%]"
             >
               {/* Now card */}
-              <div className="glass-lift rounded-2xl p-5">
+              <div ref={useTilt(8)} className="glass-lift rounded-2xl p-5" style={{ transformStyle: 'preserve-3d' }}>
                 <div className="flex items-center gap-3 border-b border-white/[0.04] pb-3">
                   <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent/8">
                     <Terminal size={14} className="text-accent-dim/60" />
@@ -133,7 +134,7 @@ export function About() {
               </div>
 
               {/* Strengths */}
-              <div className="glass-sm mt-4 rounded-2xl p-5">
+              <div ref={useTilt(6)} className="glass-sm mt-4 rounded-2xl p-5" style={{ transformStyle: 'preserve-3d' }}>
                 <p className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-white/25">Strengths</p>
                 <div className="grid grid-cols-2 gap-x-4 gap-y-2.5">
                   {strengths.map((s, i) => (

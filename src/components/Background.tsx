@@ -1,32 +1,28 @@
-import { useEffect, useRef, useState } from 'react'
-import { motion, useScroll, useTransform } from 'motion/react'
+import { useEffect, useRef, useCallback, useState } from 'react'
+import { motion, useScroll, useTransform, useMotionValue, useSpring } from 'motion/react'
 
 /* ------------------------------------------------------------------ */
-/*  Layer 1 – Far Aurora (6 organic blobs, deep blur, ambient glow)   */
+/*  Layer 1 – Far Aurora                                              */
 /* ------------------------------------------------------------------ */
 function AuroraBlobs() {
-  const blobs = useMemo(() => [
-    { size: 56, x: -8, y: -4, color: 'bg-blue-400/7', blur: 200, dur: 38, s: [1, 1.2, .88, 1.08, 1], dx: [0,140,-80,120,0], dy: [0,-160,110,-70,0] },
-    { size: 44, x: 78, y: 18, color: 'bg-purple-400/6', blur: 180, dur: 44, s: [1, .8, 1.18, .9, 1], dx: [0,-100,140,-60,0], dy: [0,120,-90,160,0] },
-    { size: 34, x: 42, y: 48, color: 'bg-white/[0.04]', blur: 160, dur: 50, s: [1, 1.1, .92, 1.15, 1], dx: [0,70,-110,50,0], dy: [0,-60,90,-110,0] },
-    { size: 38, x: 18, y: 72, color: 'bg-cyan-400/4', blur: 170, dur: 55, s: [1, 1.06, .94, 1.12, 1], dx: [0,-50,80,-40,0], dy: [0,70,-50,90,0] },
-    { size: 24, x: 70, y: 8, color: 'bg-violet-400/5', blur: 140, dur: 40, s: [1, .88, 1.14, .94, 1], dx: [0,100,-50,70,0], dy: [0,-80,120,-40,0] },
-    { size: 18, x: 28, y: 78, color: 'bg-amber-400/3', blur: 120, dur: 48, s: [1, 1.04, .96, 1.08, 1], dx: [0,-60,40,-80,0], dy: [0,40,-70,30,0] },
-  ], [])
+  const blobs = [
+    [56, -8, -4, 'bg-blue-400/7', 200, 38, [1,1.2,.88,1.08,1], [0,140,-80,120,0], [0,-160,110,-70,0]],
+    [44, 78, 18, 'bg-purple-400/6', 180, 44, [1,.8,1.18,.9,1], [0,-100,140,-60,0], [0,120,-90,160,0]],
+    [34, 42, 48, 'bg-white/[0.04]', 160, 50, [1,1.1,.92,1.15,1], [0,70,-110,50,0], [0,-60,90,-110,0]],
+    [38, 18, 72, 'bg-cyan-400/4', 170, 55, [1,1.06,.94,1.12,1], [0,-50,80,-40,0], [0,70,-50,90,0]],
+    [24, 70, 8, 'bg-violet-400/5', 140, 40, [1,.88,1.14,.94,1], [0,100,-50,70,0], [0,-80,120,-40,0]],
+    [18, 28, 78, 'bg-amber-400/3', 120, 48, [1,1.04,.96,1.08,1], [0,-60,40,-80,0], [0,40,-70,30,0]],
+  ] as const
 
   return (
     <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden" aria-hidden="true">
-      {blobs.map((b, i) => (
+      {blobs.map(([size, x, y, color, blur, dur, scale, dx, dy], i) => (
         <motion.div
           key={i}
-          animate={{ x: b.dx, y: b.dy, scale: b.s }}
-          transition={{ duration: b.dur, repeat: Infinity, ease: 'easeInOut' }}
-          className={`absolute rounded-full ${b.color}`}
-          style={{
-            left: `${b.x}%`, top: `${b.y}%`, width: `${b.size}rem`, height: `${b.size}rem`,
-            filter: `blur(${b.blur}px)`,
-            willChange: 'transform',
-          }}
+          animate={{ x: [...dx], y: [...dy], scale: [...scale] }}
+          transition={{ duration: dur, repeat: Infinity, ease: 'easeInOut' }}
+          className={`absolute rounded-full ${color}`}
+          style={{ left: `${x}%`, top: `${y}%`, width: `${size}rem`, height: `${size}rem`, filter: `blur(${blur}px)` }}
         />
       ))}
     </div>
@@ -34,75 +30,106 @@ function AuroraBlobs() {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Layer 2 – Dot Grid (subtle, parallax on scroll)                   */
+/*  Layer 2 – Dot Grid                                                */
 /* ------------------------------------------------------------------ */
 function DotGrid() {
   const { scrollY } = useScroll()
   const y = useTransform(scrollY, [0, 1000], [0, -60])
-  const opacity = useTransform(scrollY, [0, 400], [0.03, 0.015])
-
   return (
-    <motion.div
-      style={{ y, opacity }}
-      className="pointer-events-none fixed inset-0 -z-10" aria-hidden="true"
-    >
-      <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.25) 0.5px, transparent 0.5px)',
-          backgroundSize: '48px 48px',
-        }}
-      />
+    <motion.div style={{ y }} className="pointer-events-none fixed inset-0 -z-10 opacity-[0.025]" aria-hidden="true">
+      <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle,rgba(255,255,255,0.25)0.5px,transparent 0.5px)', backgroundSize: '48px 48px' }} />
     </motion.div>
   )
 }
 
 /* ------------------------------------------------------------------ */
-/*  Layer 3 – Particles (3 species: dust, glimmer, sparkle)           */
+/*  3D Rotating Geometric Shape                                       */
 /* ------------------------------------------------------------------ */
-type Species = 'dust' | 'glimmer' | 'sparkle'
-interface P { id: number; x: number; y: number; size: number; dur: number; del: number; driftX: number; driftY: number; species: Species }
+function GeometricShape() {
+  const mx = useMotionValue(0.5)
+  const my = useMotionValue(0.5)
+  const sx = useSpring(mx, { stiffness: 30, damping: 25 })
+  const sy = useSpring(my, { stiffness: 30, damping: 25 })
+
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => { mx.set(e.clientX / window.innerWidth); my.set(e.clientY / window.innerHeight) }
+    window.addEventListener('mousemove', onMove, { passive: true })
+    return () => window.removeEventListener('mousemove', onMove)
+  }, [mx, my])
+
+  const rx = useTransform(sx, [0, 1], [-15, 15])
+  const ry = useTransform(sy, [0, 1], [-15, 15])
+
+  return (
+    <motion.div style={{ rotateX: rx, rotateY: ry }} className="pointer-events-none fixed right-[-10vw] top-[15vh] -z-10 hidden md:block" aria-hidden="true">
+      <motion.div animate={{ rotateZ: 360 }} transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
+        className="h-[50vh] w-[50vh] rounded-full border border-white/[0.03]">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <div key={i} className="absolute left-1/2 top-0 h-2 w-2 -translate-x-1/2 rounded-full bg-white/[0.06]"
+            style={{ transformOrigin: '50% 25vh', rotate: `${i * 45}deg` }} />
+        ))}
+      </motion.div>
+      <motion.div animate={{ rotateZ: -360 }} transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
+        className="absolute inset-[15%] rounded-full border border-white/[0.02]" />
+      <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.03, 0.08, 0.03] }}
+        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute left-1/2 top-1/2 h-[20vh] w-[20vh] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br from-blue-400/10 to-purple-400/10 blur-3xl" />
+    </motion.div>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/*  Layer 3 – Poppable Particles                                      */
+/* ------------------------------------------------------------------ */
+interface PopParticle { id: number; x: number; y: number; size: number; popped: boolean; delay: number; popX: number; popY: number }
 
 function Particles() {
-  const [particles] = useState<P[]>(() =>
-    Array.from({ length: 60 }, (_, i): P => {
-      const species: Species = i < 30 ? 'dust' : i < 50 ? 'glimmer' : 'sparkle'
-      const base = { id: i, x: Math.random() * 100, y: Math.random() * 100, del: Math.random() * 25 }
-      if (species === 'dust') return { ...base, size: Math.random() * 1.2 + 0.3, dur: Math.random() * 28 + 22, driftX: 0, driftY: Math.random() * -40 - 10, species }
-      if (species === 'glimmer') return { ...base, size: Math.random() * 1.6 + 0.8, dur: Math.random() * 18 + 14, driftX: (Math.random() - 0.5) * 40, driftY: Math.random() * -20 - 5, species }
-      return { ...base, size: Math.random() * 1.2 + 0.6, dur: Math.random() * 6 + 3, del: Math.random() * 20, driftX: 0, driftY: 0, species }
+  const [particles, setParticles] = useState<PopParticle[]>(() =>
+    Array.from({ length: 50 }, (_, i) => ({
+      id: i, x: Math.random() * 100, y: Math.random() * 100,
+      size: Math.random() * 1.8 + 0.4, popped: false, delay: Math.random() * 20,
+      popX: 0, popY: 0,
     }))
+  )
+
+  const popCount = useRef(0)
+
+  const pop = useCallback((id: number) => {
+    setParticles(prev => prev.map(p =>
+      p.id === id ? { ...p, popped: true, popX: (Math.random() - 0.5) * 60, popY: (Math.random() - 0.5) * 60 } : p
+    ))
+    popCount.current++
+    if (popCount.current >= 5) {
+      setTimeout(() => {
+        setParticles(prev => prev.map(p => ({ ...p, popped: false })))
+        popCount.current = 0
+      }, 1500)
+    }
+  }, [])
 
   return (
     <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden" aria-hidden="true">
       {particles.map((p) => {
-        if (p.species === 'dust')
+        if (p.popped) {
           return (
             <motion.div
               key={p.id}
-              className="absolute rounded-full bg-white/15"
-              style={{ left: `${p.x}%`, top: `${p.y}%`, width: p.size, height: p.size }}
-              animate={{ y: [0, p.driftY, 0], opacity: [0, 0.35, 0] }}
-              transition={{ duration: p.dur, repeat: Infinity, delay: p.del, ease: 'easeInOut' }}
+              initial={{ scale: 1, opacity: 1, x: 0, y: 0 }}
+              animate={{ scale: 3, opacity: 0, x: p.popX, y: p.popY }}
+              transition={{ duration: 0.6, ease: 'easeOut' }}
+              className="absolute rounded-full bg-blue-200/30 shadow-[0_0_6px_rgba(160,196,255,0.3)]"
+              style={{ left: `${p.x}%`, top: `${p.y}%`, width: p.size * 2, height: p.size * 2 }}
             />
           )
-        if (p.species === 'glimmer')
-          return (
-            <motion.div
-              key={p.id}
-              className="absolute rounded-full bg-blue-200/20"
-              style={{ left: `${p.x}%`, top: `${p.y}%`, width: p.size, height: p.size }}
-              animate={{ x: [0, p.driftX, 0], y: [0, p.driftY, 0], opacity: [0, 0.5, 0] }}
-              transition={{ duration: p.dur, repeat: Infinity, delay: p.del, ease: 'easeInOut' }}
-            />
-          )
+        }
         return (
           <motion.div
             key={p.id}
-            className="absolute rounded-full bg-blue-200/25 shadow-[0_0_6px_rgba(160,196,255,0.2)]"
+            className="absolute rounded-full bg-white/15"
             style={{ left: `${p.x}%`, top: `${p.y}%`, width: p.size, height: p.size }}
-            animate={{ scale: [0, 2, 0], opacity: [0, 0.6, 0] }}
-            transition={{ duration: p.dur, repeat: Infinity, delay: p.del, ease: 'easeOut' }}
+            animate={{ y: [0, -30 - (p.id % 20), 0], opacity: [0, 0.4, 0] }}
+            transition={{ duration: 18 + (p.id % 20), repeat: Infinity, delay: p.delay, ease: 'easeInOut' }}
+            onClick={() => pop(p.id)}
           />
         )
       })}
@@ -111,21 +138,18 @@ function Particles() {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Layer 4 – Vignette (darkens edges, frames content)                */
+/*  Layer 4 – Vignette                                                */
 /* ------------------------------------------------------------------ */
 function Vignette() {
   return (
-    <div
-      className="pointer-events-none fixed inset-0 -z-10" aria-hidden="true"
-      style={{
-        background: 'radial-gradient(ellipse 65% 55% at 50% 50%, transparent 40%, rgba(0,0,0,0.55) 100%)',
-      }}
+    <div className="pointer-events-none fixed inset-0 -z-10" aria-hidden="true"
+      style={{ background: 'radial-gradient(ellipse 65% 55% at 50% 50%, transparent 40%, rgba(0,0,0,0.55) 100%)' }}
     />
   )
 }
 
 /* ------------------------------------------------------------------ */
-/*  Layer 5 – Cursor Glow (dual-colour radial, smooth spring)         */
+/*  Layer 5 – Cursor Glow                                             */
 /* ------------------------------------------------------------------ */
 function CursorGlow() {
   const ref = useRef<HTMLDivElement>(null)
@@ -148,34 +172,27 @@ function CursorGlow() {
   }, [])
 
   return (
-    <motion.div
-      ref={ref} aria-hidden="true"
-      className="pointer-events-none fixed inset-0 -z-10"
-      style={{
-        opacity: fade,
-        background: 'radial-gradient(600px at var(--cx, -1000px) var(--cy, -1000px), rgba(160,196,255,0.06), rgba(139,92,246,0.02) 45%, transparent 70%)',
-      }}
+    <motion.div ref={ref} aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10"
+      style={{ opacity: fade, background: 'radial-gradient(700px at var(--cx, -1000px) var(--cy, -1000px), rgba(160,196,255,0.06), rgba(139,92,246,0.02) 45%, transparent 70%)' }}
     />
   )
 }
 
 /* ------------------------------------------------------------------ */
-/*  Layer 6 – Cursor Ring (spring follower with hover scale)          */
+/*  Layer 6 – Cursor Ring                                             */
 /* ------------------------------------------------------------------ */
 function CursorRing() {
   const ref = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    let raf: number, x = -100, y = -100, tx = -100, ty = -100
-    let targetSize = 32, currentSize = 32
-
+    let raf: number, x = -100, y = -100, tx = -100, ty = -100, targetSize = 32, currentSize = 32
     const onMove = (e: MouseEvent) => {
       tx = e.clientX; ty = e.clientY
-      targetSize = (e.target as HTMLElement).closest('a, button, [data-ring]') ? 52 : 32
+      targetSize = (e.target as HTMLElement).closest('a, button, [data-ring]') ? 56 : 32
     }
     const tick = () => {
-      x += (tx - x) * 0.1; y += (ty - y) * 0.1
-      currentSize += (targetSize - currentSize) * 0.06
+      x += (tx - x) * 0.1; y += (ty - y) * 0.1; currentSize += (targetSize - currentSize) * 0.06
       const el = ref.current
       if (el) {
         el.style.transform = `translate(calc(${x}px - ${currentSize / 2}px), calc(${y}px - ${currentSize / 2}px))`
@@ -189,28 +206,54 @@ function CursorRing() {
   }, [])
 
   return (
-    <div
-      ref={ref} aria-hidden="true"
-      className="pointer-events-none fixed left-0 top-0 z-50 hidden md:block"
-      style={{
-        borderRadius: '50%',
-        border: '1px solid rgba(160,196,255,0.12)',
-        willChange: 'transform, width, height',
-        transition: 'border-color 0.3s',
-      }}
+    <div ref={ref} aria-hidden="true" className="pointer-events-none fixed left-0 top-0 z-50 hidden md:block"
+      style={{ borderRadius: '50%', border: '1px solid rgba(160,196,255,0.12)', willChange: 'transform, width, height' }}
     />
   )
 }
 
+/* ------------------------------------------------------------------ */
+/*  Layer 7 – CRT Glitch                                              */
+/* ------------------------------------------------------------------ */
+function CRTGlitch({ active }: { active: boolean }) {
+  if (!active) return null
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="pointer-events-none fixed inset-0 z-40" aria-hidden="true">
+      <div className="absolute inset-0" style={{ background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.15) 2px, rgba(0,0,0,0.15) 4px)' }} />
+      <motion.div animate={{ x: [0, 3, -2, 1, 0] }} transition={{ duration: 0.3, repeat: 3 }}
+        className="absolute inset-0 mix-blend-screen opacity-[0.04]"
+        style={{ background: 'linear-gradient(90deg, rgba(255,0,0,0.3), transparent 30%, transparent 70%, rgba(0,0,255,0.3))' }} />
+      <motion.div animate={{ opacity: [0, 0.1, 0, 0.05, 0] }} transition={{ duration: 0.6, repeat: 2 }}
+        className="absolute inset-0 bg-white" />
+    </motion.div>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/*  Main Export                                                       */
+/* ------------------------------------------------------------------ */
+
 export function Background() {
+  const [glitchActive, setGlitchActive] = useState(false)
+
+  useEffect(() => {
+    (window as unknown as Record<string, () => void>).__triggerGlitch = () => {
+      setGlitchActive(true)
+      setTimeout(() => setGlitchActive(false), 3000)
+    }
+    return () => { delete (window as unknown as Record<string, unknown>).__triggerGlitch }
+  }, [])
+
   return (
     <>
       <AuroraBlobs />
       <DotGrid />
+      <GeometricShape />
       <Particles />
       <Vignette />
       <CursorGlow />
       <CursorRing />
+      <CRTGlitch active={glitchActive} />
     </>
   )
 }
