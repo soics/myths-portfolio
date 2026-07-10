@@ -1,121 +1,108 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, useScroll, useTransform } from 'motion/react'
 
-function NoiseOverlay() {
-  return (
-    <svg className="pointer-events-none fixed inset-0 -z-10 h-full w-full opacity-[0.025]" aria-hidden="true">
-      <defs>
-        <filter id="noise" x="0" y="0" width="100%" height="100%">
-          <feTurbulence type="fractalNoise" baseFrequency="0.6" numOctaves="4" stitchTiles="stitch" />
-          <feComponentTransfer>
-            <feFuncA type="linear" slope="1" />
-          </feComponentTransfer>
-        </filter>
-      </defs>
-      <rect width="100%" height="100%" filter="url(#noise)" />
-    </svg>
-  )
-}
+/* ------------------------------------------------------------------ */
+/*  Layer 1 – Far Aurora (6 organic blobs, deep blur, ambient glow)   */
+/* ------------------------------------------------------------------ */
+function AuroraBlobs() {
+  const blobs = useMemo(() => [
+    { size: 56, x: -8, y: -4, color: 'bg-blue-400/7', blur: 200, dur: 38, s: [1, 1.2, .88, 1.08, 1], dx: [0,140,-80,120,0], dy: [0,-160,110,-70,0] },
+    { size: 44, x: 78, y: 18, color: 'bg-purple-400/6', blur: 180, dur: 44, s: [1, .8, 1.18, .9, 1], dx: [0,-100,140,-60,0], dy: [0,120,-90,160,0] },
+    { size: 34, x: 42, y: 48, color: 'bg-white/[0.04]', blur: 160, dur: 50, s: [1, 1.1, .92, 1.15, 1], dx: [0,70,-110,50,0], dy: [0,-60,90,-110,0] },
+    { size: 38, x: 18, y: 72, color: 'bg-cyan-400/4', blur: 170, dur: 55, s: [1, 1.06, .94, 1.12, 1], dx: [0,-50,80,-40,0], dy: [0,70,-50,90,0] },
+    { size: 24, x: 70, y: 8, color: 'bg-violet-400/5', blur: 140, dur: 40, s: [1, .88, 1.14, .94, 1], dx: [0,100,-50,70,0], dy: [0,-80,120,-40,0] },
+    { size: 18, x: 28, y: 78, color: 'bg-amber-400/3', blur: 120, dur: 48, s: [1, 1.04, .96, 1.08, 1], dx: [0,-60,40,-80,0], dy: [0,40,-70,30,0] },
+  ], [])
 
-function AuroraMesh() {
   return (
-    <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-      <motion.div
-        animate={{ x: [0, 120, -60, 140, 0], y: [0, -140, 100, -60, 0], scale: [1, 1.18, 0.88, 1.1, 1] }}
-        transition={{ duration: 40, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute -left-[10%] -top-[5%] h-[50rem] w-[50rem] rounded-full bg-blue-400/6 blur-[180px]"
-      />
-      <motion.div
-        animate={{ x: [0, -80, 120, -50, 0], y: [0, 100, -80, 140, 0], scale: [1, 0.82, 1.18, 0.88, 1] }}
-        transition={{ duration: 45, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute -right-[10%] top-[20%] h-[40rem] w-[40rem] rounded-full bg-purple-400/5 blur-[160px]"
-      />
-      <motion.div
-        animate={{ x: [0, 60, -100, 40, 0], y: [0, -50, 80, -100, 0], scale: [1, 1.1, 0.9, 1.15, 1] }}
-        transition={{ duration: 50, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute left-[45%] top-[50%] h-[30rem] w-[30rem] rounded-full bg-white/[0.04] blur-[140px]"
-      />
-      <motion.div
-        animate={{ x: [0, -40, 70, -30, 0], y: [0, 60, -40, 80, 0], scale: [1, 1.06, 0.94, 1.12, 1] }}
-        transition={{ duration: 55, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute -bottom-[10%] left-[20%] h-[35rem] w-[35rem] rounded-full bg-cyan-400/3 blur-[150px]"
-      />
-      <motion.div
-        animate={{ x: [0, 90, -40, 60, 0], y: [0, -70, 110, -30, 0], scale: [1, 0.9, 1.12, 0.95, 1] }}
-        transition={{ duration: 38, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute left-[70%] top-[10%] h-[20rem] w-[20rem] rounded-full bg-violet-400/4 blur-[120px]"
-      />
-      <motion.div
-        animate={{ x: [0, -50, 30, -70, 0], y: [0, 30, -60, 20, 0], scale: [1, 1.04, 0.96, 1.08, 1] }}
-        transition={{ duration: 48, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute left-[30%] top-[75%] h-[15rem] w-[15rem] rounded-full bg-amber-400/2 blur-[100px]"
-      />
+    <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden" aria-hidden="true">
+      {blobs.map((b, i) => (
+        <motion.div
+          key={i}
+          animate={{ x: b.dx, y: b.dy, scale: b.s }}
+          transition={{ duration: b.dur, repeat: Infinity, ease: 'easeInOut' }}
+          className={`absolute rounded-full ${b.color}`}
+          style={{
+            left: `${b.x}%`, top: `${b.y}%`, width: `${b.size}rem`, height: `${b.size}rem`,
+            filter: `blur(${b.blur}px)`,
+            willChange: 'transform',
+          }}
+        />
+      ))}
     </div>
   )
 }
 
+/* ------------------------------------------------------------------ */
+/*  Layer 2 – Dot Grid (subtle, parallax on scroll)                   */
+/* ------------------------------------------------------------------ */
 function DotGrid() {
+  const { scrollY } = useScroll()
+  const y = useTransform(scrollY, [0, 1000], [0, -60])
+  const opacity = useTransform(scrollY, [0, 400], [0.03, 0.015])
+
   return (
-    <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10">
+    <motion.div
+      style={{ y, opacity }}
+      className="pointer-events-none fixed inset-0 -z-10" aria-hidden="true"
+    >
       <div
-        className="absolute inset-0 opacity-[0.025]"
+        className="absolute inset-0"
         style={{
-          backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.3) 1px, transparent 1px)',
-          backgroundSize: '64px 64px',
+          backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.25) 0.5px, transparent 0.5px)',
+          backgroundSize: '48px 48px',
         }}
       />
-    </div>
+    </motion.div>
   )
 }
 
-type Particle = { id: number; x: number; y: number; size: number; duration: number; delay: number; drift: number; type: 'float' | 'drift' | 'sparkle' }
+/* ------------------------------------------------------------------ */
+/*  Layer 3 – Particles (3 species: dust, glimmer, sparkle)           */
+/* ------------------------------------------------------------------ */
+type Species = 'dust' | 'glimmer' | 'sparkle'
+interface P { id: number; x: number; y: number; size: number; dur: number; del: number; driftX: number; driftY: number; species: Species }
 
 function Particles() {
-  const [particles] = useState<Particle[]>(() =>
-    Array.from({ length: 45 }, (_, i) => {
-      const type = i < 25 ? 'float' : i < 38 ? 'drift' : 'sparkle'
-      return {
-        id: i, x: Math.random() * 100, y: Math.random() * 100,
-        size: Math.random() * 2 + 0.5,
-        duration: type === 'sparkle' ? Math.random() * 6 + 3 : Math.random() * 30 + 20,
-        delay: Math.random() * 20,
-        drift: Math.random() * 30 - 15,
-        type,
-      }
+  const [particles] = useState<P[]>(() =>
+    Array.from({ length: 60 }, (_, i): P => {
+      const species: Species = i < 30 ? 'dust' : i < 50 ? 'glimmer' : 'sparkle'
+      const base = { id: i, x: Math.random() * 100, y: Math.random() * 100, del: Math.random() * 25 }
+      if (species === 'dust') return { ...base, size: Math.random() * 1.2 + 0.3, dur: Math.random() * 28 + 22, driftX: 0, driftY: Math.random() * -40 - 10, species }
+      if (species === 'glimmer') return { ...base, size: Math.random() * 1.6 + 0.8, dur: Math.random() * 18 + 14, driftX: (Math.random() - 0.5) * 40, driftY: Math.random() * -20 - 5, species }
+      return { ...base, size: Math.random() * 1.2 + 0.6, dur: Math.random() * 6 + 3, del: Math.random() * 20, driftX: 0, driftY: 0, species }
     }))
 
   return (
-    <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+    <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden" aria-hidden="true">
       {particles.map((p) => {
-        if (p.type === 'float') {
+        if (p.species === 'dust')
           return (
             <motion.div
               key={p.id}
-              className="absolute rounded-full bg-white/20"
+              className="absolute rounded-full bg-white/15"
               style={{ left: `${p.x}%`, top: `${p.y}%`, width: p.size, height: p.size }}
-              animate={{ y: [0, -50, 0], opacity: [0, 0.4, 0] }}
-              transition={{ duration: p.duration, repeat: Infinity, delay: p.delay, ease: 'easeInOut' }}
+              animate={{ y: [0, p.driftY, 0], opacity: [0, 0.35, 0] }}
+              transition={{ duration: p.dur, repeat: Infinity, delay: p.del, ease: 'easeInOut' }}
             />
           )
-        }
-        if (p.type === 'drift') {
+        if (p.species === 'glimmer')
           return (
             <motion.div
               key={p.id}
-              className="absolute rounded-full bg-blue-200/25"
-              style={{ left: `${p.x}%`, top: `${p.y}%`, width: p.size + 1, height: p.size + 1 }}
-              animate={{ x: [0, p.drift, 0], y: [0, -20, 0], opacity: [0, 0.5, 0] }}
-              transition={{ duration: p.duration, repeat: Infinity, delay: p.delay, ease: 'easeInOut' }}
+              className="absolute rounded-full bg-blue-200/20"
+              style={{ left: `${p.x}%`, top: `${p.y}%`, width: p.size, height: p.size }}
+              animate={{ x: [0, p.driftX, 0], y: [0, p.driftY, 0], opacity: [0, 0.5, 0] }}
+              transition={{ duration: p.dur, repeat: Infinity, delay: p.del, ease: 'easeInOut' }}
             />
           )
-        }
         return (
           <motion.div
             key={p.id}
-            className="absolute rounded-full bg-blue-200/30"
-            style={{ left: `${p.x}%`, top: `${p.y}%`, width: p.size + 0.5, height: p.size + 0.5 }}
-            animate={{ scale: [0, 1.5, 0], opacity: [0, 0.5, 0] }}
-            transition={{ duration: p.duration, repeat: Infinity, delay: p.delay, ease: 'easeOut' }}
+            className="absolute rounded-full bg-blue-200/25 shadow-[0_0_6px_rgba(160,196,255,0.2)]"
+            style={{ left: `${p.x}%`, top: `${p.y}%`, width: p.size, height: p.size }}
+            animate={{ scale: [0, 2, 0], opacity: [0, 0.6, 0] }}
+            transition={{ duration: p.dur, repeat: Infinity, delay: p.del, ease: 'easeOut' }}
           />
         )
       })}
@@ -123,98 +110,93 @@ function Particles() {
   )
 }
 
-function CursorGlow() {
-  const ref = useRef<HTMLDivElement>(null)
-  const { scrollY } = useScroll()
-  const opacity = useTransform(scrollY, [0, 400], [1, 0])
-
-  useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-
-    let raf: number
-    let x = -1000, y = -1000, tx = -1000, ty = -1000
-
-    const onMouse = (e: MouseEvent) => { tx = e.clientX; ty = e.clientY }
-    const tick = () => {
-      x += (tx - x) * 0.08
-      y += (ty - y) * 0.08
-      ref.current?.style.setProperty('--gx', `${x}px`)
-      ref.current?.style.setProperty('--gy', `${y}px`)
-      raf = requestAnimationFrame(tick)
-    }
-
-    window.addEventListener('mousemove', onMouse, { passive: true })
-    raf = requestAnimationFrame(tick)
-
-    return () => {
-      window.removeEventListener('mousemove', onMouse)
-      cancelAnimationFrame(raf)
-    }
-  }, [])
-
+/* ------------------------------------------------------------------ */
+/*  Layer 4 – Vignette (darkens edges, frames content)                */
+/* ------------------------------------------------------------------ */
+function Vignette() {
   return (
-    <motion.div
-      ref={ref}
-      aria-hidden="true"
-      className="pointer-events-none fixed inset-0 -z-10"
+    <div
+      className="pointer-events-none fixed inset-0 -z-10" aria-hidden="true"
       style={{
-        opacity,
-        background: 'radial-gradient(700px at var(--gx, -1000px) var(--gy, -1000px), rgba(160, 196, 255, 0.06), rgba(160, 140, 255, 0.02) 50%, transparent 80%)',
+        background: 'radial-gradient(ellipse 65% 55% at 50% 50%, transparent 40%, rgba(0,0,0,0.55) 100%)',
       }}
     />
   )
 }
 
+/* ------------------------------------------------------------------ */
+/*  Layer 5 – Cursor Glow (dual-colour radial, smooth spring)         */
+/* ------------------------------------------------------------------ */
+function CursorGlow() {
+  const ref = useRef<HTMLDivElement>(null)
+  const { scrollY } = useScroll()
+  const fade = useTransform(scrollY, [0, 500], [1, 0.3])
+
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    let raf: number, x = -1000, y = -1000, tx = -1000, ty = -1000
+    const onMove = (e: MouseEvent) => { tx = e.clientX; ty = e.clientY }
+    const tick = () => {
+      x += (tx - x) * 0.08; y += (ty - y) * 0.08
+      const el = ref.current
+      if (el) { el.style.setProperty('--cx', `${x}px`); el.style.setProperty('--cy', `${y}px`) }
+      raf = requestAnimationFrame(tick)
+    }
+    window.addEventListener('mousemove', onMove, { passive: true })
+    raf = requestAnimationFrame(tick)
+    return () => { window.removeEventListener('mousemove', onMove); cancelAnimationFrame(raf) }
+  }, [])
+
+  return (
+    <motion.div
+      ref={ref} aria-hidden="true"
+      className="pointer-events-none fixed inset-0 -z-10"
+      style={{
+        opacity: fade,
+        background: 'radial-gradient(600px at var(--cx, -1000px) var(--cy, -1000px), rgba(160,196,255,0.06), rgba(139,92,246,0.02) 45%, transparent 70%)',
+      }}
+    />
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/*  Layer 6 – Cursor Ring (spring follower with hover scale)          */
+/* ------------------------------------------------------------------ */
 function CursorRing() {
   const ref = useRef<HTMLDivElement>(null)
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    let raf: number, x = -100, y = -100, tx = -100, ty = -100
+    let targetSize = 32, currentSize = 32
 
-    let raf: number
-    let x = -100, y = -100, tx = -100, ty = -100
-    let targetSize = 32
-    let currentSize = 32
-
-    const onMouse = (e: MouseEvent) => {
-      tx = e.clientX
-      ty = e.clientY
-
-      const target = e.target as HTMLElement
-      const interactive = target.closest('a, button, [data-ring]')
-      targetSize = interactive ? 56 : 32
+    const onMove = (e: MouseEvent) => {
+      tx = e.clientX; ty = e.clientY
+      targetSize = (e.target as HTMLElement).closest('a, button, [data-ring]') ? 52 : 32
     }
-
     const tick = () => {
-      x += (tx - x) * 0.12
-      y += (ty - y) * 0.12
-      currentSize += (targetSize - currentSize) * 0.08
-      if (ref.current) {
-        ref.current.style.transform = `translate(calc(${x}px - ${currentSize / 2}px), calc(${y}px - ${currentSize / 2}px))`
-        ref.current.style.width = `${currentSize}px`
-        ref.current.style.height = `${currentSize}px`
+      x += (tx - x) * 0.1; y += (ty - y) * 0.1
+      currentSize += (targetSize - currentSize) * 0.06
+      const el = ref.current
+      if (el) {
+        el.style.transform = `translate(calc(${x}px - ${currentSize / 2}px), calc(${y}px - ${currentSize / 2}px))`
+        el.style.width = `${currentSize}px`; el.style.height = `${currentSize}px`
       }
       raf = requestAnimationFrame(tick)
     }
-
-    window.addEventListener('mousemove', onMouse, { passive: true })
+    window.addEventListener('mousemove', onMove, { passive: true })
     raf = requestAnimationFrame(tick)
-
-    return () => {
-      window.removeEventListener('mousemove', onMouse)
-      cancelAnimationFrame(raf)
-    }
+    return () => { window.removeEventListener('mousemove', onMove); cancelAnimationFrame(raf) }
   }, [])
 
   return (
     <div
-      ref={ref}
-      aria-hidden="true"
+      ref={ref} aria-hidden="true"
       className="pointer-events-none fixed left-0 top-0 z-50 hidden md:block"
       style={{
         borderRadius: '50%',
-        border: '1px solid rgba(160, 196, 255, 0.15)',
+        border: '1px solid rgba(160,196,255,0.12)',
         willChange: 'transform, width, height',
-        transition: 'border-color 0.4s',
+        transition: 'border-color 0.3s',
       }}
     />
   )
@@ -223,10 +205,10 @@ function CursorRing() {
 export function Background() {
   return (
     <>
-      <NoiseOverlay />
-      <AuroraMesh />
+      <AuroraBlobs />
       <DotGrid />
       <Particles />
+      <Vignette />
       <CursorGlow />
       <CursorRing />
     </>
