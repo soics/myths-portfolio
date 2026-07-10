@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { useScroll, useTransform, motion } from 'motion/react'
 import { AtSign, GitBranch, Mail, Music2, Sparkles } from 'lucide-react'
 import { site } from '../data/site'
@@ -8,27 +9,66 @@ const links = [
   ['03', 'Projects', '#projects'],
   ['04', 'Journey', '#journey'],
   ['05', 'Contact', '#contact'],
-]
+] as const
+
+function useActiveSection(sectionIds: string[]) {
+  const [active, setActive] = useState('')
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const offset = window.scrollY + window.innerHeight * 0.3
+      let current = ''
+      for (const id of sectionIds) {
+        const el = document.getElementById(id)
+        if (el && el.offsetTop <= offset) current = id
+      }
+      setActive(current)
+    }
+
+    handleScroll()
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [sectionIds])
+
+  return active
+}
 
 export function Header() {
   const { scrollY } = useScroll()
   const bg = useTransform(scrollY, [0, 100], ['rgba(255,255,255,0)', 'rgba(255,255,255,0.04)'])
   const border = useTransform(scrollY, [0, 100], ['rgba(255,255,255,0)', 'rgba(255,255,255,0.08)'])
+  const blur = useTransform(scrollY, [0, 100], ['blur(0px)', 'blur(16px)'])
+  const activeSection = useActiveSection(['about', 'skills', 'projects', 'journey', 'contact'])
 
   return (
-    <motion.header style={{ backgroundColor: bg, borderColor: border }} className="fixed left-0 right-0 top-0 z-30 border-b border-transparent px-4 py-4 backdrop-blur-xl">
+    <motion.header
+      style={{ backgroundColor: bg, borderColor: border, backdropFilter: blur, WebkitBackdropFilter: blur }}
+      className="fixed left-0 right-0 top-0 z-30 border-b border-transparent px-4 py-4"
+    >
       <nav className="mx-auto flex max-w-6xl items-center justify-between gap-4 rounded-full px-4 py-3 text-sm text-white/80">
         <a className="focus-ring block" href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" rel="noreferrer" aria-label="Surprise"><img src="/sackboy.png" alt="" className="block max-h-20 w-auto transition hover:scale-105" /></a>
         <div className="hidden items-center gap-1 md:flex">
-          {links.map(([number, label, href]) => (
-            <a key={href} href={href} className="focus-ring rounded-full px-3 py-2 transition hover:bg-white/10 hover:text-white">
-              <span className="mr-1 text-white/35">{number}</span>{label}
-            </a>
-          ))}
+          {links.map(([number, label, href]) => {
+            const isActive = activeSection === href.slice(1)
+            return (
+              <a
+                key={href}
+                href={href}
+                className={`focus-ring relative rounded-full px-3 py-2 transition-all duration-300 hover:bg-white/10 ${
+                  isActive ? 'text-white' : 'text-white/65 hover:text-white/90'
+                }`}
+              >
+                <span className="mr-1 text-white/30">{number}</span>{label}
+                {isActive && (
+                  <motion.span layoutId="nav-indicator" className="absolute inset-x-2 -bottom-px h-px bg-gradient-to-r from-blue-200/60 to-transparent" />
+                )}
+              </a>
+              )
+            })}
         </div>
         <div className="flex items-center gap-2">
-          <a className="focus-ring rounded-full p-2 text-white/70 transition hover:bg-white/10 hover:text-white" href={site.github} target="_blank" rel="noreferrer" aria-label="GitHub"><GitBranch size={18} /></a>
-          <a className="focus-ring rounded-full p-2 text-white/70 transition hover:bg-white/10 hover:text-white" href={`mailto:${site.email}`} aria-label="Email"><Mail size={18} /></a>
+          <a className="focus-ring rounded-full p-2 text-white/70 transition hover:bg-white/10 hover:text-white hover:shadow-[0_0_12px_rgba(255,255,255,0.06)]" href={site.github} target="_blank" rel="noreferrer" aria-label="GitHub"><GitBranch size={18} /></a>
+          <a className="focus-ring rounded-full p-2 text-white/70 transition hover:bg-white/10 hover:text-white hover:shadow-[0_0_12px_rgba(255,255,255,0.06)]" href={`mailto:${site.email}`} aria-label="Email"><Mail size={18} /></a>
         </div>
       </nav>
     </motion.header>
