@@ -264,8 +264,9 @@ function Contact() {
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    const form = new FormData(event.currentTarget)
-    if (String(form.get('company') || '').trim()) return
+    const el = event.currentTarget
+    const form = new FormData(el)
+    if (String(form.get('website') || '').trim()) return
     const payload = {
       name: String(form.get('name') || '').trim().slice(0, 80),
       email: String(form.get('email') || '').trim().slice(0, 120),
@@ -282,9 +283,13 @@ function Contact() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       })
-      if (!res.ok) throw new Error()
+      if (!res.ok) {
+        const text = await res.text().catch(() => '')
+        console.warn('Contact API error', res.status, text)
+        throw new Error()
+      }
       setStatus('success')
-      event.currentTarget.reset()
+      el.reset()
     } catch {
       setStatus('error')
     }
