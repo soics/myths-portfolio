@@ -1,8 +1,7 @@
-import { useEffect, useState, useCallback, lazy, Suspense } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useSpring } from 'motion/react'
 import { motion, useScroll, AnimatePresence } from 'motion/react'
-
-const Scene = lazy(() => import('./components/Scene').then(m => ({ default: m.Scene })))
+import { Scene } from './components/Scene'
 import { Background } from './components/Background'
 import { Terminal } from './components/Terminal'
 import { Header } from './components/Primitives'
@@ -227,7 +226,7 @@ function App() {
       <ScrollProgress />
       <BackgroundAccent />
       <Background />
-      <ErrorBoundary><Suspense fallback={null}><Scene /></Suspense></ErrorBoundary>
+      <ErrorBoundary><Scene /></ErrorBoundary>
       <Terminal open={terminalOpen} onClose={() => setTerminalOpen(false)} sideEffects={sideEffects} />
       <Header />
       <main id="main-content">
