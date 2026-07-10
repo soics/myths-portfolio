@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, useScroll, useTransform, useSpring, useInView } from 'motion/react'
-import { ArrowRight, BookOpen, ChevronDown, Code2, Compass, ExternalLink, GitBranch, Lightbulb, Loader2, MessageCircle, Puzzle, Search, Send, ShieldCheck, Target, Users } from 'lucide-react'
+import { ArrowRight, BookOpen, ChevronDown, Code2, Compass, ExternalLink, GitBranch, Lightbulb, Loader2, MessageCircle, Puzzle, Search, Send, ShieldCheck, Star, Target, Users } from 'lucide-react'
 import { chapters, learningSkills, site, strengths } from './data/site'
 import { getGitHubData, type GitHubProfile, type GitHubRepo } from './lib/github'
 
@@ -301,6 +301,29 @@ function ProjectsSection() {
   )
 }
 
+const langColors: Record<string, string> = {
+  TypeScript: 'bg-blue-500/10 text-blue-300 border-blue-500/25',
+  JavaScript: 'bg-yellow-500/10 text-yellow-300 border-yellow-500/25',
+  Python: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/25',
+  HTML: 'bg-orange-500/10 text-orange-300 border-orange-500/25',
+  CSS: 'bg-sky-500/10 text-sky-300 border-sky-500/25',
+  Lua: 'bg-blue-500/10 text-blue-300 border-blue-500/25',
+  Shell: 'bg-green-500/10 text-green-300 border-green-500/25',
+}
+
+const langAccentBars: Record<string, string> = {
+  TypeScript: 'bg-blue-400', JavaScript: 'bg-yellow-400', Python: 'bg-emerald-400',
+  HTML: 'bg-orange-400', CSS: 'bg-sky-400', Lua: 'bg-blue-400', Shell: 'bg-green-400',
+}
+
+function langStyle(lang: string | null): string {
+  return langColors[lang || ''] || 'bg-white/[0.04] text-white/50 border-white/10'
+}
+
+function langBar(lang: string | null): string {
+  return langAccentBars[lang || ''] || 'bg-white/10'
+}
+
 function EmptyProjects({ profile, inView }: { profile: GitHubProfile | null; inView: boolean }) {
   return (
     <motion.div
@@ -309,7 +332,9 @@ function EmptyProjects({ profile, inView }: { profile: GitHubProfile | null; inV
       transition={softSpring}
       className="glass rounded-[2rem] p-8"
     >
-      <Code2 className="mb-6 text-blue-200/70" />
+      <motion.div animate={{ y: [0, -6, 0] }} transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}>
+        <Code2 className="mb-6 text-blue-200/60" size={28} />
+      </motion.div>
       <h3 className="text-3xl font-semibold tracking-[-0.05em]">Building my first projects...</h3>
       <p className="mt-4 max-w-2xl text-white/58">Currently building my foundation. This empty state is temporary by design. Repositories will appear here automatically from GitHub.</p>
       <p className="mt-6 text-sm text-white/35">Public repos: {profile?.public_repos ?? 0}</p>
@@ -324,20 +349,37 @@ function RepoCard({ repo, inView, index }: { repo: GitHubRepo; inView: boolean; 
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ delay: index * 0.08, ...softSpring }}
       whileHover={{ y: -10, scale: 1.02 }}
-      className="focus-ring glass block rounded-[2rem] p-6 transition-all hover:border-white/20 hover:shadow-[0_12px_40px_rgba(0,0,0,0.5)]"
+      className="focus-ring glass relative block overflow-hidden rounded-[2rem] p-6 transition-all hover:border-white/20 hover:shadow-[0_12px_40px_rgba(0,0,0,0.5)]"
       href={repo.html_url}
       target="_blank"
       rel="noreferrer"
     >
-      <div className="mb-10 flex items-center justify-between">
-        <Code2 className="text-blue-200/70" />
-        <ExternalLink className="text-white/35 transition group-hover:text-white" size={18} />
+      <div className={`absolute left-0 right-0 top-0 h-[2px] ${langBar(repo.language)}`} />
+      <div className="mb-8 flex items-center justify-between">
+        <div className="rounded-xl bg-white/[0.04] p-2.5">
+          <Code2 className="text-blue-200/60" size={20} />
+        </div>
+        <ExternalLink className="text-white/25 transition group-hover:text-white" size={16} />
       </div>
       <h3 className="text-2xl font-semibold tracking-[-0.05em]">{repo.name}</h3>
       <p className="mt-3 min-h-14 text-sm leading-6 text-white/55">{repo.description || 'A public repository from the building phase.'}</p>
-      <div className="mt-6 flex items-center justify-between text-xs uppercase tracking-[0.25em] text-white/35">
-        <span>{repo.language || 'Code'}</span>
-        <span>{new Date(repo.updated_at).getFullYear()}</span>
+      <div className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-2">
+        {repo.language && (
+          <span className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium ${langStyle(repo.language)}`}>
+            {repo.language}
+          </span>
+        )}
+        {repo.stargazers_count > 0 && (
+          <span className="inline-flex items-center gap-1.5 text-xs text-white/40">
+            <Star size={12} /> {repo.stargazers_count}
+          </span>
+        )}
+        {repo.forks_count > 0 && (
+          <span className="inline-flex items-center gap-1.5 text-xs text-white/40">
+            <GitBranch size={12} /> {repo.forks_count}
+          </span>
+        )}
+        <span className="ml-auto text-xs text-white/30">{new Date(repo.updated_at).getFullYear()}</span>
       </div>
     </motion.a>
   )
