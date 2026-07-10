@@ -189,7 +189,7 @@ export function Hero() {
       <motion.div style={{ y, perspective: 800 }} className="relative z-10 mx-auto w-full max-w-6xl">
         {/* Massive left-aligned name */}
         <div className="relative max-w-[85%] md:max-w-[70%]">
-          <h1 className="flex flex-wrap overflow-hidden">
+          <h1 className="flex flex-wrap">
             {site.name.split('').map((char, i) => {
               const isM = i === 0
               return (
@@ -204,7 +204,7 @@ export function Hero() {
                     duration: 1, ease: [0.22, 1, 0.36, 1], delay: 0.4 + i * 0.07,
                     rotateZ: mWobble ? { duration: 0.6, ease: 'easeInOut' } : undefined,
                   }}
-                  className={`inline-block text-[clamp(5rem,18vw,11rem)] font-black leading-[1.1] text-white ${isM ? 'cursor-pointer select-none' : ''}`}
+                  className={`inline-block text-[clamp(4.5rem,16vw,10rem)] font-black leading-[0.82] tracking-[-0.08em] text-white ${isM ? 'cursor-pointer select-none' : ''}`}
                   onClick={isM ? handleMClick : undefined}
                   style={{ textShadow: '0 0 80px rgba(160,196,255,0.05), 0 1px 0 rgba(255,255,255,0.04), 0 2px 0 rgba(255,255,255,0.03), 0 4px 0 rgba(255,255,255,0.02), 0 8px 20px rgba(0,0,0,0.3)' }}
                 >
