@@ -37,7 +37,7 @@ function ChapterCard({ chapter, index, inView, isLast }: {
             Chapter {chapter.number}
           </span>
           <h3 className="text-xl font-semibold tracking-[-0.03em] text-white/95 md:text-2xl">{chapter.title}</h3>
-          <p className="mt-2.5 max-w-xl text-[15px] leading-[1.8] text-white/50">{chapter.text}</p>
+          <p className="mt-2.5 max-w-xl text-[15px] leading-[1.8] text-white/65">{chapter.text}</p>
           {isLast && (
             <motion.span initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 1 }}
               className="mt-4 inline-flex items-center gap-1.5 text-xs text-accent-dim/40">
@@ -81,7 +81,7 @@ export function Journey() {
             Journey
           </motion.p>
           <h2 className="text-balance text-4xl font-semibold tracking-[-0.06em] text-white md:text-5xl">A timeline for becoming.</h2>
-          <p className="mt-5 max-w-2xl text-lg leading-8 text-white/55">The path is intentionally simple: learn, build, connect the pieces, repeat.</p>
+          <p className="mt-5 max-w-2xl text-lg leading-8 text-white/70">The path is intentionally simple: learn, build, connect the pieces, repeat.</p>
         </motion.div>
 
         <div className="relative pl-[44px] md:pl-16">

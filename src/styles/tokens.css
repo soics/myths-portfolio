@@ -59,7 +59,7 @@ body {
     radial-gradient(ellipse 60% 50% at 80% 80%, rgba(var(--accent-rgb), 0.03) 0%, transparent 60%),
     radial-gradient(ellipse 50% 40% at 20% 90%, rgba(var(--accent-rgb), 0.02) 0%, transparent 60%),
     linear-gradient(180deg, #030303 0%, #08080a 45%, #030303 100%);
-  transition: background 1.2s ease;
+  transition: background 0.8s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 body::before {

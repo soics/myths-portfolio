@@ -128,7 +128,7 @@ export function Header() {
                     key={href}
                     href={href}
                     className={`focus-ring relative rounded-lg px-3.5 py-2 text-xs font-medium tracking-[0.02em] transition-all duration-300 ${
-                      active ? 'text-white/95' : 'text-white/45 hover:bg-white/[0.06] hover:text-white/80'
+                      active ? 'text-white/95' : 'text-white/60 hover:bg-white/[0.06] hover:text-white/85'
                     }`}
                   >
                     <span className="mr-1.5 opacity-30">{num}</span>
@@ -149,14 +149,26 @@ export function Header() {
               <button
                 type="button"
                 onClick={() => setPaletteOpen((p) => !p)}
-                className="focus-ring flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-white/35 transition-all hover:bg-white/[0.06] hover:text-white/60"
+                className="focus-ring flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-white/50 transition-all hover:bg-white/[0.06] hover:text-white/70"
                 aria-label="Command palette"
               >
                 <Command size={14} />
                 <span className="hidden text-[11px] md:inline">K</span>
               </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const w = window as unknown as Record<string, () => void>
+                  w.__openTerminal?.()
+                }}
+                className="focus-ring flex items-center gap-1 rounded-lg px-2 py-2 text-white/40 transition-all hover:bg-white/[0.06] hover:text-white/65"
+                aria-label="Open terminal"
+              >
+                <span className="font-mono text-[11px] tracking-[0.1em]">_</span>
+                <span className="hidden text-[10px] md:inline">`</span>
+              </button>
               <a
-                className="focus-ring rounded-lg p-2 text-white/45 transition-all hover:bg-white/[0.06] hover:text-white"
+                className="focus-ring rounded-lg p-2 text-white/60 transition-all hover:bg-white/[0.06] hover:text-white"
                 href={site.github}
                 target="_blank"
                 rel="noreferrer"
@@ -165,7 +177,7 @@ export function Header() {
                 <GitBranch size={15} />
               </a>
               <a
-                className="focus-ring rounded-lg p-2 text-white/45 transition-all hover:bg-white/[0.06] hover:text-white"
+                className="focus-ring rounded-lg p-2 text-white/60 transition-all hover:bg-white/[0.06] hover:text-white"
                 href={`mailto:${site.email}`}
                 aria-label="Email"
               >
@@ -245,16 +257,16 @@ function CommandPalette({ onClose }: { onClose: () => void }) {
       >
         {/* Search */}
         <div className="flex items-center gap-3 border-b border-white/[0.06] px-4 py-3.5">
-          <Command size={15} className="shrink-0 text-white/25" />
+          <Command size={15} className="shrink-0 text-white/40" />
           <input
             ref={inputRef}
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Type a command or section name&hellip;"
-            className="w-full bg-transparent text-sm text-white outline-none placeholder:text-white/20"
+            className="w-full bg-transparent text-sm text-white outline-none placeholder:text-white/35"
           />
-          <kbd className="rounded-md border border-white/[0.06] bg-white/[0.04] px-1.5 py-0.5 text-[11px] text-white/25">ESC</kbd>
+          <kbd className="rounded-md border border-white/[0.06] bg-white/[0.04] px-1.5 py-0.5 text-[11px] text-white/40">ESC</kbd>
         </div>
 
         {/* Results */}
@@ -268,15 +280,15 @@ function CommandPalette({ onClose }: { onClose: () => void }) {
             >
               <div>
                 <span className="text-white/85">{item.label}</span>
-                <span className="ml-3 text-xs text-white/25">{item.desc}</span>
+                <span className="ml-3 text-xs text-white/40">{item.desc}</span>
               </div>
               {item.external && (
-                <span className="text-[10px] text-white/20">↗</span>
+                <span className="text-[10px] text-white/35">↗</span>
               )}
             </button>
           ))}
           {filtered.length === 0 && (
-            <p className="px-4 py-8 text-center text-sm text-white/25">No results for &ldquo;{query}&rdquo;</p>
+            <p className="px-4 py-8 text-center text-sm text-white/40">No results for &ldquo;{query}&rdquo;</p>
           )}
         </div>
       </motion.div>

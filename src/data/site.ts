@@ -14,6 +14,11 @@ export const learningSkills = ['HTML', 'CSS', 'JavaScript', 'TypeScript', 'React
 
 export const strengths = ['Communication', 'Teamwork', 'Adaptability', 'Creative thinking', 'Learning ability', 'Problem solving', 'Curiosity', 'Persistence']
 
+export const projectNotes: Record<string, string> = {
+  'myths-portfolio': 'Design systems, React + Tailwind, accessibility, security hardening, Vercel deployment.',
+  'soics': 'Profile README — GitHub markdown, personal branding, documenting the journey publicly.',
+}
+
 export const chapters = [
   { number: '01', title: 'Learning fundamentals', text: 'Building a real base: markup, styling, JavaScript, version control, and small daily reps.' },
   { number: '02', title: 'Building applications', text: 'Turning lessons into working interfaces, useful scripts, and deployable full-stack experiments.' },

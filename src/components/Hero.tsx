@@ -62,12 +62,12 @@ function LiveCodeTerminal() {
         <span className="h-2 w-2 rounded-full bg-red-400/40" />
         <span className="h-2 w-2 rounded-full bg-yellow-400/40" />
         <span className="h-2 w-2 rounded-full bg-green-400/40" />
-        <span className="ml-2 text-[10px] text-white/20">build.sh</span>
+        <span className="ml-2 text-[10px] text-white/35">build.sh</span>
       </div>
-      <div className="px-3 py-2.5 font-mono text-[11px] leading-[1.7] text-white/40">
+      <div className="px-3 py-2.5 font-mono text-[11px] leading-[1.7] text-white/55">
         {displayed.map((line, i) => (
           <div key={i}>
-            <span className="text-white/20">$ </span>
+            <span className="text-white/35">$ </span>
             {line}
             {i === displayed.reduce((last, d, idx) => d.length > 0 ? idx : last, -1) && (
               <motion.span animate={{ opacity: [1, 0] }} transition={{ duration: 0.6, repeat: Infinity, repeatType: 'reverse' }}
@@ -220,7 +220,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.4, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-6 max-w-xl text-lg leading-relaxed text-white/40 md:text-xl"
+          className="mt-6 max-w-xl text-lg leading-relaxed text-white/60 md:text-xl"
         >
           {site.phrases[2]}
         </motion.p>

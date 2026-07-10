@@ -73,7 +73,7 @@ export function Contact() {
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           >
             <h2 className="text-balance text-4xl font-semibold tracking-[-0.06em] text-white md:text-5xl">Say something real.</h2>
-            <p className="mt-5 max-w-md text-lg leading-8 text-white/55">
+            <p className="mt-5 max-w-md text-lg leading-8 text-white/70">
               Open to advice, feedback, beginner-friendly opportunities, collaborations, and people who care about building.
             </p>
           </motion.div>
@@ -104,24 +104,24 @@ export function Contact() {
           <div className="space-y-5">
             {/* Name */}
             <div>
-              <label className="block text-xs text-white/40">
+              <label className="block text-xs text-white/55">
                 Name <span className="text-red-200/35">*</span>
               </label>
               <input
                 required minLength={2} maxLength={80} name="name"
-                className="focus-ring mt-1.5 w-full rounded-xl border border-white/[0.06] bg-black/50 px-4 py-3.5 text-sm text-white transition-all duration-300 placeholder:text-white/15 focus:border-accent/25 focus:shadow-[0_0_24px_rgba(160,196,255,0.05)]"
+                className="focus-ring mt-1.5 w-full rounded-xl border border-white/[0.06] bg-black/50 px-4 py-3.5 text-sm text-white transition-all duration-300 placeholder:text-white/25 focus:border-accent/25 focus:shadow-[0_0_24px_rgba(160,196,255,0.05)]"
                 placeholder="Your name"
               />
             </div>
 
             {/* Email */}
             <div>
-              <label className="block text-xs text-white/40">
+              <label className="block text-xs text-white/55">
                 Email <span className="text-red-200/35">*</span>
               </label>
               <input
                 required type="email" maxLength={120} name="email"
-                className="focus-ring mt-1.5 w-full rounded-xl border border-white/[0.06] bg-black/50 px-4 py-3.5 text-sm text-white transition-all duration-300 placeholder:text-white/15 focus:border-accent/25 focus:shadow-[0_0_24px_rgba(160,196,255,0.05)]"
+                className="focus-ring mt-1.5 w-full rounded-xl border border-white/[0.06] bg-black/50 px-4 py-3.5 text-sm text-white transition-all duration-300 placeholder:text-white/25 focus:border-accent/25 focus:shadow-[0_0_24px_rgba(160,196,255,0.05)]"
                 placeholder="your@email.com"
               />
             </div>
@@ -129,15 +129,15 @@ export function Contact() {
             {/* Message */}
             <div>
               <div className="flex items-baseline justify-between">
-                <label className="block text-xs text-white/40">
+                <label className="block text-xs text-white/55">
                   Message <span className="text-red-200/35">*</span>
                 </label>
-                <span className="text-[11px] text-white/15">{msgLen}/2000</span>
+                <span className="text-[11px] text-white/25">{msgLen}/2000</span>
               </div>
               <textarea
                 required minLength={10} maxLength={2000} name="message" rows={5}
                 onChange={(e) => setMsgLen(e.target.value.length)}
-                className="focus-ring mt-1.5 w-full resize-none rounded-xl border border-white/[0.06] bg-black/50 px-4 py-3.5 text-sm text-white transition-all duration-300 placeholder:text-white/15 focus:border-accent/25 focus:shadow-[0_0_24px_rgba(160,196,255,0.05)]"
+                className="focus-ring mt-1.5 w-full resize-none rounded-xl border border-white/[0.06] bg-black/50 px-4 py-3.5 text-sm text-white transition-all duration-300 placeholder:text-white/25 focus:border-accent/25 focus:shadow-[0_0_24px_rgba(160,196,255,0.05)]"
                 placeholder="What&rsquo;s on your mind?"
               />
             </div>

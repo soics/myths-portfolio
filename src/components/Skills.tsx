@@ -34,7 +34,7 @@ function LearningPanel() {
       style={{ transformStyle: 'preserve-3d' }}
     >
       <div className="border-b border-white/[0.05] px-5 py-3.5">
-        <span className="text-xs font-semibold uppercase tracking-[0.2em] text-white/35">Learning</span>
+        <span className="text-xs font-semibold uppercase tracking-[0.2em] text-white/50">Learning</span>
       </div>
       <div className="p-5">
         <div className="space-y-0.5 font-mono text-sm">
@@ -44,9 +44,9 @@ function LearningPanel() {
               initial={{ opacity: 0, x: -8 }}
               animate={inView ? { opacity: 1, x: 0 } : {}}
               transition={{ delay: i * 0.04, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-              className="flex items-center gap-3 rounded-lg px-2 py-1.5 text-white/55 transition-colors hover:bg-white/[0.04] hover:text-white/80"
+              className="flex items-center gap-3 rounded-lg px-2 py-1.5 text-white/70 transition-colors hover:bg-white/[0.04] hover:text-white/90"
             >
-              <span className="w-5 text-right text-[11px] text-white/15">{String(i + 1).padStart(2, '0')}</span>
+              <span className="w-5 text-right text-[11px] text-white/25">{String(i + 1).padStart(2, '0')}</span>
               <span className="text-accent/30">&gt;</span>
               <span>{s}</span>
             </motion.div>
@@ -74,7 +74,7 @@ function StrengthsPanel() {
       style={{ transformStyle: 'preserve-3d' }}
     >
       <div className="border-b border-white/[0.05] px-5 py-3.5">
-        <span className="text-xs font-semibold uppercase tracking-[0.2em] text-white/35">Strengths</span>
+        <span className="text-xs font-semibold uppercase tracking-[0.2em] text-white/50">Strengths</span>
       </div>
       <div className="p-5">
         <div className="flex flex-wrap gap-2">
@@ -116,7 +116,7 @@ export function Skills() {
           className="mb-12"
         >
           <h2 className="text-balance text-4xl font-semibold tracking-[-0.06em] text-white md:text-5xl">Tools I am learning. Traits I am building.</h2>
-          <p className="mt-5 max-w-2xl text-lg leading-8 text-white/55">
+          <p className="mt-5 max-w-2xl text-lg leading-8 text-white/70">
             No fake percentages. No &ldquo;expert&rdquo; labels after two tutorials. Just the tools I am actively learning and the personal strengths I am developing alongside them.
           </p>
         </motion.div>

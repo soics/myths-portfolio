@@ -42,7 +42,7 @@ export function About() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.15 + pIdx * 0.1, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                    className="text-[15px] leading-[1.85] text-white/55"
+                    className="text-[15px] leading-[1.85] text-white/70"
                   >
                     {para.split(' ').map((word, wIdx) => {
                       const clean = word.replace(/[^a-zA-Z]/g, '').toLowerCase()
@@ -76,7 +76,7 @@ export function About() {
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.8 }}
-                className="focus-ring mt-8 inline-flex items-center gap-2 text-sm text-white/35 transition-colors hover:text-white/60"
+                className="focus-ring mt-8 inline-flex items-center gap-2 text-sm text-white/50 transition-colors hover:text-white/70"
               >
                 <ArrowUpRight size={14} />
                 See my GitHub
@@ -98,7 +98,7 @@ export function About() {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-white/90">Now</p>
-                    <p className="text-[11px] text-white/30">Current status</p>
+                    <p className="text-[11px] text-white/45">Current status</p>
                   </div>
                 </div>
                 <div className="mt-5 space-y-4">
@@ -115,7 +115,7 @@ export function About() {
                       transition={{ delay: 0.4 + i * 0.08, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
                       className="group"
                     >
-                      <span className="text-[11px] text-white/25">{item.label}</span>
+                      <span className="text-[11px] text-white/40">{item.label}</span>
                       <p className="mt-0.5 text-sm font-medium text-white/75">{item.value}</p>
                     </motion.div>
                   ))}

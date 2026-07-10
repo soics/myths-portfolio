@@ -93,7 +93,7 @@ export function Terminal({ open, onClose, sideEffects }: TerminalProps) {
               <button onClick={onClose} className="h-3 w-3 rounded-full bg-red-400/60 transition-colors hover:bg-red-400/90" aria-label="Close terminal" />
               <span className="h-3 w-3 rounded-full bg-yellow-400/40" />
               <span className="h-3 w-3 rounded-full bg-green-400/40" />
-              <span className="ml-3 text-[11px] font-mono text-white/20">myths@portfolio — backtick to toggle</span>
+              <span className="ml-3 text-[11px] font-mono text-white/35">myths@portfolio — backtick to toggle</span>
             </div>
 
             {/* Output */}
@@ -106,7 +106,7 @@ export function Terminal({ open, onClose, sideEffects }: TerminalProps) {
                   line.type === 'input' ? 'text-white/70' :
                   line.type === 'error' ? 'text-red-200/60' :
                   line.type === 'system' ? 'text-emerald-200/50' :
-                  'text-white/50'
+                  'text-white/65'
                 }`}>
                   {line.text}
                 </div>
@@ -122,7 +122,7 @@ export function Terminal({ open, onClose, sideEffects }: TerminalProps) {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className="min-w-0 flex-1 bg-transparent text-white/80 outline-none placeholder:text-white/15"
+                className="min-w-0 flex-1 bg-transparent text-white/80 outline-none placeholder:text-white/25"
                 placeholder="Type a command..."
                 spellCheck={false}
                 autoComplete="off"

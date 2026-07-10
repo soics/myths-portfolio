@@ -20,12 +20,12 @@ import './styles/globals.css'
 /* ------------------------------------------------------------------ */
 
 const SECTION_ACCENTS = [
-  { id: 'top',    accent: '160,196,255' },
-  { id: 'about',  accent: '167,139,250' },
-  { id: 'skills', accent: '52,211,153'  },
-  { id: 'projects', accent: '251,191,36' },
-  { id: 'journey', accent: '103,232,249' },
-  { id: 'contact', accent: '251,191,36' },
+  { id: 'top',    accent: '160,196,255', name: 'blue'   },
+  { id: 'about',  accent: '139,92,246',  name: 'purple' },
+  { id: 'skills', accent: '52,211,153',  name: 'green'  },
+  { id: 'projects', accent: '245,158,11', name: 'amber'  },
+  { id: 'journey', accent: '34,211,238', name: 'cyan'   },
+  { id: 'contact', accent: '244,63,94',  name: 'rose'   },
 ] as const
 
 function BackgroundAccent() {
@@ -41,7 +41,7 @@ function BackgroundAccent() {
           }
         }
       },
-      { threshold: 0.3, rootMargin: '0px 0px -20% 0px' },
+      { threshold: 0.25 },
     )
     const targets = SECTION_ACCENTS.map(a => document.getElementById(a.id)).filter(Boolean) as Element[]
     targets.forEach(t => observer.observe(t))
@@ -49,10 +49,22 @@ function BackgroundAccent() {
   }, [])
 
   useEffect(() => {
-    document.documentElement.style.setProperty('--accent-rgb', activeAccent)
+    const root = document.documentElement
+    root.style.setProperty('--accent-rgb', activeAccent)
+    root.style.setProperty('--accent-glow', `rgba(${activeAccent}, 0.08)`)
   }, [activeAccent])
 
-  return null
+  return (
+    <motion.div
+      key={activeAccent}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.6 }}
+      className="pointer-events-none fixed inset-0 -z-10"
+      aria-hidden="true"
+      style={{ background: `radial-gradient(ellipse 80% 50% at 50% 0%, rgba(${activeAccent}, 0.06), transparent 70%)` }}
+    />
+  )
 }
 
 /* ------------------------------------------------------------------ */
@@ -113,9 +125,9 @@ function FooterSecret() {
   }
 
   return (
-    <footer className="px-5 py-10 text-center text-sm text-white/30">
+    <footer className="px-5 py-10 text-center text-sm text-white/45">
       <p>&copy; {new Date().getFullYear()} myths. Built, not finished.</p>
-      <button type="button" onClick={handleClick} className="text-[10px] text-white/10 transition-colors hover:text-white/25 cursor-pointer">
+      <button type="button" onClick={handleClick} className="text-[10px] text-white/18 transition-colors hover:text-white/35 cursor-pointer">
         {clickCount === 0 ? 'find the rabbit hole' : clickCount === 1 ? 'deeper...' : 'almost there...'}
       </button>
 
@@ -130,7 +142,7 @@ function FooterSecret() {
             <p className="text-xs leading-relaxed text-white/60">
               &ldquo;The rabbit hole has no bottom. Keep falling.&rdquo;
             </p>
-            <p className="mt-2 text-[10px] text-white/20">&mdash; myths, probably</p>
+            <p className="mt-2 text-[10px] text-white/35">&mdash; myths, probably</p>
           </motion.div>
         )}
       </AnimatePresence>

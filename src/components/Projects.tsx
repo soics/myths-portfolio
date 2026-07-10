@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, useInView } from 'motion/react'
-import { Code2, ExternalLink, GitBranch, Loader2, Star } from 'lucide-react'
+import { BookOpen, Code2, ExternalLink, GitBranch, Loader2, Star } from 'lucide-react'
 import { getGitHubData, type GitHubProfile, type GitHubRepo } from '../lib/github'
+import { projectNotes } from '../data/site'
 
 
 /* ------------------------------------------------------------------ */
@@ -83,20 +84,27 @@ function FeaturedCard({ repo, index }: { repo: GitHubRepo; index: number }) {
               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/[0.06]">
                 <Code2 className="text-blue-200/40" size={17} />
               </div>
-              <span className="text-xs text-white/25 font-mono">Featured</span>
+              <span className="text-xs text-white/40 font-mono">Featured</span>
             </div>
             <h3 className="mt-4 text-2xl font-semibold tracking-[-0.04em] text-white/95 md:text-3xl">{repo.name}</h3>
-            <p className="mt-3 max-w-2xl text-[15px] leading-[1.7] text-white/50">{repo.description || 'A public repository.'}</p>
+            <p className="mt-3 max-w-2xl text-[15px] leading-[1.7] text-white/65">{repo.description || 'A public repository.'}</p>
 
-            <div className="mt-7 flex flex-wrap items-center gap-3">
+            {projectNotes[repo.name] && (
+              <div className="mt-5 flex items-start gap-2.5 rounded-xl bg-white/[0.04] px-4 py-3">
+                <BookOpen size={13} className="mt-0.5 shrink-0 text-accent-dim/60" />
+                <p className="text-[13px] leading-[1.6] text-white/50">{projectNotes[repo.name]}</p>
+              </div>
+            )}
+
+            <div className="mt-5 flex flex-wrap items-center gap-3">
               {repo.language && (
                 <span className={`inline-flex items-center rounded-full border px-3.5 py-1.5 text-[11px] font-medium ${color(repo.language, langColors)}`}>
                   {repo.language}
                 </span>
               )}
-              <span className="inline-flex items-center gap-1.5 text-xs text-white/30"><Star size={11} /> {repo.stargazers_count}</span>
-              <span className="inline-flex items-center gap-1.5 text-xs text-white/30"><GitBranch size={11} /> {repo.forks_count}</span>
-              <span className="text-xs text-white/20">{new Date(repo.updated_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
+              <span className="inline-flex items-center gap-1.5 text-xs text-white/45"><Star size={11} /> {repo.stargazers_count}</span>
+              <span className="inline-flex items-center gap-1.5 text-xs text-white/45"><GitBranch size={11} /> {repo.forks_count}</span>
+              <span className="text-xs text-white/35">{new Date(repo.updated_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
             </div>
           </div>
 
@@ -105,7 +113,7 @@ function FeaturedCard({ repo, index }: { repo: GitHubRepo; index: number }) {
             whileHover={{ x: 4, opacity: 1 }}
             className="hidden shrink-0 md:block"
           >
-            <ExternalLink className="text-white/15 transition-all group-hover:text-white/50" size={18} />
+            <ExternalLink className="text-white/25 transition-all group-hover:text-white/60" size={18} />
           </motion.div>
         </div>
       </div>
@@ -138,10 +146,10 @@ function RepoCard({ repo, inView, index }: { repo: GitHubRepo; inView: boolean; 
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/[0.05]">
             <Code2 className="text-blue-200/35" size={16} />
           </div>
-          <ExternalLink className="text-white/12 transition-all group-hover:text-white/40" size={15} />
+          <ExternalLink className="text-white/20 transition-all group-hover:text-white/55" size={15} />
         </div>
         <h3 className="text-lg font-semibold tracking-[-0.03em] text-white/90">{repo.name}</h3>
-        <p className="mt-1.5 line-clamp-2 text-sm leading-[1.7] text-white/45">{repo.description || 'A public repository.'}</p>
+        <p className="mt-1.5 line-clamp-2 text-sm leading-[1.7] text-white/60">{repo.description || 'A public repository.'}</p>
         <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2">
           {repo.language && (
             <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-medium ${color(repo.language, langColors)}`}>
@@ -149,12 +157,12 @@ function RepoCard({ repo, inView, index }: { repo: GitHubRepo; inView: boolean; 
             </span>
           )}
           {repo.stargazers_count > 0 && (
-            <span className="inline-flex items-center gap-1 text-xs text-white/30"><Star size={11} /> {repo.stargazers_count}</span>
+            <span className="inline-flex items-center gap-1 text-xs text-white/45"><Star size={11} /> {repo.stargazers_count}</span>
           )}
           {repo.forks_count > 0 && (
-            <span className="inline-flex items-center gap-1 text-xs text-white/30"><GitBranch size={11} /> {repo.forks_count}</span>
+            <span className="inline-flex items-center gap-1 text-xs text-white/45"><GitBranch size={11} /> {repo.forks_count}</span>
           )}
-          <span className="ml-auto text-xs text-white/18">{new Date(repo.updated_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
+          <span className="ml-auto text-xs text-white/30">{new Date(repo.updated_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
         </div>
       </div>
     </motion.a>
@@ -182,8 +190,8 @@ function EmptyProjects({ profile, inView }: { profile: GitHubProfile | null; inV
           <Code2 className="text-blue-200/35" size={30} />
         </motion.div>
         <h3 className="text-2xl font-semibold tracking-[-0.04em] text-white/90">More code, less noise</h3>
-        <p className="mx-auto mt-3 max-w-md text-sm leading-[1.7] text-white/45">This section fills automatically from GitHub as new repositories are created. The canvas is ready — work in progress.</p>
-        <p className="mt-5 text-xs text-white/20">Public repos: {profile?.public_repos ?? 0}</p>
+        <p className="mx-auto mt-3 max-w-md text-sm leading-[1.7] text-white/60">This section fills automatically from GitHub as new repositories are created. The canvas is ready — work in progress.</p>
+        <p className="mt-5 text-xs text-white/35">Public repos: {profile?.public_repos ?? 0}</p>
       </div>
     </motion.div>
   )
@@ -219,18 +227,18 @@ export function ProjectsSection() {
           <h2 className="text-balance text-4xl font-semibold tracking-[-0.06em] text-white md:text-5xl">
             {state.repos.length > 0 ? 'Live from GitHub.' : 'Loaded from GitHub.'}
           </h2>
-          <p className="mt-5 max-w-2xl text-lg leading-8 text-white/55">Public repositories pulled in real time. This section grows with every push.</p>
+          <p className="mt-5 max-w-2xl text-lg leading-8 text-white/70">Public repositories pulled in real time. This section grows with every push.</p>
         </motion.div>
 
         {state.loading && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="glass-sm flex items-center gap-3 rounded-[18px] p-6 text-sm text-white/40">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="glass-sm flex items-center gap-3 rounded-[18px] p-6 text-sm text-white/55">
             <Loader2 className="animate-spin text-blue-300/30" size={16} />
             Loading GitHub repositories&hellip;
           </motion.div>
         )}
 
         {state.error && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="glass-sm rounded-[18px] p-6 text-sm text-white/35">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="glass-sm rounded-[18px] p-6 text-sm text-white/50">
             Could not reach GitHub. Trying again later.
           </motion.div>
         )}
