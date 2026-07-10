@@ -164,7 +164,7 @@ function EmptyProjects({ profile, inView }: { profile: GitHubProfile | null; inV
       transition={{ type: 'spring', stiffness: 70, damping: 20 }}
       className="glass-lift relative overflow-hidden rounded-[20px] p-14 text-center md:p-16"
     >
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,229,255,0.03),transparent_70%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(212,212,220,0.03),transparent_70%)]" />
       <div className="relative z-10">
         <motion.div
           animate={{ rotate: [0, -3, 3, 0] }}

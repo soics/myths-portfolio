@@ -19,12 +19,12 @@ import type { SideEffects } from './hooks/useTerminal'
 import './styles/globals.css'
 
 const SECTION_ZONES = [
-  { id: 'top',     accent: '0,229,255',  name: 'cyber'     },
-  { id: 'about',   accent: '0,229,255',  name: 'origin'    },
-  { id: 'skills',  accent: '124,58,237', name: 'violet'    },
-  { id: 'projects',accent: '0,229,255',  name: 'discover'  },
-  { id: 'journey', accent: '245,158,11', name: 'amber'     },
-  { id: 'contact', accent: '124,58,237', name: 'signal'    },
+  { id: 'top',     accent: '200,200,210', name: 'terminal' },
+  { id: 'about',   accent: '200,200,210', name: 'origin'   },
+  { id: 'skills',  accent: '136,136,160', name: 'engine'   },
+  { id: 'projects',accent: '200,200,210', name: 'discover' },
+  { id: 'journey', accent: '160,144,128', name: 'forge'    },
+  { id: 'contact', accent: '136,136,160', name: 'transmit' },
 ] as const
 
 function BackgroundAccent() {
@@ -61,7 +61,7 @@ function BackgroundAccent() {
         transition={{ duration: 1.5, ease: 'easeOut' }}
         className="pointer-events-none fixed inset-0 -z-10"
         aria-hidden="true"
-        style={{ background: `radial-gradient(ellipse at 50% 50%, rgba(${SECTION_ZONES[0].accent}, 0.08), transparent 60%)` }}
+        style={{ background: `radial-gradient(ellipse at 50% 50%, rgba(${SECTION_ZONES[0].accent}, 0.06), transparent 60%)` }}
       />
     </>
   )
@@ -72,7 +72,7 @@ function ScrollProgress() {
   const scaleX = useSpring(scrollYProgress, { stiffness: 200, damping: 30 })
   return (
     <motion.div
-      style={{ scaleX, background: 'linear-gradient(90deg, rgba(0,229,255,0.4), rgba(124,58,237,0.3), rgba(0,229,255,0.2))' }}
+      style={{ scaleX, background: 'linear-gradient(90deg, rgba(212,212,220,0.3), rgba(136,136,160,0.2), rgba(212,212,220,0.15))' }}
       className="fixed left-0 top-0 z-50 h-[1.5px] origin-left"
     />
   )
@@ -141,10 +141,10 @@ function FooterSecret() {
 }
 
 const THEMES: Record<string, { accent: string; bg: string; raised: string; text: string }> = {
-  dark:   { accent: '0,229,255',  bg: '#06060e', raised: '#0c0c1a', text: '#e0e8ff' },
-  amber:  { accent: '245,158,11', bg: '#060603', raised: '#0c0a04', text: '#f5f0e8' },
-  matrix: { accent: '0,255,65',   bg: '#000500', raised: '#000a00', text: '#00ff41' },
-  mono:   { accent: '180,180,200', bg: '#050508', raised: '#0a0a0d', text: '#d0d0e0' },
+  dark:   { accent: '212,212,220', bg: '#121214', raised: '#1a1a1e', text: '#ececf0' },
+  warm:   { accent: '160,144,128', bg: '#141210', raised: '#1c1a16', text: '#ece8e4' },
+  matrix: { accent: '0,255,65',    bg: '#000500', raised: '#000a00', text: '#00ff41' },
+  mono:   { accent: '180,180,200', bg: '#0a0a0c', raised: '#121216', text: '#d0d0d8' },
 }
 
 function App() {

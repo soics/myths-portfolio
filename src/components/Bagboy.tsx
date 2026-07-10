@@ -3,10 +3,10 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useStore } from '../lib/store'
 
-const CYAN = new THREE.Color('#00e5ff')
-const VIOLET = new THREE.Color('#7c3aed')
-const AMBER = new THREE.Color('#f59e0b')
-const WHITE = new THREE.Color('#e0e8ff')
+const ACCENT = new THREE.Color('#d4d4dc')
+const MUTED = new THREE.Color('#8888a0')
+const WARM = new THREE.Color('#a09080')
+const WHITE = new THREE.Color('#ececf0')
 
 function Part({ color, position, scale, rotation }: {
   color: THREE.Color
@@ -63,15 +63,15 @@ export function Bagboy() {
   const scrollY = useStore((s) => s.scrollY)
 
   const sectionColors: Record<string, THREE.Color> = useMemo(() => ({
-    top: CYAN,
-    about: CYAN,
-    skills: VIOLET,
-    projects: CYAN,
-    journey: AMBER,
-    contact: VIOLET,
+    top: ACCENT,
+    about: ACCENT,
+    skills: MUTED,
+    projects: ACCENT,
+    journey: WARM,
+    contact: MUTED,
   }), [])
 
-  const currentColor = sectionColors[activeSection] || CYAN
+  const currentColor = sectionColors[activeSection] || ACCENT
 
   const bodyPos: [number, number, number] = [0, 0, 0]
   const headPos: [number, number, number] = [0, 1.2, 0]
@@ -160,10 +160,10 @@ export function Bagboy() {
       <mesh ref={bagRef} position={bagPos} scale={bagScale}>
         <boxGeometry args={[1, 1, 1]} />
         <meshPhysicalMaterial
-          color={CYAN}
+          color={ACCENT}
           metalness={0.7}
           roughness={0.1}
-          emissive={CYAN}
+          emissive={ACCENT}
           emissiveIntensity={0.15}
           transparent
           opacity={0.8}
@@ -175,8 +175,8 @@ export function Bagboy() {
       <Part color={WHITE} position={earLPos} scale={earScale} />
       <Part color={WHITE} position={earRPos} scale={earScale} />
       {/* Eyes */}
-      <Sphere color={CYAN} position={eyeLPos} scale={eyeScale} emissiveIntensity={0.8} />
-      <Sphere color={CYAN} position={eyeRPos} scale={eyeScale} emissiveIntensity={0.8} />
+      <Sphere color={ACCENT} position={eyeLPos} scale={eyeScale} emissiveIntensity={0.8} />
+      <Sphere color={ACCENT} position={eyeRPos} scale={eyeScale} emissiveIntensity={0.8} />
       {/* Arms */}
       <mesh ref={armLRef} position={armLPos} scale={armScale}>
         <cylinderGeometry args={[1, 1, 1, 8]} />
@@ -198,7 +198,7 @@ export function Bagboy() {
       {/* Bag strap across body */}
       <mesh position={[0, 0.2, 0.45]} scale={[0.65, 0.05, 0.03]}>
         <boxGeometry args={[1, 1, 1]} />
-        <meshPhysicalMaterial color={AMBER} metalness={0.3} roughness={0.5} transparent opacity={0.6} />
+        <meshPhysicalMaterial color={WARM} metalness={0.3} roughness={0.5} transparent opacity={0.6} />
       </mesh>
     </group>
   )

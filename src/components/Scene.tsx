@@ -22,9 +22,9 @@ function Particles({ count = 100 }: { count?: number }) {
     <points geometry={geo}>
       <pointsMaterial
         size={0.04}
-        color="#00e5ff"
+        color="#d4d4dc"
         transparent
-        opacity={0.4}
+        opacity={0.25}
         sizeAttenuation
         blending={THREE.AdditiveBlending}
       />
@@ -35,7 +35,7 @@ function Particles({ count = 100 }: { count?: number }) {
 function GroundGrid() {
   return (
     <gridHelper
-      args={[20, 20, '#00e5ff', '#7c3aed']}
+      args={[20, 20, '#d4d4dc', '#8888a0']}
       position={[0, -3, 0]}
     />
   )
@@ -45,9 +45,9 @@ function AmbientLighting() {
   return (
     <>
       <ambientLight intensity={0.3} color="#6060ff" />
-      <directionalLight position={[5, 10, 5]} intensity={1.5} color="#00e5ff" />
-      <directionalLight position={[-5, 5, -5]} intensity={0.5} color="#7c3aed" />
-      <pointLight position={[0, 2, 0]} intensity={0.8} color="#00e5ff" distance={10} decay={2} />
+      <directionalLight position={[5, 10, 5]} intensity={0.8} color="#ffffff" />
+      <directionalLight position={[-5, 5, -5]} intensity={0.3} color="#8888a0" />
+      <pointLight position={[0, 2, 0]} intensity={0.5} color="#d4d4dc" distance={10} decay={2} />
     </>
   )
 }
@@ -59,11 +59,11 @@ function FloatingGeometry() {
         <mesh position={[-4, 1, -6]} scale={0.15}>
           <octahedronGeometry />
           <meshPhysicalMaterial
-            color="#00e5ff"
-            metalness={0.8}
-            roughness={0.1}
+            color="#d4d4dc"
+            metalness={0.6}
+            roughness={0.2}
             transparent
-            opacity={0.2}
+            opacity={0.15}
             wireframe
           />
         </mesh>
@@ -72,7 +72,7 @@ function FloatingGeometry() {
         <mesh position={[5, -1, -7]} scale={0.2}>
           <icosahedronGeometry />
           <meshPhysicalMaterial
-            color="#7c3aed"
+            color="#8888a0"
             metalness={0.6}
             roughness={0.2}
             transparent
@@ -85,7 +85,7 @@ function FloatingGeometry() {
         <mesh position={[-3, -0.5, -8]} scale={0.12}>
           <torusGeometry args={[1, 0.3, 8, 16]} />
           <meshPhysicalMaterial
-            color="#f59e0b"
+            color="#a09080"
             metalness={0.5}
             roughness={0.2}
             transparent

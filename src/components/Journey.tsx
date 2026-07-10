@@ -69,7 +69,7 @@ function PhaseCard({ chapter, index, inView: sectionInView, isLast }: {
               transition={{ delay: 0.3 + index * 0.1, duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
               className="h-full rounded-full"
               style={{
-                background: `linear-gradient(90deg, rgba(0,229,255,0.5), rgba(124,58,237,0.3))`,
+                background: `linear-gradient(90deg, rgba(212,212,220,0.3), rgba(136,136,160,0.2))`,
               }}
             />
           </div>
@@ -123,7 +123,7 @@ export function Blueprint() {
             className="absolute left-[21px] top-0 w-[2px] md:left-[31px]"
           >
             <div className="absolute inset-0" style={{
-              background: 'linear-gradient(180deg, rgba(0,229,255,0.3), rgba(124,58,237,0.2), rgba(245,158,11,0.15))',
+              background: 'linear-gradient(180deg, rgba(212,212,220,0.2), rgba(136,136,160,0.15), rgba(160,144,128,0.1))',
             }} />
             <div className="absolute inset-x-0 top-0 h-full w-[1px] bg-cyan/10" />
           </motion.div>

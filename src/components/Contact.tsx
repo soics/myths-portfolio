@@ -118,7 +118,7 @@ export function Contact() {
                 </label>
                 <input
                   required minLength={2} maxLength={80} name="name"
-                  className="focus-ring mt-1.5 w-full rounded-xl border border-white/[0.06] bg-black/40 px-4 py-3 text-sm text-white transition-all duration-300 placeholder:text-white/20 focus:border-cyan/25 focus:shadow-[0_0_24px_rgba(0,229,255,0.05)]"
+                  className="focus-ring mt-1.5 w-full rounded-xl border border-white/[0.06] bg-black/40 px-4 py-3 text-sm text-white transition-all duration-300 placeholder:text-white/20 focus:border-white/15 focus:shadow-[0_0_24px_rgba(212,212,220,0.04)]"
                   placeholder="Your name"
                 />
               </SignalField>
@@ -130,7 +130,7 @@ export function Contact() {
                 </label>
                 <input
                   required type="email" maxLength={120} name="email"
-                  className="focus-ring mt-1.5 w-full rounded-xl border border-white/[0.06] bg-black/40 px-4 py-3 text-sm text-white transition-all duration-300 placeholder:text-white/20 focus:border-cyan/25 focus:shadow-[0_0_24px_rgba(0,229,255,0.05)]"
+                  className="focus-ring mt-1.5 w-full rounded-xl border border-white/[0.06] bg-black/40 px-4 py-3 text-sm text-white transition-all duration-300 placeholder:text-white/20 focus:border-white/15 focus:shadow-[0_0_24px_rgba(212,212,220,0.04)]"
                   placeholder="your@email.com"
                 />
               </SignalField>
@@ -141,12 +141,12 @@ export function Contact() {
                   <label className="block text-xs text-white/50">
                     Message <span className="text-violet/40">*</span>
                   </label>
-                  <span className="text-[11px] font-mono text-white/20">{msgLen}/2000</span>
+                  <span className="text-[11px] font-mono text-white/15">{msgLen}/2000</span>
                 </div>
                 <textarea
                   required minLength={10} maxLength={2000} name="message" rows={5}
                   onChange={(e) => setMsgLen(e.target.value.length)}
-                  className="focus-ring mt-1.5 w-full resize-none rounded-xl border border-white/[0.06] bg-black/40 px-4 py-3 text-sm text-white transition-all duration-300 placeholder:text-white/20 focus:border-cyan/25 focus:shadow-[0_0_24px_rgba(0,229,255,0.05)]"
+                  className="focus-ring mt-1.5 w-full resize-none rounded-xl border border-white/[0.06] bg-black/40 px-4 py-3 text-sm text-white transition-all duration-300 placeholder:text-white/20 focus:border-white/15 focus:shadow-[0_0_24px_rgba(212,212,220,0.04)]"
                   placeholder="What&rsquo;s on your mind?"
                 />
               </SignalField>
@@ -157,7 +157,7 @@ export function Contact() {
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.98 }}
               disabled={status === 'loading'}
-              className="focus-ring mt-6 inline-flex w-full items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-cyan to-violet px-5 py-4 text-sm font-semibold text-white transition-all hover:shadow-[0_0_40px_rgba(0,229,255,0.15)] disabled:opacity-60"
+              className="focus-ring mt-6 inline-flex w-full items-center justify-center gap-3 rounded-xl bg-white/10 px-5 py-4 text-sm font-semibold text-white transition-all hover:bg-white/15 hover:shadow-[0_0_32px_rgba(212,212,220,0.08)] disabled:opacity-60"
               type="submit"
             >
               {status === 'loading' ? (

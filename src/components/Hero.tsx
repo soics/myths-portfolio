@@ -40,7 +40,7 @@ function DataStreams() {
   const streams = [
     { label: 'STATUS', value: 'ACTIVE', color: 'text-cyan' },
     { label: 'MODE', value: 'BUILD', color: 'text-amber' },
-    { label: 'SIGNAL', value: 'STABLE', color: 'text-violet' },
+    { label: 'SIGNAL', value: 'STABLE', color: 'text-cyan' },
     { label: 'UPTIME', value: 'ONLINE', color: 'text-cyan' },
   ]
 
@@ -86,14 +86,14 @@ function HolographicRing() {
           transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
           className="absolute inset-0"
         >
-          <div className="absolute left-1/2 top-0 h-2 w-2 -translate-x-1/2 rounded-full bg-cyan/30 shadow-[0_0_10px_rgba(0,229,255,0.2)]" />
+          <div className="absolute left-1/2 top-0 h-2 w-2 -translate-x-1/2 rounded-full bg-cyan/20 shadow-[0_0_8px_rgba(212,212,220,0.15)]" />
         </motion.div>
         <motion.div
           animate={{ rotate: -360 }}
           transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
           className="absolute inset-[15%]"
         >
-          <div className="absolute left-1/2 top-0 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-violet/25 shadow-[0_0_8px_rgba(124,58,237,0.2)]" />
+          <div className="absolute left-1/2 top-0 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-violet/15 shadow-[0_0_6px_rgba(136,136,160,0.15)]" />
         </motion.div>
       </div>
     </motion.div>
@@ -195,7 +195,7 @@ export function Hero() {
             className="mt-12 flex flex-wrap gap-4"
           >
             <a href="#projects"
-              className="focus-ring group inline-flex items-center gap-3 rounded-full bg-cyan px-7 py-3.5 text-sm font-semibold text-deep transition-all hover:bg-white hover:shadow-[0_0_40px_rgba(0,229,255,0.2)] active:scale-[0.97]"
+              className="focus-ring group inline-flex items-center gap-3 rounded-full bg-cyan px-7 py-3.5 text-sm font-semibold text-deep transition-all hover:bg-white hover:shadow-[0_0_32px_rgba(212,212,220,0.15)] active:scale-[0.97]"
             >
               <span>Explore the world</span>
               <ArrowRight size={15} className="transition group-hover:translate-x-1" />
