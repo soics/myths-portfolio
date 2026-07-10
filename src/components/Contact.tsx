@@ -167,7 +167,7 @@ export function Contact() {
               ) : (
                 <span className="flex items-center gap-2">
                   <Radio size={14} />
-                  SEND SIGNAL
+                  Send message
                 </span>
               )}
             </motion.button>
