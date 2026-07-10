@@ -489,25 +489,36 @@ function Contact() {
         >
           <input className="hidden" name="website" tabIndex={-1} autoComplete="off" />
           <label className="mb-4 block text-sm text-white/60">Name
-            <input required minLength={2} maxLength={80} name="name" className="focus-ring mt-2 w-full rounded-2xl border border-white/10 bg-black/35 px-4 py-3 text-white transition focus:border-blue-200/40 focus:shadow-[0_0_20px_rgba(122,167,255,0.08)]" />
+            <input required minLength={2} maxLength={80} name="name" className="focus-ring mt-2 w-full rounded-2xl border border-white/10 bg-black/35 px-4 py-3.5 text-white transition-all duration-200 placeholder:text-white/25 focus:border-blue-200/40 focus:shadow-[0_0_24px_rgba(122,167,255,0.1)]" placeholder="Your name" />
           </label>
           <label className="mb-4 block text-sm text-white/60">Email
-            <input required type="email" maxLength={120} name="email" className="focus-ring mt-2 w-full rounded-2xl border border-white/10 bg-black/35 px-4 py-3 text-white transition focus:border-blue-200/40 focus:shadow-[0_0_20px_rgba(122,167,255,0.08)]" />
+            <input required type="email" maxLength={120} name="email" className="focus-ring mt-2 w-full rounded-2xl border border-white/10 bg-black/35 px-4 py-3.5 text-white transition-all duration-200 placeholder:text-white/25 focus:border-blue-200/40 focus:shadow-[0_0_24px_rgba(122,167,255,0.1)]" placeholder="your@email.com" />
           </label>
           <label className="mb-5 block text-sm text-white/60">Message
-            <textarea required minLength={10} maxLength={2000} name="message" rows={6} className="focus-ring mt-2 w-full resize-none rounded-2xl border border-white/10 bg-black/35 px-4 py-3 text-white transition focus:border-blue-200/40 focus:shadow-[0_0_20px_rgba(122,167,255,0.08)]" />
+            <textarea required minLength={10} maxLength={2000} name="message" rows={5} className="focus-ring mt-2 w-full resize-none rounded-2xl border border-white/10 bg-black/35 px-4 py-3.5 text-white transition-all duration-200 placeholder:text-white/25 focus:border-blue-200/40 focus:shadow-[0_0_24px_rgba(122,167,255,0.1)]" placeholder="What's on your mind?" />
           </label>
           <motion.button
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.98 }}
             disabled={status === 'loading'}
-            className="focus-ring inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-white px-5 py-4 font-semibold text-black transition hover:shadow-[0_0_30px_rgba(255,255,255,0.12)] disabled:opacity-60"
+            className="focus-ring inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-white px-5 py-4 font-semibold text-black transition-all duration-200 hover:shadow-[0_0_30px_rgba(255,255,255,0.15)] disabled:opacity-60"
             type="submit"
           >
-            {status === 'loading' ? <Loader2 className="animate-spin" /> : <Send size={18} />} Send message
+            {status === 'loading' ? (
+              <motion.span animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}><Loader2 size={18} /></motion.span>
+            ) : <Send size={18} />} Send message
           </motion.button>
-          {status === 'success' && <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mt-4 flex items-center gap-2 text-sm text-green-200"><ShieldCheck size={16} /> Message stored securely.</motion.p>}
-          {status === 'error' && <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mt-4 text-sm text-red-200">Check the form and try again.</motion.p>}
+          {status === 'success' && (
+            <motion.div initial={{ opacity: 0, y: 12, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 22 }} className="mt-4 flex items-center gap-2 text-sm text-green-200">
+              <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 400, damping: 15, delay: 0.15 }}><ShieldCheck size={16} /></motion.span>
+              Message stored securely.
+            </motion.div>
+          )}
+          {status === 'error' && (
+            <motion.p initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ type: 'spring', stiffness: 400, damping: 12 }} className="mt-4 text-sm text-red-200/90">
+              Check the form and try again.
+            </motion.p>
+          )}
         </motion.form>
       </div>
     </section>
