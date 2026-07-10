@@ -9,7 +9,7 @@ export function Journey() {
     target: sectionRef,
     offset: ['start end', 'end start'],
   })
-  const lineHeight = useTransform(scrollYProgress, [0, 1], ['0%', '100%'])
+  const lineHeight = useTransform(scrollYProgress, [0.05, 0.95], ['0%', '100%'])
 
   return (
     <section ref={sectionRef} id="journey" className="px-5 py-28">
@@ -25,7 +25,7 @@ export function Journey() {
             initial={{ opacity: 0, x: -12 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="mb-4 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.35em] text-blue-200/60"
+            className="mb-4 text-xs font-semibold uppercase tracking-[0.35em] text-blue-200/60"
           >
             Journey
           </motion.p>
@@ -33,39 +33,45 @@ export function Journey() {
           <p className="mt-5 max-w-2xl text-lg leading-8 text-white/55">The path is intentionally simple: learn, build, connect the pieces, repeat.</p>
         </motion.div>
 
-        <div className="relative grid gap-6 pl-0 md:pl-10">
+        <div className="relative pl-[44px] md:pl-16">
           <motion.div
             style={{ height: lineHeight }}
-            className="absolute left-[22px] top-12 w-px bg-gradient-to-b from-blue-300/30 via-blue-200/15 to-transparent md:left-[22px]"
+            className="absolute left-[21px] top-0 w-[1px] bg-gradient-to-b from-blue-300/25 via-blue-200/15 to-transparent md:left-[31px]"
           />
 
           {chapters.map((chapter, i) => (
             <motion.article
               key={chapter.number}
-              initial={{ opacity: 0, x: -30 }}
+              initial={{ opacity: 0, x: -20 }}
               animate={inView ? { opacity: 1, x: 0 } : {}}
               transition={{ delay: i * 0.15, type: 'spring' as const, stiffness: 100, damping: 25 }}
-              whileHover={{ x: 8 }}
-              className="glass relative rounded-[2rem] p-6 transition-all hover:border-white/20 md:grid md:grid-cols-[140px_1fr] md:gap-5"
+              className="group relative mb-6 last:mb-0"
             >
-              <span className="absolute left-[-22px] top-[22px] hidden md:block">
+              <span className="absolute left-[-33px] top-8 md:left-[-45px]">
                 <motion.span
-                  animate={{ scale: [1, 1.6, 1], opacity: [0.15, 0.4, 0.15] }}
-                  transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut', delay: i * 0.3 }}
+                  animate={{ scale: [1, 1.8, 1], opacity: [0.1, 0.3, 0.1] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', delay: i * 0.4 }}
                   className="absolute -inset-2 rounded-full bg-blue-200/15"
                 />
                 <motion.span
                   initial={{ scale: 0 }}
                   animate={inView ? { scale: 1 } : {}}
-                  transition={{ delay: i * 0.15 + 0.1, type: 'spring', stiffness: 300 }}
-                  className="relative block h-4 w-4 rounded-full border-2 border-blue-200/40 bg-blue-200/15"
+                  transition={{ delay: i * 0.15 + 0.1, type: 'spring' as const, stiffness: 300 }}
+                  className="relative block h-3.5 w-3.5 rounded-full border-2 border-blue-200/40 bg-black md:h-4 md:w-4"
                 />
               </span>
 
-              <span className="block text-5xl font-black tracking-[-0.08em] text-white/15 md:pl-8">{chapter.number}</span>
-              <div className="mt-3 md:mt-0">
-                <h3 className="text-2xl font-semibold tracking-[-0.04em]">{chapter.title}</h3>
-                <p className="mt-3 leading-relaxed text-white/55">{chapter.text}</p>
+              <div className="glass relative overflow-hidden rounded-[20px] transition-all duration-300 hover:border-white/15 hover:shadow-[0_12px_40px_rgba(0,0,0,0.4)]">
+                <span className="absolute right-4 top-2 select-none text-[6rem] font-black leading-[0.8] tracking-[-0.08em] text-white/[0.02] md:text-[8rem]">
+                  {chapter.number}
+                </span>
+                <div className="relative p-6 md:p-8">
+                  <span className="mb-2 block text-xs font-semibold uppercase tracking-[0.3em] text-blue-200/40">
+                    Chapter {chapter.number}
+                  </span>
+                  <h3 className="text-xl font-semibold tracking-[-0.04em] text-white/95 md:text-2xl">{chapter.title}</h3>
+                  <p className="mt-3 max-w-xl leading-[1.8] text-white/50 md:text-[15px]">{chapter.text}</p>
+                </div>
               </div>
             </motion.article>
           ))}

@@ -1,91 +1,115 @@
-import { useRef, useState } from 'react'
-import { motion, useInView } from 'motion/react'
-import { BookOpen, Compass, Lightbulb, MessageCircle, Puzzle, Search, Target, Users } from 'lucide-react'
-import { strengths } from '../data/site'
+import { motion } from 'motion/react'
+import { ArrowUpRight } from 'lucide-react'
+import { site, strengths } from '../data/site'
 
-const strengthIcon: Record<string, React.ComponentType<{ size?: number; className?: string; style?: React.CSSProperties }>> = {
-  Communication: MessageCircle,
-  Teamwork: Users,
-  Adaptability: Compass,
-  'Creative thinking': Lightbulb,
-  'Learning ability': BookOpen,
-  'Problem solving': Puzzle,
-  Curiosity: Search,
-  Persistence: Target,
-}
+const emphasizedWords = ['curiosity', 'mistakes', 'making things', 'thousands of juniors', 'unlearn']
 
-function TiltCard({ children, className, ...props }: Omit<React.ComponentPropsWithoutRef<typeof motion.div>, 'ref'>) {
-  const ref = useRef<HTMLDivElement>(null)
-  const [rotate, setRotate] = useState({ x: 0, y: 0 })
+const bio = `I am a junior developer who codes because I love building things. I do not pretend to have shipped at scale. I do not pad my resume with technologies I have barely touched. What I have is curiosity — the genuine drive to understand how things work and the patience to actually learn them.
 
-  const handleMouse = (e: React.MouseEvent) => {
-    const rect = ref.current?.getBoundingClientRect()
-    if (!rect) return
-    setRotate({
-      x: -((e.clientY - rect.top - rect.height / 2) / rect.height) * 8,
-      y: ((e.clientX - rect.left - rect.width / 2) / rect.width) * 8,
-    })
-  }
+My best lessons have come from mistakes: shipping broken builds, realizing I committed secrets, wrestling with git at 2 AM. Every error message taught me more than any tutorial ever did.
 
-  const handleLeave = () => setRotate({ x: 0, y: 0 })
+I believe the gap between "beginner" and "professional" is not talent or some innate gift — it is simply the number of mistakes you have made and learned from. I am still early in that process, and I am okay with that.
 
-  return (
-    <motion.div
-      ref={ref}
-      onMouseMove={handleMouse}
-      onMouseLeave={handleLeave}
-      animate={{ rotateX: rotate.x, rotateY: rotate.y }}
-      transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-      style={{ transformStyle: 'preserve-3d' }}
-      className={className}
-      {...props}
-    >
-      {children}
-    </motion.div>
-  )
-}
+My goal is honest: keep building, keep breaking things, keep getting better. One day the work will speak for itself. Until then, I will be here — coding, learning, and proving that persistence beats pedigree every time.`
 
 export function About() {
-  const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-80px' })
-
   return (
-    <section id="about" className="px-5 py-28">
+    <section id="about" className="relative px-5 py-28">
       <div className="mx-auto max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-          className="mb-12"
+          className="relative flex flex-col gap-16 lg:flex-row"
         >
-          <motion.p
-            initial={{ opacity: 0, x: -12 }}
-            whileInView={{ opacity: 1, x: 0 }}
+          <div className="lg:w-3/5 xl:w-[58%]">
+            <motion.p
+              initial={{ opacity: 0, x: -12 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="mb-5 text-xs font-semibold uppercase tracking-[0.35em] text-blue-200/60"
+            >
+              About
+            </motion.p>
+
+            <div className="prose-custom space-y-5 leading-[1.75] text-white/55">
+              {bio.split('\n\n').map((paragraph, pIdx) => (
+                <motion.p
+                  key={pIdx}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.1 + pIdx * 0.08, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  className="text-[15px] leading-[1.85]"
+                >
+                  {paragraph.split(' ').map((word, wIdx) => {
+                    const clean = word.replace(/[^a-zA-Z]/g, '').toLowerCase()
+                    const isEmphasized = emphasizedWords.includes(clean)
+                    return (
+                      <span key={wIdx} className={`transition-colors duration-300 ${isEmphasized ? 'relative text-white/85 font-medium' : ''}`}>
+                        {isEmphasized && (
+                          <motion.span
+                            initial={{ scaleX: 0 }}
+                            whileInView={{ scaleX: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.3 + (pIdx * 0.08) + (wIdx * 0.003), duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+                            className="absolute -bottom-px left-0 h-px w-full origin-left bg-blue-300/30"
+                          />
+                        )}
+                        {word}{' '}
+                      </span>
+                    )
+                  })}
+                </motion.p>
+              ))}
+            </div>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="mb-4 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.35em] text-blue-200/60"
+            transition={{ delay: 0.3, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+            className="lg:w-2/5 xl:w-[38%]"
           >
-            About
-          </motion.p>
-          <h2 className="text-balance text-4xl font-semibold tracking-[-0.06em] text-white md:text-5xl">A beginner, but not casual.</h2>
-          <p className="mt-5 max-w-2xl text-lg leading-8 text-white/55">I am learning full-stack development and scripting with a focus on steady growth, practical projects, and becoming useful enough to build real things.</p>
-        </motion.div>
-        <motion.div ref={ref} className="group/grid grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {strengths.slice(0, 8).map((strength, i) => {
-            const Icon = strengthIcon[strength]
-            return (
-              <TiltCard
-                key={strength}
-                initial={{ opacity: 0, y: 30 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: i * 0.08, type: 'spring' as const, stiffness: 100, damping: 25 }}
-                className="glass rounded-3xl p-5 text-white/70 transition-all duration-300 hover:border-white/20 hover:shadow-[0_8px_30px_rgba(0,0,0,0.4)] [&:not(:hover)]:group-hover/grid:opacity-60"
-              >
-                <Icon className="mb-5 text-blue-200/60" size={18} style={{ transform: 'translateZ(24px)' }} />
-                <span style={{ transform: 'translateZ(16px)' }} className="block text-sm leading-relaxed">{strength}</span>
-              </TiltCard>
-            )
-          })}
+            <div className="glass rounded-2xl p-6">
+              <p className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-white/35">What I bring</p>
+              <div className="space-y-3">
+                {strengths.map((strength, i) => (
+                  <motion.div
+                    key={strength}
+                    initial={{ opacity: 0, x: -8 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.4 + i * 0.05, duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+                    className="group flex items-center gap-3"
+                  >
+                    <motion.div
+                      animate={{ scale: [1, 1.2, 1] }}
+                      transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut', delay: i * 0.2 }}
+                      className="h-1.5 w-1.5 shrink-0 rounded-full bg-blue-300/40"
+                    />
+                    <span className="text-sm text-white/65 transition-colors duration-300 group-hover:text-white/90">{strength}</span>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            <motion.a
+              href={site.github}
+              target="_blank"
+              rel="noreferrer"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.8 }}
+              className="focus-ring mt-4 inline-flex items-center gap-2 text-sm text-white/40 transition-colors hover:text-white/70"
+            >
+              <ArrowUpRight size={14} />
+              See my GitHub
+            </motion.a>
+          </motion.div>
         </motion.div>
       </div>
     </section>
