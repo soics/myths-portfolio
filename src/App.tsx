@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, useScroll, useTransform, useSpring, useInView } from 'motion/react'
-import { ArrowRight, ChevronDown, Code2, ExternalLink, GitBranch, Loader2, Send, ShieldCheck, Star } from 'lucide-react'
+import { ArrowRight, BookOpen, ChevronDown, Code2, Compass, ExternalLink, GitBranch, Lightbulb, Loader2, MessageCircle, Puzzle, Search, Send, ShieldCheck, Target, Users } from 'lucide-react'
 import { chapters, learningSkills, site, strengths } from './data/site'
 import { getGitHubData, type GitHubProfile, type GitHubRepo } from './lib/github'
 
@@ -110,6 +110,48 @@ function Hero() {
   )
 }
 
+const strengthIcon: Record<string, React.ComponentType<{ size?: number; className?: string; style?: React.CSSProperties }>> = {
+  Communication: MessageCircle,
+  Teamwork: Users,
+  Adaptability: Compass,
+  'Creative thinking': Lightbulb,
+  'Learning ability': BookOpen,
+  'Problem solving': Puzzle,
+  Curiosity: Search,
+  Persistence: Target,
+}
+
+function TiltCard({ children, className, ...props }: Omit<React.ComponentPropsWithoutRef<typeof motion.div>, 'ref'>) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [rotate, setRotate] = useState({ x: 0, y: 0 })
+
+  const handleMouse = (e: React.MouseEvent) => {
+    const rect = ref.current?.getBoundingClientRect()
+    if (!rect) return
+    setRotate({
+      x: -((e.clientY - rect.top - rect.height / 2) / rect.height) * 10,
+      y: ((e.clientX - rect.left - rect.width / 2) / rect.width) * 10,
+    })
+  }
+
+  const handleLeave = () => setRotate({ x: 0, y: 0 })
+
+  return (
+    <motion.div
+      ref={ref}
+      onMouseMove={handleMouse}
+      onMouseLeave={handleLeave}
+      animate={{ rotateX: rotate.x, rotateY: rotate.y }}
+      transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+      style={{ transformStyle: 'preserve-3d' }}
+      className={className}
+      {...props}
+    >
+      {children}
+    </motion.div>
+  )
+}
+
 function About() {
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-80px' })
@@ -118,20 +160,22 @@ function About() {
     <section id="about" className="px-5 py-24">
       <div className="mx-auto max-w-6xl">
         <SectionTitle eyebrow="About" title="A beginner, but not casual." text="I am learning full-stack development and scripting with a focus on steady growth, practical projects, and becoming useful enough to build real things." />
-        <motion.div ref={ref} className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {strengths.slice(0, 8).map((strength, i) => (
-            <motion.div
-              key={strength}
-              initial={{ opacity: 0, y: 30 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: i * 0.08, ...softSpring }}
-              whileHover={{ y: -8, scale: 1.02 }}
-              className="glass rounded-3xl p-5 text-white/75 transition-all hover:border-white/20 hover:shadow-[0_8px_30px_rgba(0,0,0,0.4)]"
-            >
-              <Star className="mb-6 text-blue-200/70" size={18} />
-              {strength}
-            </motion.div>
-          ))}
+        <motion.div ref={ref} className="group/grid grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {strengths.slice(0, 8).map((strength, i) => {
+            const Icon = strengthIcon[strength]
+            return (
+              <TiltCard
+                key={strength}
+                initial={{ opacity: 0, y: 30 }}
+                animate={inView ? { opacity: 1, y: 0 } : {}}
+                transition={{ delay: i * 0.08, ...softSpring }}
+                className="glass rounded-3xl p-5 text-white/75 transition-all duration-300 hover:border-white/20 hover:shadow-[0_8px_30px_rgba(0,0,0,0.4)] [&:not(:hover)]:group-hover/grid:opacity-70"
+              >
+                <Icon className="mb-6 text-blue-200/70" size={18} style={{ transform: 'translateZ(24px)' }} />
+                <span style={{ transform: 'translateZ(16px)' }} className="block">{strength}</span>
+              </TiltCard>
+            )
+          })}
         </motion.div>
       </div>
     </section>
