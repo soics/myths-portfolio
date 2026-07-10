@@ -386,14 +386,23 @@ function RepoCard({ repo, inView, index }: { repo: GitHubRepo; inView: boolean; 
 }
 
 function Journey() {
-  const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-80px' })
+  const sectionRef = useRef(null)
+  const inView = useInView(sectionRef, { once: true, margin: '-80px' })
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start'],
+  })
+  const lineHeight = useTransform(scrollYProgress, [0, 1], ['0%', '100%'])
 
   return (
-    <section id="journey" className="px-5 py-24">
+    <section ref={sectionRef} id="journey" className="px-5 py-24">
       <div className="mx-auto max-w-6xl">
         <SectionTitle eyebrow="Journey" title="A timeline for becoming." text="The path is intentionally simple: learn, build, connect the pieces, repeat." />
-        <div ref={ref} className="relative grid gap-5 before:absolute before:left-[22px] before:top-12 before:h-[calc(100%-6rem)] before:w-px before:bg-gradient-to-b before:from-white/20 before:via-white/10 before:to-transparent">
+        <div className="relative grid gap-5">
+          <motion.div
+            style={{ height: lineHeight, scaleY: 1, transformOrigin: 'top' }}
+            className="absolute left-[22px] top-12 w-px bg-gradient-to-b from-blue-200/40 via-blue-200/20 to-transparent"
+          />
           {chapters.map((chapter, i) => (
             <motion.article
               key={chapter.number}
@@ -403,12 +412,19 @@ function Journey() {
               whileHover={{ x: 12 }}
               className="glass relative grid gap-5 rounded-[2rem] p-6 transition-all hover:border-white/20 md:grid-cols-[140px_1fr]"
             >
-              <motion.span
-                initial={{ scale: 0 }}
-                animate={inView ? { scale: 1 } : {}}
-                transition={{ delay: i * 0.15 + 0.1, type: 'spring', stiffness: 300 }}
-                className="absolute left-3 top-6 hidden h-4 w-4 rounded-full border-2 border-blue-200/50 bg-blue-200/20 md:block"
-              />
+              <span className="absolute left-[14px] top-[22px] hidden md:block">
+                <motion.span
+                  animate={{ scale: [1, 1.8, 1], opacity: [0.2, 0.5, 0.2] }}
+                  transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut', delay: i * 0.3 }}
+                  className="absolute -inset-2 rounded-full bg-blue-200/15"
+                />
+                <motion.span
+                  initial={{ scale: 0 }}
+                  animate={inView ? { scale: 1 } : {}}
+                  transition={{ delay: i * 0.15 + 0.1, type: 'spring', stiffness: 300 }}
+                  className="relative block h-4 w-4 rounded-full border-2 border-blue-200/50 bg-blue-200/20"
+                />
+              </span>
               <span className="text-5xl font-black tracking-[-0.08em] text-white/18 md:pl-8">{chapter.number}</span>
               <div>
                 <h3 className="text-2xl font-semibold tracking-[-0.04em]">{chapter.title}</h3>
