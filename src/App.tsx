@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, useScroll, useTransform, useSpring, useInView } from 'motion/react'
-import { ArrowRight, Code2, ExternalLink, GitBranch, Loader2, Send, ShieldCheck, Star } from 'lucide-react'
+import { ArrowRight, ChevronDown, Code2, ExternalLink, GitBranch, Loader2, Send, ShieldCheck, Star } from 'lucide-react'
 import { chapters, learningSkills, site, strengths } from './data/site'
 import { getGitHubData, type GitHubProfile, type GitHubRepo } from './lib/github'
 
@@ -20,6 +20,50 @@ function ScrollProgress() {
   return <motion.div style={{ scaleX }} className="fixed left-0 top-0 z-50 h-[2px] origin-left bg-gradient-to-r from-blue-300 to-blue-100" />
 }
 
+function MagneticAnchor({ children, className, ...props }: Omit<React.ComponentPropsWithoutRef<typeof motion.a>, 'ref'>) {
+  const ref = useRef<HTMLAnchorElement>(null)
+  const [pos, setPos] = useState({ x: 0, y: 0 })
+
+  const handleMouse = (e: React.MouseEvent) => {
+    const rect = ref.current?.getBoundingClientRect()
+    if (!rect) return
+    setPos({
+      x: (e.clientX - rect.left - rect.width / 2) * 0.25,
+      y: (e.clientY - rect.top - rect.height / 2) * 0.25,
+    })
+  }
+
+  const handleLeave = () => setPos({ x: 0, y: 0 })
+
+  return (
+    <motion.a
+      ref={ref}
+      onMouseMove={handleMouse}
+      onMouseLeave={handleLeave}
+      animate={{ x: pos.x, y: pos.y }}
+      transition={{ type: 'spring', stiffness: 250, damping: 18, mass: 0.5 }}
+      className={className}
+      {...props}
+    >
+      {children}
+    </motion.a>
+  )
+}
+
+function ScrollIndicator() {
+  const { scrollY } = useScroll()
+  const opacity = useTransform(scrollY, [0, 200], [1, 0])
+
+  return (
+    <motion.div style={{ opacity }} className="pointer-events-none absolute bottom-8 left-1/2 -translate-x-1/2">
+      <motion.div animate={{ y: [0, 6, 0] }} transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }} className="flex flex-col items-center gap-2">
+        <span className="text-xs uppercase tracking-[0.3em] text-white/25">Scroll</span>
+        <ChevronDown size={14} className="text-white/25" />
+      </motion.div>
+    </motion.div>
+  )
+}
+
 function Hero() {
   const { scrollY } = useScroll()
   const y = useTransform(scrollY, [0, 600], [0, 120])
@@ -35,8 +79,8 @@ function Hero() {
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="mt-6 max-w-2xl text-xl leading-8 text-white/64 md:text-2xl">{site.title}</motion.p>
           <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.65 }} className="mt-2 text-base text-white/40">{site.phrases[2]}</motion.p>
           <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }} className="mt-10 flex flex-wrap gap-4">
-            <a className="focus-ring group inline-flex items-center gap-3 rounded-full bg-white px-6 py-4 font-semibold text-black transition-all hover:scale-[1.03] hover:shadow-[0_0_30px_rgba(255,255,255,0.15)] active:scale-[0.98]" href="#journey">View the journey <ArrowRight className="transition group-hover:translate-x-1" size={18} /></a>
-            <a className="focus-ring glass inline-flex items-center gap-3 rounded-full px-6 py-4 font-semibold text-white/85 transition-all hover:scale-[1.03] hover:text-white" href={site.github} target="_blank" rel="noreferrer"><GitBranch size={18} /> GitHub</a>
+            <MagneticAnchor className="focus-ring group inline-flex items-center gap-3 rounded-full bg-white px-6 py-4 font-semibold text-black hover:shadow-[0_0_30px_rgba(255,255,255,0.15)]" href="#journey">View the journey <ArrowRight className="transition group-hover:translate-x-1" size={18} /></MagneticAnchor>
+            <MagneticAnchor className="focus-ring glass inline-flex items-center gap-3 rounded-full px-6 py-4 font-semibold text-white/85 hover:text-white" href={site.github} target="_blank" rel="noreferrer"><GitBranch size={18} /> GitHub</MagneticAnchor>
           </motion.div>
         </div>
         <motion.div initial={{ opacity: 0, y: 40, scale: 0.94 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ ...softSpring, delay: 0.35 }} className="glass rounded-[2rem] p-6">
@@ -51,12 +95,17 @@ function Hero() {
                 transition={{ delay: 0.9 + i * 0.12 }}
                 className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4 backdrop-blur-sm transition hover:border-white/20 hover:bg-white/[0.06]"
               >
-                <span className="h-2 w-2 rounded-full bg-blue-300" />{item}
+                <motion.span
+                  animate={{ scale: [1, 1.5, 1], opacity: [0.4, 1, 0.4] }}
+                  transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut', delay: i * 0.3 }}
+                  className="block h-2 w-2 rounded-full bg-blue-300 shrink-0"
+                />{item}
               </motion.div>
             ))}
           </div>
         </motion.div>
       </motion.div>
+      <ScrollIndicator />
     </motion.section>
   )
 }
