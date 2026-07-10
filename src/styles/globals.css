@@ -18,8 +18,8 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   background:
-    radial-gradient(circle at 18% 12%, rgba(124, 92, 255, 0.15), transparent 28rem),
-    radial-gradient(circle at 88% 18%, rgba(122, 167, 255, 0.12), transparent 24rem),
+    radial-gradient(circle at 18% 12%, rgba(124, 92, 255, 0.08), transparent 28rem),
+    radial-gradient(circle at 88% 18%, rgba(122, 167, 255, 0.06), transparent 24rem),
     linear-gradient(180deg, #030303 0%, #08080a 45%, #030303 100%);
 }
 

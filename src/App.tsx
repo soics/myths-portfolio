@@ -4,6 +4,7 @@ import { ArrowRight, Code2, ExternalLink, GitBranch, Loader2, Send, ShieldCheck,
 import { chapters, learningSkills, site, strengths } from './data/site'
 import { getGitHubData, type GitHubProfile, type GitHubRepo } from './lib/github'
 
+import { Background } from './components/Background'
 import { Header, SectionTitle, SocialLinks } from './components/Primitives'
 import './styles/globals.css'
 
@@ -17,24 +18,6 @@ function ScrollProgress() {
   const { scrollYProgress } = useScroll()
   const scaleX = useSpring(scrollYProgress, { stiffness: 200, damping: 30 })
   return <motion.div style={{ scaleX }} className="fixed left-0 top-0 z-50 h-[2px] origin-left bg-gradient-to-r from-blue-300 to-blue-100" />
-}
-
-function FloatingOrbs() {
-  return (
-    <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-      <motion.div
-        animate={{ x: [0, 30, -20, 0], y: [0, -40, 20, 0] }}
-        transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-        className="absolute left-1/4 top-1/5 h-[30rem] w-[30rem] rounded-full bg-blue-400/8 blur-[120px]"
-      />
-      <motion.div
-        animate={{ x: [0, -20, 40, 0], y: [0, 30, -30, 0] }}
-        transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
-        className="absolute right-1/4 top-2/5 h-[25rem] w-[25rem] rounded-full bg-purple-400/6 blur-[100px]"
-      />
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:72px_72px] [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]" />
-    </div>
-  )
 }
 
 function Hero() {
@@ -339,7 +322,7 @@ function App() {
   return (
     <>
       <ScrollProgress />
-      <FloatingOrbs />
+      <Background />
       <Header />
       <main>
         <Hero />
