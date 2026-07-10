@@ -1,35 +1,33 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, lazy, Suspense } from 'react'
 import { useSpring } from 'motion/react'
 import { motion, useScroll, AnimatePresence } from 'motion/react'
+
+const Scene = lazy(() => import('./components/Scene').then(m => ({ default: m.Scene })))
 import { Background } from './components/Background'
 import { Terminal } from './components/Terminal'
 import { Header } from './components/Primitives'
 import { Hero } from './components/Hero'
-import { About } from './components/About'
-import { Skills } from './components/Skills'
+import { Manifesto } from './components/About'
+import { Tools } from './components/Skills'
 import { ProjectsSection } from './components/Projects'
-import { Journey } from './components/Journey'
+import { Blueprint } from './components/Journey'
 import { Contact } from './components/Contact'
+import { useStore } from './lib/store'
 import { useKonamiCode } from './hooks/useKonamiCode'
 import { useTypedSequence } from './hooks/useTilt'
 import type { SideEffects } from './hooks/useTerminal'
 import './styles/globals.css'
 
-/* ------------------------------------------------------------------ */
-/*  Signature: scroll-reactive accent shift                           */
-/* ------------------------------------------------------------------ */
-
-const SECTION_ACCENTS = [
-  { id: 'top',    accent: '160,196,255', name: 'blue'   },
-  { id: 'about',  accent: '139,92,246',  name: 'purple' },
-  { id: 'skills', accent: '52,211,153',  name: 'green'  },
-  { id: 'projects', accent: '245,158,11', name: 'amber'  },
-  { id: 'journey', accent: '34,211,238', name: 'cyan'   },
-  { id: 'contact', accent: '244,63,94',  name: 'rose'   },
+const SECTION_ZONES = [
+  { id: 'top',     accent: '0,229,255',  name: 'cyber'     },
+  { id: 'about',   accent: '0,229,255',  name: 'origin'    },
+  { id: 'skills',  accent: '124,58,237', name: 'violet'    },
+  { id: 'projects',accent: '0,229,255',  name: 'discover'  },
+  { id: 'journey', accent: '245,158,11', name: 'amber'     },
+  { id: 'contact', accent: '124,58,237', name: 'signal'    },
 ] as const
 
 function BackgroundAccent() {
-  const [activeAccent, setActiveAccent] = useState('160,196,255')
   const [flashKey, setFlashKey] = useState(0)
 
   useEffect(() => {
@@ -37,62 +35,45 @@ function BackgroundAccent() {
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting) {
-            const found = SECTION_ACCENTS.find(a => a.id === entry.target.id)
+            const found = SECTION_ZONES.find(a => a.id === entry.target.id)
             if (found) {
-              setActiveAccent(found.accent)
+              const root = document.documentElement
+              root.style.setProperty('--accent-rgb', found.accent)
+              root.style.setProperty('--accent-glow', `rgba(${found.accent}, 0.1)`)
               setFlashKey(k => k + 1)
             }
           }
         }
       },
-      { threshold: 0.25 },
+      { threshold: 0.2 },
     )
-    const targets = SECTION_ACCENTS.map(a => document.getElementById(a.id)).filter(Boolean) as Element[]
+    const targets = SECTION_ZONES.map(a => document.getElementById(a.id)).filter(Boolean) as Element[]
     targets.forEach(t => observer.observe(t))
     return () => observer.disconnect()
   }, [])
 
-  useEffect(() => {
-    const root = document.documentElement
-    root.style.setProperty('--accent-rgb', activeAccent)
-    root.style.setProperty('--accent-glow', `rgba(${activeAccent}, 0.12)`)
-  }, [activeAccent])
-
   return (
     <>
       <motion.div
-        key={activeAccent}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-        className="pointer-events-none fixed inset-0 -z-10"
-        aria-hidden="true"
-        style={{ background: `radial-gradient(ellipse 80% 50% at 50% 0%, rgba(${activeAccent}, 0.08), transparent 70%)` }}
-      />
-      <motion.div
         key={flashKey}
-        initial={{ opacity: 0.2 }}
+        initial={{ opacity: 0.15 }}
         animate={{ opacity: 0 }}
-        transition={{ duration: 1.2, ease: 'easeOut' }}
+        transition={{ duration: 1.5, ease: 'easeOut' }}
         className="pointer-events-none fixed inset-0 -z-10"
         aria-hidden="true"
-        style={{ background: `radial-gradient(ellipse at 50% 50%, rgba(${activeAccent}, 0.15), transparent 60%)` }}
+        style={{ background: `radial-gradient(ellipse at 50% 50%, rgba(${SECTION_ZONES[0].accent}, 0.08), transparent 60%)` }}
       />
     </>
   )
 }
-
-/* ------------------------------------------------------------------ */
-/*  Utility Components                                                */
-/* ------------------------------------------------------------------ */
 
 function ScrollProgress() {
   const { scrollYProgress } = useScroll()
   const scaleX = useSpring(scrollYProgress, { stiffness: 200, damping: 30 })
   return (
     <motion.div
-      style={{ scaleX }}
-      className="fixed left-0 top-0 z-50 h-[2px] origin-left bg-gradient-to-r from-accent/60 to-transparent"
+      style={{ scaleX, background: 'linear-gradient(90deg, rgba(0,229,255,0.4), rgba(124,58,237,0.3), rgba(0,229,255,0.2))' }}
+      className="fixed left-0 top-0 z-50 h-[1.5px] origin-left"
     />
   )
 }
@@ -120,10 +101,6 @@ const KONAMI_MSG = `
   You found me. — myths
 `
 
-/* ------------------------------------------------------------------ */
-/*  Footer Secret (3-click rabbit hole)                                */
-/* ------------------------------------------------------------------ */
-
 function FooterSecret() {
   const [revealed, setRevealed] = useState(false)
   const [clickCount, setClickCount] = useState(0)
@@ -133,17 +110,15 @@ function FooterSecret() {
     setClickCount(next)
     if (next >= 3) {
       setRevealed(true)
-      const w = window as unknown as Record<string, () => void>
-      w.__triggerGlitch?.()
       setTimeout(() => setRevealed(false), 5000)
     }
   }
 
   return (
-    <footer className="px-5 py-10 text-center text-sm text-white/45">
-      <p>&copy; {new Date().getFullYear()} myths. Built, not finished.</p>
-      <button type="button" onClick={handleClick} className="text-[10px] text-white/18 transition-colors hover:text-white/35 cursor-pointer">
-        {clickCount === 0 ? 'find the rabbit hole' : clickCount === 1 ? 'deeper...' : 'almost there...'}
+    <footer className="px-5 py-10 text-center text-sm text-white/35">
+      <p>&copy; {new Date().getFullYear()} myths.</p>
+      <button type="button" onClick={handleClick} className="text-[10px] text-white/15 transition-colors hover:text-white/30 cursor-pointer">
+        {clickCount === 0 ? '— signal lost —' : clickCount === 1 ? 'searching...' : 'almost there...'}
       </button>
 
       <AnimatePresence>
@@ -152,12 +127,12 @@ function FooterSecret() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 max-w-md rounded-2xl border border-white/[0.08] bg-[#0c0c0e]/95 px-6 py-4 text-center shadow-[0_16px_48px_rgba(0,0,0,0.6)] backdrop-blur-xl"
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 max-w-md rounded-2xl border border-white/[0.08] bg-deep/95 px-6 py-4 text-center shadow-[0_16px_48px_rgba(0,0,0,0.6)] backdrop-blur-xl"
           >
-            <p className="text-xs leading-relaxed text-white/60">
-              &ldquo;The rabbit hole has no bottom. Keep falling.&rdquo;
+            <p className="text-xs leading-relaxed text-white/50">
+              &ldquo;The signal is faint but still burning.&rdquo;
             </p>
-            <p className="mt-2 text-[10px] text-white/35">&mdash; myths, probably</p>
+            <p className="mt-2 text-[10px] text-white/25">&mdash; bagboy</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -165,20 +140,15 @@ function FooterSecret() {
   )
 }
 
-/* ------------------------------------------------------------------ */
-/*  App                                                               */
-/* ------------------------------------------------------------------ */
-
 const THEMES: Record<string, { accent: string; bg: string; raised: string; text: string }> = {
-  dark:   { accent: '160,196,255', bg: '#030303', raised: '#08080a', text: '#f3f3f0' },
-  amber:  { accent: '251,191,36',  bg: '#0a0803', raised: '#0f0d08', text: '#f5f0e8' },
-  matrix: { accent: '0,255,65',    bg: '#000a00', raised: '#001400', text: '#00ff41' },
-  mono:   { accent: '200,200,200', bg: '#050505', raised: '#0a0a0a', text: '#e0e0e0' },
+  dark:   { accent: '0,229,255',  bg: '#06060e', raised: '#0c0c1a', text: '#e0e8ff' },
+  amber:  { accent: '245,158,11', bg: '#060603', raised: '#0c0a04', text: '#f5f0e8' },
+  matrix: { accent: '0,255,65',   bg: '#000500', raised: '#000a00', text: '#00ff41' },
+  mono:   { accent: '180,180,200', bg: '#050508', raised: '#0a0a0d', text: '#d0d0e0' },
 }
 
 function App() {
   const [terminalOpen, setTerminalOpen] = useState(false)
-  const [matrixActive, setMatrixActive] = useState(false)
 
   const glitch = useCallback(() => {
     const w = window as unknown as Record<string, () => void>
@@ -199,7 +169,25 @@ function App() {
     root.style.setProperty('--text-color', t.text)
   }, [])
 
-  const sideEffects: SideEffects = { glitch, scrollTo, matrix: () => setMatrixActive(a => !a), setTheme }
+  const sideEffects: SideEffects = { glitch, scrollTo, matrix: glitch, setTheme }
+
+  // Scroll tracker for bagboy
+  useEffect(() => {
+    const handle = () => {
+      useStore.getState().setScrollY(window.scrollY)
+    }
+    window.addEventListener('scroll', handle, { passive: true })
+    return () => window.removeEventListener('scroll', handle)
+  }, [])
+
+  // Escape to close terminal
+  useEffect(() => {
+    const handle = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setTerminalOpen(false)
+    }
+    window.addEventListener('keydown', handle)
+    return () => window.removeEventListener('keydown', handle)
+  }, [])
 
   // Backtick to toggle terminal
   useEffect(() => {
@@ -213,22 +201,19 @@ function App() {
     return () => window.removeEventListener('keydown', handle)
   }, [])
 
-  // Konami code → opens terminal + glitch
   useKonamiCode(() => {
     glitch()
     setTerminalOpen(true)
     console.log(KONAMI_MSG)
   })
 
-  // "myths" typing → terminal opens
   useTypedSequence('myths', () => {
     console.log(EASTER_MSG)
     setTerminalOpen(true)
     document.title = '⚡ myths — hidden mode'
-    setTimeout(() => { document.title = 'myths — developer portfolio' }, 2000)
+    setTimeout(() => { document.title = 'myths — digital universe' }, 2000)
   })
 
-  // Expose side effects to window for other components
   useEffect(() => {
     const w = window as unknown as Record<string, unknown>
     w.__openTerminal = () => setTerminalOpen(true)
@@ -240,15 +225,16 @@ function App() {
       <SkipLink />
       <ScrollProgress />
       <BackgroundAccent />
-      <Background matrixActive={matrixActive} />
+      <Background />
+      <Suspense fallback={null}><Scene /></Suspense>
       <Terminal open={terminalOpen} onClose={() => setTerminalOpen(false)} sideEffects={sideEffects} />
       <Header />
       <main id="main-content">
         <Hero />
-        <About />
-        <Skills />
+        <Manifesto />
+        <Tools />
         <ProjectsSection />
-        <Journey />
+        <Blueprint />
         <Contact />
       </main>
       <FooterSecret />

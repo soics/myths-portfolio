@@ -1,78 +1,64 @@
-import { useState, useRef, useEffect, useCallback } from 'react'
-import {
-  motion, useScroll, useTransform, useSpring, useMotionValue,
-} from 'motion/react'
-import { ArrowRight, GitBranch } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { motion, useScroll, useTransform } from 'motion/react'
+import { ArrowRight, Terminal, Sparkles } from 'lucide-react'
 import { site } from '../data/site'
 
-/* ------------------------------------------------------------------ */
-/*  3D Live-Code Terminal                                              */
-/* ------------------------------------------------------------------ */
-function useCodeTyper(lines: string[]) {
-  const [displayed, setDisplayed] = useState<string[]>(lines.map(() => ''))
-  const [phase, setPhase] = useState(0)
+function TypeWriter({ text, delay = 0, speed = 40 }: { text: string; delay?: number; speed?: number }) {
+  const [displayed, setDisplayed] = useState('')
+  const [started, setStarted] = useState(false)
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (phase === 0) {
-        const lineIdx = displayed.findIndex((d, i) => d.length < lines[i].length)
-        if (lineIdx === -1) { setPhase(1); return }
-        setDisplayed(prev => {
-          const next = [...prev]
-          next[lineIdx] = lines[lineIdx].slice(0, next[lineIdx].length + 1)
-          return next
-        })
-      } else if (phase === 1) {
-        setTimeout(() => setPhase(2), 2000)
-      } else {
-        const allEmpty = displayed.every(d => d.length === 0)
-        if (allEmpty) { setPhase(0); return }
-        setDisplayed(prev => {
-          const next = [...prev]
-          for (let i = next.length - 1; i >= 0; i--) {
-            if (next[i].length > 0) { next[i] = next[i].slice(0, -1); break }
-          }
-          return next
-        })
-      }
-    }, phase === 0 ? 35 : 20)
-    return () => clearTimeout(timer)
-  }, [phase, displayed, lines])
+    const startTimer = setTimeout(() => setStarted(true), delay * 1000)
+    return () => clearTimeout(startTimer)
+  }, [delay])
 
-  return displayed
+  useEffect(() => {
+    if (!started) return
+    if (displayed.length < text.length) {
+      const timer = setTimeout(() => {
+        setDisplayed(text.slice(0, displayed.length + 1))
+      }, speed)
+      return () => clearTimeout(timer)
+    }
+  }, [started, displayed, text, speed])
+
+  return (
+    <span>
+      {displayed}
+      {displayed.length < text.length && (
+        <motion.span
+          animate={{ opacity: [1, 0] }}
+          transition={{ duration: 0.5, repeat: Infinity, repeatType: 'reverse' }}
+          className="inline-block w-[2px] h-[1em] bg-cyan/60 ml-0.5 align-middle"
+        />
+      )}
+    </span>
+  )
 }
 
-function LiveCodeTerminal() {
-  const lines = [
-    'const portfolio = new Portfolio()',
-    'portfolio.theme = "dark"',
-    'portfolio.build()',
-    '// → deploying...',
+function DataStreams() {
+  const streams = [
+    { label: 'STATUS', value: 'ACTIVE', color: 'text-cyan' },
+    { label: 'MODE', value: 'BUILD', color: 'text-amber' },
+    { label: 'SIGNAL', value: 'STABLE', color: 'text-violet' },
+    { label: 'UPTIME', value: 'ONLINE', color: 'text-cyan' },
   ]
-  const displayed = useCodeTyper(lines)
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20, scale: 0.9 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ delay: 2.4, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className="pointer-events-none absolute bottom-8 right-4 z-20 hidden w-72 select-none overflow-hidden rounded-xl border border-white/[0.06] bg-black/60 backdrop-blur-xl lg:block"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ delay: 2.5, duration: 0.8 }}
+      className="pointer-events-none absolute right-6 top-24 z-10 hidden md:block"
     >
-      <div className="flex items-center gap-1.5 border-b border-white/[0.04] px-3 py-2">
-        <span className="h-2 w-2 rounded-full bg-red-400/40" />
-        <span className="h-2 w-2 rounded-full bg-yellow-400/40" />
-        <span className="h-2 w-2 rounded-full bg-green-400/40" />
-        <span className="ml-2 text-[10px] text-white/35">build.sh</span>
-      </div>
-      <div className="px-3 py-2.5 font-mono text-[11px] leading-[1.7] text-white/55">
-        {displayed.map((line, i) => (
-          <div key={i}>
-            <span className="text-white/35">$ </span>
-            {line}
-            {i === displayed.reduce((last, d, idx) => d.length > 0 ? idx : last, -1) && (
-              <motion.span animate={{ opacity: [1, 0] }} transition={{ duration: 0.6, repeat: Infinity, repeatType: 'reverse' }}
-                className="ml-0.5 inline-block h-3 w-[2px] bg-accent/40 align-middle" />
-            )}
+      <div className="space-y-2 text-right">
+        {streams.map((s) => (
+          <div key={s.label} className="group flex items-center gap-3 justify-end">
+            <span className="text-[10px] font-mono text-white/20 tracking-[0.15em]">{s.label}</span>
+            <span className={`text-[11px] font-mono font-semibold ${s.color}`}>
+              {s.value}
+            </span>
+            <span className={`h-1.5 w-1.5 rounded-full ${s.color.replace('text-', 'bg-')} signal-pulse`} />
           </div>
         ))}
       </div>
@@ -80,169 +66,168 @@ function LiveCodeTerminal() {
   )
 }
 
-/* ------------------------------------------------------------------ */
-/*  3D Parallax Layer System                                          */
-/* ------------------------------------------------------------------ */
-function useParallaxLayer(factor = 1) {
-  const mx = useMotionValue(0.5)
-  const my = useMotionValue(0.5)
-  const sx = useSpring(mx, { stiffness: 40, damping: 30 })
-  const sy = useSpring(my, { stiffness: 40, damping: 30 })
-
-  const handle = useCallback((e: MouseEvent) => {
-    mx.set(e.clientX / window.innerWidth)
-    my.set(e.clientY / window.innerHeight)
-  }, [mx, my])
-
-  useEffect(() => {
-    window.addEventListener('mousemove', handle, { passive: true })
-    return () => window.removeEventListener('mousemove', handle)
-  }, [handle])
-
-  const x = useTransform(sx, [0, 1], [-20 * factor, 20 * factor])
-  const y = useTransform(sy, [0, 1], [-15 * factor, 15 * factor])
-  return { x, y }
-}
-
-/* ------------------------------------------------------------------ */
-/*  Floating Orb Elements                                              */
-/* ------------------------------------------------------------------ */
-function FloatingOrbs() {
-  const deep = useParallaxLayer(0.3)
-  const mid = useParallaxLayer(0.5)
-
+function HolographicRing() {
   return (
-    <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-      <motion.div style={{ x: deep.x, y: deep.y }} className="absolute inset-0">
-        <motion.div animate={{ rotate: 360 }} transition={{ duration: 50, repeat: Infinity, ease: 'linear' }}
-          className="absolute -right-32 top-10 h-[35rem] w-[35rem] rounded-full border border-white/[0.015]" />
-        <motion.div animate={{ rotate: -360 }} transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
-          className="absolute -right-24 top-20 h-[28rem] w-[28rem] rounded-full border border-white/[0.01]" />
-      </motion.div>
-
-      <motion.div style={{ x: mid.x, y: mid.y }} className="absolute inset-0">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <motion.div key={i} animate={{ y: [0, -20 - i * 5, 0], opacity: [0.03, 0.08, 0.03] }}
-            transition={{ duration: 5 + i, repeat: Infinity, ease: 'easeInOut', delay: i * 0.5 }}
-            className="absolute h-2 w-2 rounded-full bg-blue-300/15"
-            style={{ left: `${30 + i * 15}%`, top: `${40 + i * 8}%` }} />
-        ))}
-      </motion.div>
-    </div>
-  )
-}
-
-/* ------------------------------------------------------------------ */
-/*  Magnetic Anchor                                                   */
-/* ------------------------------------------------------------------ */
-function MagneticAnchor({
-  children, className, href, target, rel, ...props
-}: React.ComponentPropsWithoutRef<typeof motion.a>) {
-  const ref = useRef<HTMLAnchorElement>(null)
-  const [pos, setPos] = useState({ x: 0, y: 0 })
-  const handleMove = (e: React.MouseEvent) => {
-    const r = ref.current?.getBoundingClientRect()
-    if (!r) return
-    setPos({ x: (e.clientX - r.left - r.width / 2) * 0.35, y: (e.clientY - r.top - r.height / 2) * 0.35 })
-  }
-  const handleLeave = () => setPos({ x: 0, y: 0 })
-  return (
-    <motion.a ref={ref} onMouseMove={handleMove} onMouseLeave={handleLeave}
-      animate={{ x: pos.x, y: pos.y }}
-      transition={{ type: 'spring', stiffness: 250, damping: 18, mass: 0.5 }}
-      className={className} href={href} target={target} rel={rel} {...props}
+    <motion.div
+      initial={{ opacity: 0, scale: 0.5 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+      className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-0"
+      aria-hidden="true"
     >
-      {children}
-    </motion.a>
+      <div className="relative h-[500px] w-[500px] md:h-[700px] md:w-[700px]">
+        {/* Outer ring */}
+        <div className="absolute inset-0 rounded-full border border-cyan/5" />
+        <div className="absolute inset-[15%] rounded-full border border-cyan/8" />
+        <div className="absolute inset-[30%] rounded-full border border-violet/5" />
+        {/* Animated orbit dots */}
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+          className="absolute inset-0"
+        >
+          <div className="absolute left-1/2 top-0 h-2 w-2 -translate-x-1/2 rounded-full bg-cyan/30 shadow-[0_0_10px_rgba(0,229,255,0.2)]" />
+        </motion.div>
+        <motion.div
+          animate={{ rotate: -360 }}
+          transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
+          className="absolute inset-[15%]"
+        >
+          <div className="absolute left-1/2 top-0 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-violet/25 shadow-[0_0_8px_rgba(124,58,237,0.2)]" />
+        </motion.div>
+      </div>
+    </motion.div>
   )
 }
 
-/* ------------------------------------------------------------------ */
-/*  Main Export                                                       */
-/* ------------------------------------------------------------------ */
+function CommandPrompt() {
+  const openTerminal = () => {
+    const w = window as unknown as Record<string, () => void>
+    w.__openTerminal?.()
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 2.8, duration: 0.6 }}
+      className="pointer-events-none absolute bottom-8 left-6 z-10 hidden md:block"
+    >
+      <button
+        type="button"
+        onClick={openTerminal}
+        className="pointer-events-auto group flex items-center gap-2 rounded-full border border-cyan/10 bg-deep/60 px-4 py-2 text-[11px] font-mono text-white/40 backdrop-blur-sm transition-all hover:border-cyan/20 hover:text-white/70"
+      >
+        <Terminal size={12} className="text-cyan/40" />
+        <span className="text-white/30">_</span>
+        <span className="tracking-[0.1em]">type ` to access systems</span>
+        <kbd className="ml-1 rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-[9px] text-white/30">`</kbd>
+      </button>
+    </motion.div>
+  )
+}
 
 export function Hero() {
   const { scrollY } = useScroll()
-  const y = useTransform(scrollY, [0, 500], [0, 60])
+  const y = useTransform(scrollY, [0, 500], [0, 40])
   const fade = useTransform(scrollY, [0, 400], [1, 0])
 
-  const [mWobble, setMWobble] = useState(false)
-  const wobbleRef = useRef(0)
-  const handleMClick = useCallback(() => {
-    wobbleRef.current++
-    setMWobble(true)
-    setTimeout(() => setMWobble(false), 600)
-    if (wobbleRef.current >= 5) {
-      wobbleRef.current = 0
-      const w = window as unknown as Record<string, () => void>
-      w.__triggerGlitch?.()
-    }
-  }, [])
+  const phrases = site.phrases
 
   return (
     <motion.section id="top" style={{ opacity: fade }}
       className="relative flex min-h-dvh items-center overflow-hidden px-5 pt-28"
     >
-      <FloatingOrbs />
-      <LiveCodeTerminal />
+      <HolographicRing />
+      <DataStreams />
+      <CommandPrompt />
 
-      <motion.div style={{ y, perspective: 800 }} className="relative z-10 mx-auto w-full max-w-6xl">
-        {/* Massive left-aligned name */}
-        <div className="relative max-w-[85%] md:max-w-[70%]">
-          <h1 className="flex flex-wrap">
-            {site.name.split('').map((char, i) => {
-              const isM = i === 0
-              return (
-                <motion.span
+      <motion.div style={{ y }} className="relative z-10 mx-auto w-full max-w-6xl">
+        <div className="max-w-4xl">
+          {/* Eyebrow */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="mb-6 flex items-center gap-3"
+          >
+            <span className="h-[1px] w-8 bg-cyan/30" />
+            <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-cyan/50">
+              SYSTEM.BOOT.SEQUENCE
+            </span>
+            <span className="h-[1px] w-8 bg-cyan/30" />
+          </motion.div>
+
+          {/* Name — holographic entrance */}
+          <motion.h1
+            initial={{ opacity: 0, y: 40, filter: 'blur(8px)' }}
+            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="text-[clamp(3rem,12vw,8rem)] font-black leading-[0.88] tracking-[-0.04em]"
+          >
+            <span className="bg-gradient-to-r from-white via-white to-cyan/60 bg-clip-text text-transparent">
+              {site.name}
+            </span>
+          </motion.h1>
+
+          {/* Real name */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-3 text-lg text-white/50 font-mono"
+          >
+            <span className="text-cyan/40">&gt;</span> {site.realName}
+          </motion.p>
+
+          {/* Typewriter tagline */}
+          <motion.div className="mt-8 max-w-2xl">
+            <p className="text-[15px] leading-relaxed text-white/60 md:text-base">
+              <TypeWriter text={phrases[2] || 'Building the future, one line at a time.'} delay={1} speed={25} />
+            </p>
+          </motion.div>
+
+          {/* CTA */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 2.2, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-12 flex flex-wrap gap-4"
+          >
+            <a href="#projects"
+              className="focus-ring group inline-flex items-center gap-3 rounded-full bg-cyan px-7 py-3.5 text-sm font-semibold text-deep transition-all hover:bg-white hover:shadow-[0_0_40px_rgba(0,229,255,0.2)] active:scale-[0.97]"
+            >
+              <span>Explore the world</span>
+              <ArrowRight size={15} className="transition group-hover:translate-x-1" />
+            </a>
+            <a href="#about"
+              className="focus-ring group inline-flex items-center gap-2 rounded-full border border-white/10 px-7 py-3.5 text-sm font-medium text-white/60 transition-all hover:border-white/20 hover:text-white/80 active:scale-[0.97]"
+            >
+              <Sparkles size={14} className="text-violet/50" />
+              <span>Origin story</span>
+            </a>
+          </motion.div>
+
+          {/* Signal bars */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 3, duration: 0.6 }}
+            className="mt-16 flex items-center gap-4"
+          >
+            <div className="flex items-end gap-[2px] h-4">
+              {[1, 2, 3, 4, 3, 2, 1].map((h, i) => (
+                <motion.div
                   key={i}
-                  initial={{ opacity: 0, y: 120, scale: 0.7, filter: 'blur(10px)' }}
-                  animate={{
-                    opacity: 1, y: 0, scale: 1, filter: 'blur(0px)',
-                    rotateZ: isM && mWobble ? [0, -10, 10, -5, 5, 0] : 0,
-                  }}
-                  transition={{
-                    duration: 1, ease: [0.22, 1, 0.36, 1], delay: 0.4 + i * 0.07,
-                    rotateZ: mWobble ? { duration: 0.6, ease: 'easeInOut' } : undefined,
-                  }}
-                  className={`inline-block text-[clamp(4.5rem,16vw,10rem)] font-black leading-[0.82] tracking-[-0.08em] text-white ${isM ? 'cursor-pointer select-none' : ''}`}
-                  onClick={isM ? handleMClick : undefined}
-                  style={{ textShadow: '0 0 80px rgba(160,196,255,0.05), 0 1px 0 rgba(255,255,255,0.04), 0 2px 0 rgba(255,255,255,0.03), 0 4px 0 rgba(255,255,255,0.02), 0 8px 20px rgba(0,0,0,0.3)' }}
-                >
-                  {char === ' ' ? '\u00A0' : char}
-                </motion.span>
-              )
-            })}
-          </h1>
+                  animate={{ height: `${h * 25}%` }}
+                  transition={{ duration: 1.5, repeat: Infinity, repeatType: 'reverse', delay: i * 0.15, ease: 'easeInOut' }}
+                  className="w-[2px] rounded-full bg-cyan/30"
+                />
+              ))}
+            </div>
+            <span className="text-[10px] font-mono text-white/20 tracking-[0.15em]">SIGNAL ACTIVE</span>
+          </motion.div>
         </div>
-
-        {/* Single strong tagline — the honest truth */}
-        <motion.p
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.4, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-6 max-w-xl text-lg leading-relaxed text-white/60 md:text-xl"
-        >
-          {site.phrases[2]}
-        </motion.p>
-
-        {/* CTAs */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.9, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-10 flex flex-wrap gap-4"
-        >
-          <MagneticAnchor href="#projects"
-            className="focus-ring group inline-flex items-center gap-3 rounded-full bg-white px-8 py-4 text-sm font-semibold text-black shadow-lg shadow-white/5 transition-shadow hover:shadow-[0_0_60px_rgba(255,255,255,0.10)]">
-            <span>See the work</span>
-            <ArrowRight size={16} className="transition group-hover:translate-x-1" />
-          </MagneticAnchor>
-          <MagneticAnchor href={site.github} target="_blank" rel="noreferrer"
-            className="focus-ring glass inline-flex items-center gap-3 rounded-full px-8 py-4 text-sm font-semibold text-white/70 transition-all hover:text-white">
-            <GitBranch size={16} />
-            <span>Source</span>
-          </MagneticAnchor>
-        </motion.div>
       </motion.div>
     </motion.section>
   )

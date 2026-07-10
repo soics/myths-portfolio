@@ -2,10 +2,6 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useTerminal, type SideEffects } from '../hooks/useTerminal'
 
-/* ------------------------------------------------------------------ */
-/*  Terminal Component                                                 */
-/* ------------------------------------------------------------------ */
-
 interface TerminalProps {
   open: boolean
   onClose: () => void
@@ -20,20 +16,17 @@ export function Terminal({ open, onClose, sideEffects }: TerminalProps) {
   const outputRef = useRef<HTMLDivElement>(null)
   const historyIdxRef = useRef(-1)
 
-  // Blinking cursor
   useEffect(() => {
     const id = setInterval(() => setCursorVisible(v => !v), 530)
     return () => clearInterval(id)
   }, [])
 
-  // Focus input when opened
   useEffect(() => {
     if (open) {
       setTimeout(() => inputRef.current?.focus(), 100)
     }
   }, [open])
 
-  // Auto-scroll to bottom on new output
   useEffect(() => {
     if (outputRef.current) {
       outputRef.current.scrollTop = outputRef.current.scrollHeight
@@ -86,14 +79,16 @@ export function Terminal({ open, onClose, sideEffects }: TerminalProps) {
           className="fixed inset-x-0 top-0 z-50 mx-auto mt-2 w-[calc(100%-2rem)] max-w-3xl origin-top"
           onClick={() => inputRef.current?.focus()}
         >
-          {/* Terminal window */}
-          <div className="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0a0a0c] shadow-[0_32px_80px_rgba(0,0,0,0.8)] backdrop-blur-2xl">
+          <div
+            className="overflow-hidden rounded-2xl border border-amber-500/10 bg-[#0a0a0c] shadow-[0_32px_80px_rgba(0,0,0,0.8)] backdrop-blur-2xl"
+            style={{ boxShadow: '0 32px 80px rgba(0,0,0,0.8), inset 0 0 80px rgba(251,191,36,0.02)' }}
+          >
             {/* Title bar */}
-            <div className="flex items-center gap-2 border-b border-white/[0.06] px-4 py-2.5">
+            <div className="flex items-center gap-2 border-b border-amber-500/10 px-4 py-2.5">
               <button onClick={onClose} className="h-3 w-3 rounded-full bg-red-400/60 transition-colors hover:bg-red-400/90" aria-label="Close terminal" />
               <span className="h-3 w-3 rounded-full bg-yellow-400/40" />
               <span className="h-3 w-3 rounded-full bg-green-400/40" />
-              <span className="ml-3 text-[11px] font-mono text-white/35">myths@portfolio — backtick to toggle</span>
+              <span className="ml-3 text-[11px] font-mono text-white/35">myths@universe:~ — backtick to toggle</span>
             </div>
 
             {/* Output */}
@@ -114,8 +109,8 @@ export function Terminal({ open, onClose, sideEffects }: TerminalProps) {
             </div>
 
             {/* Input line */}
-            <form onSubmit={handleSubmit} className="flex items-center border-t border-white/[0.06] px-4 py-2.5 font-mono text-[13px]">
-              <span className="mr-2 shrink-0 text-emerald-400/60">$</span>
+            <form onSubmit={handleSubmit} className="flex items-center border-t border-amber-500/10 px-4 py-2.5 font-mono text-[13px]">
+              <span className="mr-2 shrink-0 text-amber-400/60">$</span>
               <input
                 ref={inputRef}
                 type="text"

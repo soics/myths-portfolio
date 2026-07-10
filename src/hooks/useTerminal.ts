@@ -181,6 +181,44 @@ export function createCommands(sfx: SideEffects): Command[] {
         return 'Use ↑/↓ to navigate history.'
       },
     },
+    {
+      name: 'status',
+      description: 'Show build progress',
+      handler: () => {
+        return [
+          '── Build Status ──',
+          '  Foundation:  ■■■■■■■■■■ 100%',
+          '  Frontend:    ■■■■■■░░░░  65%',
+          '  Backend:     ■■■░░░░░░░  35%',
+          '  Full-Stack:  ■■■■■■░░░░  62%',
+          '',
+          `  Last build: ${new Date().toLocaleDateString()}`,
+          `  Sections: 5 deployed`,
+        ].join('\n')
+      },
+    },
+    {
+      name: 'blueprint',
+      description: 'Show ASCII construction plan',
+      handler: () => {
+        return [
+          '  ┌──────────────────────────────────────────┐',
+          '  │           CONSTRUCTION PLAN              │',
+          '  │  Phase 01 │ Foundation    │ 100% [DONE]  │',
+          '  │  Phase 02 │ Framing       │  65% [NOW]   │',
+          '  │  Phase 03 │ Finishing     │  25% [NEXT]  │',
+          '  └──────────────────────────────────────────┘',
+        ].join('\n')
+      },
+    },
+    {
+      name: 'materials',
+      description: 'List skills as construction materials',
+      handler: () => {
+        const mapped = ['Steel', 'Copper', 'Titanium', 'Plywood', 'Tempered Glass', 'Rebar', 'Concrete', 'Cast Iron', 'Brass']
+        return strengths.map((s, i) => `  ${mapped[i % mapped.length].padEnd(16)} ${s}`).join('\n')
+      },
+    },
   ]
   return commands
 }

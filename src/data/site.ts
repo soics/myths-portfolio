@@ -20,7 +20,7 @@ export const projectNotes: Record<string, string> = {
 }
 
 export const chapters = [
-  { number: '01', title: 'Learning fundamentals', text: 'Building a real base: markup, styling, JavaScript, version control, and small daily reps.' },
-  { number: '02', title: 'Building applications', text: 'Turning lessons into working interfaces, useful scripts, and deployable full-stack experiments.' },
-  { number: '03', title: 'Becoming full-stack', text: 'Connecting frontend, backend, databases, deployment, and security into complete products.' },
+  { number: '01', title: 'Learning fundamentals', text: 'Building a real base: markup, styling, JavaScript, version control, and small daily reps.', phase: 'Foundation' },
+  { number: '02', title: 'Building applications', text: 'Turning lessons into working interfaces, useful scripts, and deployable full-stack experiments.', phase: 'Framing' },
+  { number: '03', title: 'Becoming full-stack', text: 'Connecting frontend, backend, databases, deployment, and security into complete products.', phase: 'Finishing' },
 ]

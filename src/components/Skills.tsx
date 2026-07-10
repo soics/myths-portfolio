@@ -1,129 +1,116 @@
+import { useRef } from 'react'
 import { motion, useInView } from 'motion/react'
-import { learningSkills, strengths } from '../data/site'
-import { useTilt } from '../hooks/useTilt'
+import { Cpu, Zap, Code2 } from 'lucide-react'
+import { strengths } from '../data/site'
 
-/* ------------------------------------------------------------------ */
-/*  Accent palette                                                     */
-/* ------------------------------------------------------------------ */
-const accents = [
-  { dot: 'bg-blue-400/70', bar: 'bg-blue-400/20' },
-  { dot: 'bg-purple-400/70', bar: 'bg-purple-400/20' },
-  { dot: 'bg-emerald-400/70', bar: 'bg-emerald-400/20' },
-  { dot: 'bg-amber-400/70', bar: 'bg-amber-400/20' },
-  { dot: 'bg-rose-400/70', bar: 'bg-rose-400/20' },
-  { dot: 'bg-cyan-400/70', bar: 'bg-cyan-400/20' },
-  { dot: 'bg-violet-400/70', bar: 'bg-violet-400/20' },
-  { dot: 'bg-teal-400/70', bar: 'bg-teal-400/20' },
-  { dot: 'bg-orange-400/70', bar: 'bg-orange-400/20' },
+const skillTiers = [
+  { label: 'Building', skills: ['HTML', 'CSS', 'JavaScript'], color: 'from-cyan/20 to-cyan/5', barColor: 'bg-cyan/40' },
+  { label: 'Growing', skills: ['TypeScript', 'React', 'Node.js'], color: 'from-violet/20 to-violet/5', barColor: 'bg-violet/40' },
+  { label: 'Exploring', skills: ['Git', 'GitHub', 'Supabase'], color: 'from-amber/20 to-amber/5', barColor: 'bg-amber/40' },
 ]
 
-/* ------------------------------------------------------------------ */
-/*  Panel 1 — Learning (numbered terminal-style list)                  */
-/* ------------------------------------------------------------------ */
-function LearningPanel() {
-  const ref = useTilt(5)
-  const inView = useInView(ref, { once: true, margin: '-60px' })
+const strengthColors = [
+  { name: 'Core', color: 'border-cyan/20 bg-cyan/5 text-cyan' },
+  { name: 'Logic', color: 'border-violet/20 bg-violet/5 text-violet' },
+  { name: 'Flow', color: 'border-amber/20 bg-amber/5 text-amber' },
+  { name: 'Force', color: 'border-white/10 bg-white/5 text-white/70' },
+]
+
+export function Tools() {
+  const sectionRef = useRef(null)
+  const inView = useInView(sectionRef, { once: true, margin: '-60px' })
 
   return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, x: -60, skewY: 2 }}
-      animate={inView ? { opacity: 1, x: 0, skewY: 0 } : {}}
-      transition={{ type: 'spring', stiffness: 60, damping: 22 }}
-      className="glass-lift relative overflow-hidden rounded-2xl"
-      style={{ transformStyle: 'preserve-3d' }}
-    >
-      <div className="border-b border-white/[0.05] px-5 py-3.5">
-        <span className="text-xs font-semibold uppercase tracking-[0.2em] text-white/50">Learning</span>
-      </div>
-      <div className="p-5">
-        <div className="space-y-0.5 font-mono text-sm">
-          {learningSkills.map((s, i) => (
-            <motion.div
-              key={s}
-              initial={{ opacity: 0, x: -8 }}
-              animate={inView ? { opacity: 1, x: 0 } : {}}
-              transition={{ delay: i * 0.04, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-              className="flex items-center gap-3 rounded-lg px-2 py-1.5 text-white/70 transition-colors hover:bg-white/[0.04] hover:text-white/90"
-            >
-              <span className="w-5 text-right text-[11px] text-white/25">{String(i + 1).padStart(2, '0')}</span>
-              <span className="text-accent/30">&gt;</span>
-              <span>{s}</span>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </motion.div>
-  )
-}
-
-/* ------------------------------------------------------------------ */
-/*  Panel 2 — Strengths (tag cloud / mosaic)                          */
-/* ------------------------------------------------------------------ */
-function StrengthsPanel() {
-  const ref = useTilt(5)
-  const inView = useInView(ref, { once: true, margin: '-60px' })
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, x: 60, skewY: -2 }}
-      animate={inView ? { opacity: 1, x: 0, skewY: 0 } : {}}
-      transition={{ type: 'spring', stiffness: 60, damping: 22, delay: 0.1 }}
-      className="glass-lift relative overflow-hidden rounded-2xl"
-      style={{ transformStyle: 'preserve-3d' }}
-    >
-      <div className="border-b border-white/[0.05] px-5 py-3.5">
-        <span className="text-xs font-semibold uppercase tracking-[0.2em] text-white/50">Strengths</span>
-      </div>
-      <div className="p-5">
-        <div className="flex flex-wrap gap-2">
-          {strengths.map((s, i) => {
-            const a = accents[i % accents.length]
-            return (
-              <motion.span
-                key={s}
-                initial={{ opacity: 0, scale: 0.85 }}
-                animate={inView ? { opacity: 1, scale: 1 } : {}}
-                transition={{ delay: i * 0.05, type: 'spring', stiffness: 200, damping: 20 }}
-                className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-all hover:scale-105 ${a.dot.replace('/70', '/15')}`}
-                style={{ borderColor: 'rgba(255,255,255,0.06)' }}
-              >
-                <span className={`h-1 w-1 rounded-full ${a.dot}`} />
-                {s}
-              </motion.span>
-            )
-          })}
-        </div>
-      </div>
-    </motion.div>
-  )
-}
-
-/* ------------------------------------------------------------------ */
-/*  Main Export                                                       */
-/* ------------------------------------------------------------------ */
-
-export function Skills() {
-  return (
-    <section id="skills" className="px-5 py-28">
+    <section ref={sectionRef} id="skills" className="px-5 py-28">
       <div className="mx-auto max-w-6xl">
+        {/* Header */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.96 }}
-          whileInView={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="mb-12"
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="mb-14"
         >
-          <h2 className="text-balance text-4xl font-semibold tracking-[-0.06em] text-white md:text-5xl">Tools I am learning. Traits I am building.</h2>
-          <p className="mt-5 max-w-2xl text-lg leading-8 text-white/70">
-            No fake percentages. No &ldquo;expert&rdquo; labels after two tutorials. Just the tools I am actively learning and the personal strengths I am developing alongside them.
+          <div className="flex items-center gap-3 mb-4">
+            <Cpu size={14} className="text-violet/50" />
+            <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-violet/40">CAPABILITY.MATRIX</span>
+          </div>
+          <h2 className="text-balance text-4xl font-semibold tracking-[-0.04em] text-white md:text-5xl">
+            Tools I work with. Traits I build with.
+          </h2>
+          <p className="mt-5 max-w-2xl text-base leading-8 text-white/60">
+            No fake percentages. No &ldquo;expert&rdquo; labels after two tutorials. Just what I know and who I am.
           </p>
         </motion.div>
 
-        <div className="grid gap-5 lg:grid-cols-[1.2fr_1fr]">
-          <LearningPanel />
-          <StrengthsPanel />
+        <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr]">
+          {/* Skill tiers */}
+          <div className="space-y-4">
+            {skillTiers.map((tier, tIdx) => (
+              <motion.div
+                key={tier.label}
+                initial={{ opacity: 0, x: -20 }}
+                animate={inView ? { opacity: 1, x: 0 } : {}}
+                transition={{ delay: tIdx * 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                className={`glass-lift rounded-2xl overflow-hidden bg-gradient-to-r ${tier.color}`}
+              >
+                <div className="px-5 py-3 border-b border-white/[0.05]">
+                  <span className="text-xs font-mono text-white/50">
+                    <span className="text-cyan/40">&gt;</span> {tier.label}
+                  </span>
+                </div>
+                <div className="p-5">
+                  <div className="flex flex-wrap gap-2">
+                    {tier.skills.map((skill, sIdx) => (
+                      <motion.span
+                        key={skill}
+                        initial={{ opacity: 0, scale: 0.85 }}
+                        animate={inView ? { opacity: 1, scale: 1 } : {}}
+                        transition={{ delay: tIdx * 0.1 + sIdx * 0.05, type: 'spring', stiffness: 200, damping: 18 }}
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-white/70 transition-all hover:border-white/20 hover:bg-white/10"
+                      >
+                        <Code2 size={11} className="opacity-40" />
+                        {skill}
+                      </motion.span>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Strengths */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={inView ? { opacity: 1, x: 0 } : {}}
+            transition={{ delay: 0.2, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            className="glass-lift rounded-2xl overflow-hidden"
+          >
+            <div className="border-b border-white/[0.05] px-5 py-3.5 flex items-center gap-2">
+              <Zap size={13} className="text-amber/40" />
+              <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/40">Traits</span>
+            </div>
+            <div className="p-5">
+              <div className="flex flex-wrap gap-2">
+                {strengths.map((s, i) => {
+                  const sc = strengthColors[i % strengthColors.length]
+                  return (
+                    <motion.span
+                      key={s}
+                      initial={{ opacity: 0, scale: 0.85 }}
+                      animate={inView ? { opacity: 1, scale: 1 } : {}}
+                      transition={{ delay: i * 0.04, type: 'spring', stiffness: 200, damping: 18 }}
+                      className={`inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-[11px] font-medium transition-all hover:scale-105 ${sc.color}`}
+                    >
+                      <span className="h-1.5 w-1.5 rounded-sm opacity-60" style={{ backgroundColor: 'currentColor' }} />
+                      <span className="text-[8px] uppercase tracking-[0.1em] opacity-40">{sc.name}</span>
+                      <span className="opacity-80">{s}</span>
+                    </motion.span>
+                  )
+                })}
+              </div>
+            </div>
+          </motion.div>
         </div>
       </div>
     </section>
