@@ -38,7 +38,7 @@ const eggDescriptions: Record<string, string> = {
   mclicks: 'Click the "m" in myths 5 times',
   sackboy: 'Click Sackboy 3 times',
   myths: 'Type "myths" anywhere',
-  mythsClick: 'Click "myths" in the hero 3 times',
+  mythsClick: 'Click "myths" in the hero 5 times',
   play: 'Type "play" in the terminal',
 }
 

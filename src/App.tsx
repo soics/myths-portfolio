@@ -4,6 +4,7 @@ import { motion, useScroll, AnimatePresence } from 'motion/react'
 import { Scene } from './components/Scene'
 import { Background } from './components/Background'
 import { SecretGame } from './components/SecretGame'
+import { MythsCollapse } from './components/MythsCollapse'
 import { Terminal } from './components/Terminal'
 import { Header } from './components/Primitives'
 import { Hero } from './components/Hero'
@@ -151,6 +152,7 @@ const THEMES: Record<string, { accent: string; bg: string; raised: string; text:
 function App() {
   const [terminalOpen, setTerminalOpen] = useState(false)
   const [gameOpen, setGameOpen] = useState(false)
+  const mythsEggActive = useStore((s) => s.mythsEggActive)
 
   const glitch = useCallback(() => {
     const w = window as unknown as Record<string, () => void>
@@ -239,6 +241,7 @@ function App() {
       <ErrorBoundary><Scene /></ErrorBoundary>
       <Terminal open={terminalOpen} onClose={() => setTerminalOpen(false)} sideEffects={sideEffects} />
       <SecretGame open={gameOpen} onClose={() => setGameOpen(false)} />
+      {mythsEggActive && <MythsCollapse />}
       <Header />
       <main id="main-content">
         <Hero />

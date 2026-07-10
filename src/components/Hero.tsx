@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react'
-import { ArrowRight, Terminal, Sparkles } from 'lucide-react'
+import { ArrowRight, Sparkles } from 'lucide-react'
 import { site } from '../data/site'
+import { useStore } from '../lib/store'
 
 function TypeWriter({ text, delay = 0, speed = 40 }: { text: string; delay?: number; speed?: number }) {
   const [displayed, setDisplayed] = useState('')
@@ -76,11 +77,9 @@ function HolographicRing() {
       aria-hidden="true"
     >
       <div className="relative h-[500px] w-[500px] md:h-[700px] md:w-[700px]">
-        {/* Outer ring */}
         <div className="absolute inset-0 rounded-full border border-cyan/5" />
         <div className="absolute inset-[15%] rounded-full border border-cyan/8" />
         <div className="absolute inset-[30%] rounded-full border border-violet/5" />
-        {/* Animated orbit dots */}
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
@@ -118,7 +117,6 @@ function CommandPrompt() {
         onClick={openTerminal}
         className="pointer-events-auto group flex items-center gap-2 rounded-full border border-cyan/10 bg-deep/60 px-4 py-2 text-[11px] font-mono text-white/40 backdrop-blur-sm transition-all hover:border-cyan/20 hover:text-white/70"
       >
-        <Terminal size={12} className="text-cyan/40" />
         <span className="text-white/30">_</span>
         <span className="tracking-[0.1em]">type ` to access systems</span>
         <kbd className="ml-1 rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-[9px] text-white/30">`</kbd>
@@ -127,37 +125,123 @@ function CommandPrompt() {
   )
 }
 
+const CLICK_LABELS = ['', 'signal changed', 'frequency unstable', 'structure cracking', 'collapse imminent', ''] as const
+const GLOW_LEVELS = ['', 'myth-glow-1', 'myth-glow-2', 'myth-glow-3', 'myth-glow-3'] as const
+
+function useAudio() {
+  const ctxRef = useRef<AudioContext | null>(null)
+  const soundEnabled = useStore((s) => s.soundEnabled)
+  const getCtx = useCallback(() => {
+    if (!ctxRef.current) ctxRef.current = new AudioContext()
+    return ctxRef.current
+  }, [])
+  const playTone = useCallback((freq: number, duration: number, type: OscillatorType = 'sine') => {
+    if (!soundEnabled) return
+    try {
+      const ctx = getCtx()
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      osc.type = type
+      osc.frequency.value = freq
+      gain.gain.setValueAtTime(0.08, ctx.currentTime)
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration)
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+      osc.start()
+      osc.stop(ctx.currentTime + duration)
+    } catch { /* AudioContext may not be available */ }
+  }, [soundEnabled, getCtx])
+  return { playTone }
+}
+
 export function Hero() {
   const { scrollY } = useScroll()
   const y = useTransform(scrollY, [0, 500], [0, 40])
   const fade = useTransform(scrollY, [0, 400], [1, 0])
 
   const phrases = site.phrases
-  const clickRef = { current: 0 }
-  const [showQuote, setShowQuote] = useState(false)
+  const clickCount = useStore((s) => s.mythsClickCount)
+  const increment = useStore((s) => s.incrementMythsClick)
+  const setActive = useStore((s) => s.setMythsEggActive)
+  const setPhase = useStore((s) => s.setMythsEggPhase)
+  const soundEnabled = useStore((s) => s.soundEnabled)
+  const toggleSound = useStore((s) => s.toggleSound)
+
+  const [showClickFeedback, setShowClickFeedback] = useState(false)
+  const [feedbackText, setFeedbackText] = useState('')
+  const [showImminent, setShowImminent] = useState(false)
+  const { playTone } = useAudio()
 
   const handleNameClick = useCallback(() => {
-    clickRef.current++
-    if (clickRef.current >= 3) {
-      clickRef.current = 0
-      setShowQuote(true)
-      setTimeout(() => setShowQuote(false), 5000)
-      ;(window as unknown as { __triggerGlitch?: () => void }).__triggerGlitch?.()
-      ;(window as unknown as { __addEasterEgg?: (key: string) => void }).__addEasterEgg?.('mythsClick')
+    const newCount = clickCount + 1
+    increment()
+
+    if (newCount >= 5) {
+      setActive(true)
+      setPhase('collapse')
+      const w = window as unknown as { __addEasterEgg?: (key: string) => void; __triggerGlitch?: () => void }
+      w.__addEasterEgg?.('mythsClick')
+      const glitch = w.__triggerGlitch
+      if (glitch) { glitch(); setTimeout(glitch, 300); setTimeout(glitch, 600) }
+      playTone(80, 1.5, 'sawtooth')
+      return
     }
-  }, [])
+
+    playTone(200 + newCount * 60, 0.12 + newCount * 0.04)
+    setFeedbackText(CLICK_LABELS[newCount] || '')
+    setShowClickFeedback(true)
+    setTimeout(() => setShowClickFeedback(false), 1400)
+
+    if (newCount === 4) {
+      setShowImminent(true)
+      setTimeout(() => setShowImminent(false), 3000)
+      playTone(120, 0.8, 'square')
+    }
+
+    const w = window as unknown as { __triggerGlitch?: () => void }
+    if (newCount >= 3) w.__triggerGlitch?.()
+  }, [clickCount, increment, setActive, setPhase, playTone])
+
+  const glowClass = GLOW_LEVELS[clickCount] || ''
+  const distort = clickCount >= 2
+  const shake = clickCount >= 3
 
   return (
     <motion.section id="top" style={{ opacity: fade }}
-      className="relative flex min-h-dvh items-center overflow-hidden px-5 pt-28"
+      className={`relative flex min-h-dvh items-center overflow-hidden px-5 pt-28 transition-all duration-700 ${clickCount >= 4 ? 'brightness-[0.6] saturate-[0.3]' : ''}`}
     >
       <HolographicRing />
       <DataStreams />
       <CommandPrompt />
 
+      {/* Sound toggle (subtle) */}
+      <button
+        type="button"
+        onClick={toggleSound}
+        className="fixed top-20 right-5 z-30 text-[9px] font-mono tracking-[0.15em] text-white/15 transition-colors hover:text-white/40"
+        aria-label={soundEnabled ? 'Mute' : 'Enable sound'}
+      >
+        {soundEnabled ? '[sound: on]' : '[sound: off]'}
+      </button>
+
+      {/* Collapse imminent overlay */}
+      <AnimatePresence>
+        {showImminent && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="pointer-events-none fixed inset-0 z-30 flex items-center justify-center"
+          >
+            <span className="font-mono text-[clamp(1.5rem,4vw,3rem)] font-black text-cyan/20 tracking-[0.2em] collapse-imminent">
+              COLLAPSE IMMINENT
+            </span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <motion.div style={{ y }} className="relative z-10 mx-auto w-full max-w-6xl">
         <div className="max-w-4xl">
-          {/* Eyebrow */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -171,43 +255,39 @@ export function Hero() {
             <span className="h-[1px] w-8 bg-cyan/30" />
           </motion.div>
 
-          {/* Name */}
           <motion.h1
             initial={{ opacity: 0, y: 40, filter: 'blur(8px)' }}
             animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="text-[clamp(3rem,12vw,8rem)] font-black leading-[0.88] tracking-[-0.04em]"
+            className={`text-[clamp(3rem,12vw,8rem)] font-black leading-[0.88] tracking-[-0.04em] ${shake ? 'myth-shake' : ''}`}
           >
             <button
               type="button"
               onClick={handleNameClick}
-              className="cursor-pointer bg-transparent border-none p-0 inline"
+              className={`cursor-pointer bg-transparent border-none p-0 inline transition-all duration-300 ${distort ? 'myth-distort' : ''} ${clickCount >= 3 ? 'myths-egg-cracks' : ''}`}
               aria-label="Click for a secret"
             >
-              <span className="bg-gradient-to-r from-white via-white to-cyan/60 bg-clip-text text-transparent transition-all duration-300 hover:to-cyan/40">
+              <span className={`bg-gradient-to-r from-white via-white to-cyan/60 bg-clip-text text-transparent ${glowClass}`}>
                 {site.name}
               </span>
             </button>
           </motion.h1>
 
+          {/* Click feedback */}
           <AnimatePresence>
-            {showQuote && (
-              <motion.div
-                initial={{ opacity: 0, y: 12 }}
+            {showClickFeedback && feedbackText && (
+              <motion.p
+                initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 max-w-lg rounded-2xl border border-white/[0.08] bg-deep/95 px-6 py-5 text-center shadow-[0_16px_48px_rgba(0,0,0,0.6)] backdrop-blur-xl"
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.3 }}
+                className="mt-2 text-xs font-mono tracking-[0.15em] text-cyan/50"
               >
-                <p className="text-sm leading-relaxed text-white/55 italic">
-                  &ldquo;all change is not growth, as all movement is not forward&rdquo;
-                </p>
-                <p className="mt-2 text-[10px] text-white/25">myths</p>
-              </motion.div>
+                &gt; {feedbackText}
+              </motion.p>
             )}
           </AnimatePresence>
 
-          {/* Real name */}
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -217,14 +297,12 @@ export function Hero() {
             <span className="text-cyan/40">&gt;</span> {site.realName}
           </motion.p>
 
-          {/* Typewriter tagline */}
           <motion.div className="mt-8 max-w-2xl">
             <p className="text-[15px] leading-relaxed text-white/60 md:text-base">
               <TypeWriter text={phrases[2] || 'Building the future, one line at a time.'} delay={1} speed={25} />
             </p>
           </motion.div>
 
-          {/* CTA */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -245,7 +323,6 @@ export function Hero() {
             </a>
           </motion.div>
 
-          {/* Signal bars */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
