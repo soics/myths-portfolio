@@ -112,7 +112,7 @@ function SceneContent() {
 
 export function Scene() {
   return (
-    <div className="pointer-events-none fixed inset-0 -z-10" aria-hidden="true">
+    <div className="pointer-events-none fixed inset-0 -z-10" aria-hidden="true" style={{ background: 'transparent' }}>
       <Canvas
         camera={{ position: [0, 0.5, 5], fov: 45, near: 0.1, far: 100 }}
         dpr={[1, 1.5]}
@@ -120,6 +120,11 @@ export function Scene() {
           antialias: true,
           alpha: true,
           powerPreference: 'high-performance',
+          failIfMajorPerformanceCaveat: false,
+        }}
+        style={{ background: 'transparent' }}
+        onCreated={(state) => {
+          state.gl.setClearColor(0x000000, 0)
         }}
       >
         <AdaptiveDpr pixelated />

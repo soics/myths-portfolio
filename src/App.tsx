@@ -15,6 +15,7 @@ import { Contact } from './components/Contact'
 import { useStore } from './lib/store'
 import { useKonamiCode } from './hooks/useKonamiCode'
 import { useTypedSequence } from './hooks/useTilt'
+import { ErrorBoundary } from './components/ErrorBoundary'
 import type { SideEffects } from './hooks/useTerminal'
 import './styles/globals.css'
 
@@ -226,7 +227,7 @@ function App() {
       <ScrollProgress />
       <BackgroundAccent />
       <Background />
-      <Suspense fallback={null}><Scene /></Suspense>
+      <ErrorBoundary><Suspense fallback={null}><Scene /></Suspense></ErrorBoundary>
       <Terminal open={terminalOpen} onClose={() => setTerminalOpen(false)} sideEffects={sideEffects} />
       <Header />
       <main id="main-content">
