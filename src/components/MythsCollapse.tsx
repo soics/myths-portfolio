@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, Suspense } from 'react'
 import { Canvas, useFrame, type ThreeEvent } from '@react-three/fiber'
 import { Text, OrbitControls, AdaptiveDpr, AdaptiveEvents } from '@react-three/drei'
 import * as THREE from 'three'
@@ -90,9 +90,7 @@ function CollapsePhase({ onComplete }: { onComplete: () => void }) {
       <directionalLight position={[0, 5, 3]} intensity={3} color="#d4d4dc" />
       <pointLight position={[0, 0, 2]} intensity={12} color="#ffffff" distance={12} decay={2} />
       {LETTERS.map((c, i) => (
-        <mesh key={c} ref={(el) => { meshes.current[i] = el }} position={[TARGET_X[i], 0, 0]}>
-          <Text {...FP} color="#ececf0" outlineColor="#d4d4dc" outlineOpacity={0.3}>{c}</Text>
-        </mesh>
+        <Text key={c} ref={(el) => { meshes.current[i] = el as unknown as THREE.Mesh }} position={[TARGET_X[i], 0, 0]} {...FP} color="#ececf0" outlineColor="#d4d4dc" outlineOpacity={0.3}>{c}</Text>
       ))}
     </>
   )
@@ -209,15 +207,11 @@ function RebuildPhase({ onComplete }: { onComplete: () => void }) {
       <pointLight position={[0, 1, 2]} intensity={4} color="#d4d4dc" distance={10} decay={2} />
       <OrbitControls ref={controlsRef} enablePan={false} minDistance={3} maxDistance={14} autoRotate autoRotateSpeed={0.3} makeDefault />
       {letters.map((l) => (
-        <mesh key={`g-${l.char}`} position={l.target}>
-          <Text {...FP} color="#8888a0" fillOpacity={0.12}>{l.char}</Text>
-        </mesh>
+        <Text key={`g-${l.char}`} position={l.target} {...FP} color="#8888a0" fillOpacity={0.12}>{l.char}</Text>
       ))}
       <group onPointerDown={pd} onPointerMove={pm} onPointerUp={pu} onPointerLeave={pu}>
         {LETTERS.map((c, i) => (
-          <mesh key={c} ref={(el) => { meshes.current[i] = el }} position={letters[i].current}>
-            <Text {...FP} color="#ececf0" outlineColor="#d4d4dc" outlineOpacity={snappedArr[i] ? 0.5 : 0.15} fillOpacity={snappedArr[i] ? 0.5 : 1}>{c}</Text>
-          </mesh>
+          <Text key={c} ref={(el) => { meshes.current[i] = el as unknown as THREE.Object3D }} position={letters[i].current} {...FP} color="#ececf0" outlineColor="#d4d4dc" outlineOpacity={snappedArr[i] ? 0.5 : 0.15} fillOpacity={snappedArr[i] ? 0.5 : 1}>{c}</Text>
         ))}
       </group>
     </>
@@ -260,9 +254,7 @@ function RewardPhase() {
       <pointLight position={[0, 0, 3]} intensity={15} color="#d4d4dc" distance={12} decay={2} />
       <OrbitControls enablePan={false} minDistance={3} maxDistance={14} autoRotate autoRotateSpeed={0.6} makeDefault />
       {LETTERS.map((c, i) => (
-        <mesh key={c} position={[TARGET_X[i], 0, 0]}>
-          <Text {...FP} color="#ececf0" outlineColor="#d4d4dc" outlineOpacity={0.5}>{c}</Text>
-        </mesh>
+        <Text key={c} position={[TARGET_X[i], 0, 0]} {...FP} color="#ececf0" outlineColor="#d4d4dc" outlineOpacity={0.5}>{c}</Text>
       ))}
       <points ref={particlesRef} geometry={geo}>
         <pointsMaterial size={0.05} color="#d4d4dc" transparent opacity={0.35} sizeAttenuation blending={THREE.AdditiveBlending} />
@@ -328,9 +320,11 @@ export function MythsCollapse({ onExit }: { onExit?: () => void }) {
         <Canvas camera={{ position: [0, 0.5, 8], fov: 50, near: 0.1, far: 30 }} dpr={[1, 1.5]} gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }} onCreated={(s) => s.gl.setClearColor(0x000000, 1)}>
           <AdaptiveDpr pixelated />
           <AdaptiveEvents />
-          {phase === 'collapse' && <CollapsePhase onComplete={handleCollapseDone} />}
-          {phase === 'rebuild' && <RebuildPhase onComplete={handleRebuildDone} />}
-          {phase === 'reward' && <RewardPhase />}
+          <Suspense fallback={null}>
+            {phase === 'collapse' && <CollapsePhase onComplete={handleCollapseDone} />}
+            {phase === 'rebuild' && <RebuildPhase onComplete={handleRebuildDone} />}
+            {phase === 'reward' && <RewardPhase />}
+          </Suspense>
         </Canvas>
       </div>
     </div>

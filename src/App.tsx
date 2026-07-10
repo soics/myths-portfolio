@@ -131,10 +131,10 @@ function FooterSecret() {
             exit={{ opacity: 0 }}
             className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 max-w-md rounded-2xl border border-white/[0.08] bg-deep/95 px-6 py-4 text-center shadow-[0_16px_48px_rgba(0,0,0,0.6)] backdrop-blur-xl"
           >
-            <p className="text-xs leading-relaxed text-white/50">
-              &ldquo;The signal is faint but still burning.&rdquo;
-            </p>
-            <p className="mt-2 text-[10px] text-white/25">bagboy</p>
+              <p className="text-xs leading-relaxed text-white/50">
+                &ldquo;all change is not growth, as all movement is not forward&rdquo;
+              </p>
+              <p className="mt-2 text-[10px] text-white/25">myths</p>
           </motion.div>
         )}
       </AnimatePresence>
