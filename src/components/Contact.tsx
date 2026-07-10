@@ -67,10 +67,10 @@ export function Contact() {
         {/* Left — heading + social */}
         <div>
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 40, scale: 0.9 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
             viewport={{ once: true, margin: '-80px' }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
           >
             <h2 className="text-balance text-4xl font-semibold tracking-[-0.06em] text-white md:text-5xl">Say something real.</h2>
             <p className="mt-5 max-w-md text-lg leading-8 text-white/70">
@@ -90,10 +90,10 @@ export function Contact() {
 
         {/* Right — form */}
         <motion.form
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 40, scale: 0.95 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
           viewport={{ once: true, margin: '-80px' }}
-          transition={{ type: 'spring', stiffness: 100, damping: 25, delay: 0.15 }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.15 }}
           onSubmit={handleSubmit}
           animate={status === 'error' ? shakeAnim() : {}}
           className="glass-lift rounded-[20px] p-7 md:p-8"
@@ -103,7 +103,12 @@ export function Contact() {
 
           <div className="space-y-5">
             {/* Name */}
-            <div>
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            >
               <label className="block text-xs text-white/55">
                 Name <span className="text-red-200/35">*</span>
               </label>
@@ -112,10 +117,15 @@ export function Contact() {
                 className="focus-ring mt-1.5 w-full rounded-xl border border-white/[0.06] bg-black/50 px-4 py-3.5 text-sm text-white transition-all duration-300 placeholder:text-white/25 focus:border-accent/25 focus:shadow-[0_0_24px_rgba(160,196,255,0.05)]"
                 placeholder="Your name"
               />
-            </div>
+            </motion.div>
 
             {/* Email */}
-            <div>
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            >
               <label className="block text-xs text-white/55">
                 Email <span className="text-red-200/35">*</span>
               </label>
@@ -124,10 +134,15 @@ export function Contact() {
                 className="focus-ring mt-1.5 w-full rounded-xl border border-white/[0.06] bg-black/50 px-4 py-3.5 text-sm text-white transition-all duration-300 placeholder:text-white/25 focus:border-accent/25 focus:shadow-[0_0_24px_rgba(160,196,255,0.05)]"
                 placeholder="your@email.com"
               />
-            </div>
+            </motion.div>
 
             {/* Message */}
-            <div>
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            >
               <div className="flex items-baseline justify-between">
                 <label className="block text-xs text-white/55">
                   Message <span className="text-red-200/35">*</span>
@@ -140,7 +155,7 @@ export function Contact() {
                 className="focus-ring mt-1.5 w-full resize-none rounded-xl border border-white/[0.06] bg-black/50 px-4 py-3.5 text-sm text-white transition-all duration-300 placeholder:text-white/25 focus:border-accent/25 focus:shadow-[0_0_24px_rgba(160,196,255,0.05)]"
                 placeholder="What&rsquo;s on your mind?"
               />
-            </div>
+            </motion.div>
           </div>
 
           {/* Submit */}

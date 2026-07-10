@@ -62,9 +62,9 @@ function FeaturedCard({ repo, index }: { repo: GitHubRepo; index: number }) {
   return (
     <motion.a
       ref={ref}
-      initial={{ opacity: 0, y: 40, scale: 0.96 }}
+      initial={{ opacity: 0, y: 80, scale: 0.88 }}
       animate={inView ? { opacity: 1, y: 0, scale: 1 } : {}}
-      transition={{ delay: index * 0.1, type: 'spring', stiffness: 70, damping: 22 }}
+      transition={{ delay: index * 0.12, type: 'spring', stiffness: 50, damping: 22 }}
       whileHover={{ y: -8, scale: 1.002 }}
       className="focus-ring group relative block overflow-hidden rounded-[20px] transition-all duration-500 hover:shadow-[0_32px_100px_rgba(0,0,0,0.6)]"
       href={repo.html_url}
@@ -127,9 +127,9 @@ function FeaturedCard({ repo, index }: { repo: GitHubRepo; index: number }) {
 function RepoCard({ repo, inView, index }: { repo: GitHubRepo; inView: boolean; index: number }) {
   return (
     <motion.a
-      initial={{ opacity: 0, y: 30 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ delay: 0.1 + index * 0.06, type: 'spring', stiffness: 110, damping: 24 }}
+      initial={{ opacity: 0, y: 50, scale: 0.92 }}
+      animate={inView ? { opacity: 1, y: 0, scale: 1 } : {}}
+      transition={{ delay: 0.1 + index * 0.08, type: 'spring', stiffness: 80, damping: 22 }}
       whileHover={{ y: -12, scale: 1.015 }}
       className={`focus-ring group relative block overflow-hidden rounded-[18px] border p-6 transition-all duration-400 hover:shadow-[0_20px_60px_rgba(0,0,0,0.5)] ${color(repo.language, langBorders)}`}
       style={{ borderWidth: 1 }}
@@ -218,10 +218,10 @@ export function ProjectsSection() {
     <section id="projects" className="px-5 py-28">
       <div className="mx-auto max-w-6xl">
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 20, filter: 'blur(6px)' }}
+          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           className="mb-12"
         >
           <h2 className="text-balance text-4xl font-semibold tracking-[-0.06em] text-white md:text-5xl">

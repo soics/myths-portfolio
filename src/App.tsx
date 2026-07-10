@@ -30,6 +30,7 @@ const SECTION_ACCENTS = [
 
 function BackgroundAccent() {
   const [activeAccent, setActiveAccent] = useState('160,196,255')
+  const [flashKey, setFlashKey] = useState(0)
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -37,7 +38,10 @@ function BackgroundAccent() {
         for (const entry of entries) {
           if (entry.isIntersecting) {
             const found = SECTION_ACCENTS.find(a => a.id === entry.target.id)
-            if (found) setActiveAccent(found.accent)
+            if (found) {
+              setActiveAccent(found.accent)
+              setFlashKey(k => k + 1)
+            }
           }
         }
       },
@@ -51,19 +55,30 @@ function BackgroundAccent() {
   useEffect(() => {
     const root = document.documentElement
     root.style.setProperty('--accent-rgb', activeAccent)
-    root.style.setProperty('--accent-glow', `rgba(${activeAccent}, 0.08)`)
+    root.style.setProperty('--accent-glow', `rgba(${activeAccent}, 0.12)`)
   }, [activeAccent])
 
   return (
-    <motion.div
-      key={activeAccent}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.6 }}
-      className="pointer-events-none fixed inset-0 -z-10"
-      aria-hidden="true"
-      style={{ background: `radial-gradient(ellipse 80% 50% at 50% 0%, rgba(${activeAccent}, 0.06), transparent 70%)` }}
-    />
+    <>
+      <motion.div
+        key={activeAccent}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+        className="pointer-events-none fixed inset-0 -z-10"
+        aria-hidden="true"
+        style={{ background: `radial-gradient(ellipse 80% 50% at 50% 0%, rgba(${activeAccent}, 0.08), transparent 70%)` }}
+      />
+      <motion.div
+        key={flashKey}
+        initial={{ opacity: 0.2 }}
+        animate={{ opacity: 0 }}
+        transition={{ duration: 1.2, ease: 'easeOut' }}
+        className="pointer-events-none fixed inset-0 -z-10"
+        aria-hidden="true"
+        style={{ background: `radial-gradient(ellipse at 50% 50%, rgba(${activeAccent}, 0.15), transparent 60%)` }}
+      />
+    </>
   )
 }
 

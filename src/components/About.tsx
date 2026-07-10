@@ -17,15 +17,15 @@ export function About() {
     <section id="about" className="px-5 py-32">
       <div className="mx-auto max-w-6xl">
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, clipPath: 'inset(0 100% 0 0)' }}
+          whileInView={{ opacity: 1, clipPath: 'inset(0 0% 0 0)' }}
           viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
           className="relative"
         >
           {/* Decorative background letter */}
           <span
-            className="pointer-events-none absolute -left-6 -top-16 select-none text-[16rem] font-black leading-none tracking-[-0.08em] text-white/[0.015]"
+            className="pointer-events-none absolute -left-6 -top-16 select-none text-[16rem] font-black leading-none tracking-[-0.08em] text-white/[0.05]"
             aria-hidden="true"
           >
             M
@@ -38,10 +38,10 @@ export function About() {
                 {bioParagraphs.map((para, pIdx) => (
                   <motion.p
                     key={pIdx}
-                    initial={{ opacity: 0, y: 16 }}
-                    whileInView={{ opacity: 1, y: 0 }}
+                    initial={{ opacity: 0, x: -20, filter: 'blur(4px)' }}
+                    whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
                     viewport={{ once: true }}
-                    transition={{ delay: 0.15 + pIdx * 0.1, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{ delay: 0.2 + pIdx * 0.12, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
                     className="text-[15px] leading-[1.85] text-white/70"
                   >
                     {para.split(' ').map((word, wIdx) => {

@@ -9,9 +9,9 @@ function ChapterCard({ chapter, index, inView, isLast }: {
   const tiltRef = useTilt(6)
   return (
     <motion.article
-      initial={{ opacity: 0, x: -20 }}
-      animate={inView ? { opacity: 1, x: 0 } : {}}
-      transition={{ delay: index * 0.15, type: 'spring', stiffness: 100, damping: 26 }}
+      initial={{ opacity: 0, x: -30, rotate: -2 }}
+      animate={inView ? { opacity: 1, x: 0, rotate: 0 } : {}}
+      transition={{ delay: index * 0.18, type: 'spring', stiffness: 70, damping: 22 }}
       className="group relative mb-6 last:mb-0"
     >
       <span className="absolute left-[-33px] top-8 md:left-[-45px]">
@@ -66,10 +66,10 @@ export function Journey() {
     <section ref={sectionRef} id="journey" className="px-5 py-28">
       <div className="mx-auto max-w-6xl">
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 30, scale: 0.95 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
           viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
           className="mb-12"
         >
           <motion.p

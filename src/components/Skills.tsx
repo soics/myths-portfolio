@@ -27,9 +27,9 @@ function LearningPanel() {
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, x: -20 }}
-      animate={inView ? { opacity: 1, x: 0 } : {}}
-      transition={{ type: 'spring', stiffness: 80, damping: 24 }}
+      initial={{ opacity: 0, x: -60, skewY: 2 }}
+      animate={inView ? { opacity: 1, x: 0, skewY: 0 } : {}}
+      transition={{ type: 'spring', stiffness: 60, damping: 22 }}
       className="glass-lift relative overflow-hidden rounded-2xl"
       style={{ transformStyle: 'preserve-3d' }}
     >
@@ -67,9 +67,9 @@ function StrengthsPanel() {
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, x: 20 }}
-      animate={inView ? { opacity: 1, x: 0 } : {}}
-      transition={{ type: 'spring', stiffness: 80, damping: 24, delay: 0.08 }}
+      initial={{ opacity: 0, x: 60, skewY: -2 }}
+      animate={inView ? { opacity: 1, x: 0, skewY: 0 } : {}}
+      transition={{ type: 'spring', stiffness: 60, damping: 22, delay: 0.1 }}
       className="glass-lift relative overflow-hidden rounded-2xl"
       style={{ transformStyle: 'preserve-3d' }}
     >
@@ -109,10 +109,10 @@ export function Skills() {
     <section id="skills" className="px-5 py-28">
       <div className="mx-auto max-w-6xl">
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, scale: 0.96 }}
+          whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           className="mb-12"
         >
           <h2 className="text-balance text-4xl font-semibold tracking-[-0.06em] text-white md:text-5xl">Tools I am learning. Traits I am building.</h2>

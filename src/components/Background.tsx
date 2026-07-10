@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { motion, useScroll, useTransform } from 'motion/react'
+import { motion } from 'motion/react'
 
 /* ------------------------------------------------------------------ */
 /*  Layer 1 – Accent Bloom (visible signature glow)                    */
@@ -24,9 +24,9 @@ function AccentBloom() {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Layer 3 – Physics Canvas Particles (replaces React DOM particles)  */
+/*  Layer 3 – Constellation Canvas (visible, elegant, reactive)        */
 /* ------------------------------------------------------------------ */
-function PhysicsParticles() {
+function Constellation() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
@@ -37,129 +37,113 @@ function PhysicsParticles() {
 
     let animId: number
     let w = 0, h = 0
-    const mouse = { x: -1000, y: -1000, px: -1000, py: -1000 }
+    const mouse = { x: -1000, y: -1000 }
 
-    interface Part {
-      x: number; y: number; vx: number; vy: number; size: number
-      alpha: number; life: number; maxLife: number
+    interface Star {
+      x: number; y: number; baseX: number; baseY: number
+      vx: number; vy: number
+      size: number; phase: number
     }
 
-    const particles: Part[] = []
+    const stars: Star[] = []
+    let time = 0
 
     function resize() {
       w = canvas!.width = window.innerWidth
       h = canvas!.height = window.innerHeight
+      if (stars.length === 0) {
+        for (let i = 0; i < 120; i++) {
+          const x = Math.random() * w
+          const y = Math.random() * h
+          stars.push({
+            x, y, baseX: x, baseY: y,
+            vx: 0, vy: 0,
+            size: 1 + Math.random() * 2.5,
+            phase: Math.random() * Math.PI * 2,
+          })
+        }
+      }
     }
     resize()
     window.addEventListener('resize', resize)
 
-    function spawnBurst(cx: number, cy: number, count: number) {
-      for (let i = 0; i < count; i++) {
-        const angle = Math.random() * Math.PI * 2
-        const speed = 1 + Math.random() * 3
-        const maxLife = 80 + Math.random() * 120
-        particles.push({
-          x: cx + (Math.random() - 0.5) * 4,
-          y: cy + (Math.random() - 0.5) * 4,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed,
-          size: 1 + Math.random() * 2.5,
-          alpha: 0.3 + Math.random() * 0.4,
-          life: 0,
-          maxLife,
-        })
-      }
-    }
-
-    // Initial ambient particles
-    for (let i = 0; i < 60; i++) {
-      particles.push({
-        x: Math.random() * w, y: Math.random() * h,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: (Math.random() - 0.5) * 0.3,
-        size: 0.5 + Math.random() * 1.5,
-        alpha: 0.1 + Math.random() * 0.3,
-        life: Math.random() * 200,
-        maxLife: 200 + Math.random() * 200,
-      })
-    }
-
-    const onMove = (e: MouseEvent) => {
-      mouse.px = mouse.x; mouse.py = mouse.y
-      mouse.x = e.clientX; mouse.y = e.clientY
-      const dx = mouse.x - mouse.px
-      const dy = mouse.y - mouse.py
-      const dist = Math.sqrt(dx * dx + dy * dy)
-      if (dist > 3) spawnBurst(mouse.x, mouse.y, 2)
-    }
-    const onClick = (e: MouseEvent) => spawnBurst(e.clientX, e.clientY, 25)
+    const onMove = (e: MouseEvent) => { mouse.x = e.clientX; mouse.y = e.clientY }
+    const onLeave = () => { mouse.x = -1000; mouse.y = -1000 }
     window.addEventListener('mousemove', onMove, { passive: true })
-    window.addEventListener('click', onClick, { passive: true })
+    window.addEventListener('mouseleave', onLeave, { passive: true })
 
     function tick() {
+      time += 0.005
       ctx!.clearRect(0, 0, w, h)
 
-      // Get accent color from CSS
       const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent-rgb').trim() || '160,196,255'
 
-      // Update and draw particles
-      for (let i = particles.length - 1; i >= 0; i--) {
-        const p = particles[i]
-        p.life++
-        p.x += p.vx
-        p.y += p.vy
-
-        // Friction
-        p.vx *= 0.98
-        p.vy *= 0.98
-
-        // Mouse repulsion
-        const dx = p.x - mouse.x
-        const dy = p.y - mouse.y
+      // Update stars
+      for (const s of stars) {
+        const dx = mouse.x - s.x
+        const dy = mouse.y - s.y
         const dist = Math.sqrt(dx * dx + dy * dy)
-        if (dist < 120 && dist > 0) {
-          const force = (120 - dist) / 120 * 0.5
-          p.vx += (dx / dist) * force
-          p.vy += (dy / dist) * force
+
+        // Gentle mouse attraction
+        if (dist < 250 && dist > 0) {
+          const force = (250 - dist) / 250 * 0.08
+          s.vx += (dx / dist) * force
+          s.vy += (dy / dist) * force
         }
 
-        // Wrap around edges
-        if (p.x < -20) p.x = w + 20
-        if (p.x > w + 20) p.x = -20
-        if (p.y < -20) p.y = h + 20
-        if (p.y > h + 20) p.y = -20
+        // Drift back to base position
+        s.vx += (s.baseX - s.x) * 0.002
+        s.vy += (s.baseY - s.y) * 0.002
 
-        // Fade out and remove dead particles
-        const lifeRatio = p.life / p.maxLife
-        if (lifeRatio > 0.7) p.alpha *= 0.97
-        if (lifeRatio >= 1 || p.alpha < 0.01) {
-          particles.splice(i, 1)
-          continue
-        }
+        // Damping
+        s.vx *= 0.94
+        s.vy *= 0.94
 
-        // Draw particle
-        ctx!.globalAlpha = p.alpha
-        ctx!.fillStyle = `rgba(${accent}, 0.6)`
-        ctx!.beginPath()
-        ctx!.arc(p.x, p.y, p.size, 0, Math.PI * 2)
-        ctx!.fill()
+        s.x += s.vx
+        s.y += s.vy
+      }
 
-        // Draw connection lines between close particles
-        for (let j = i - 1; j >= 0 && j > i - 10; j--) {
-          const p2 = particles[j]
-          const ldx = p.x - p2.x
-          const ldy = p.y - p2.y
-          const ldist = Math.sqrt(ldx * ldx + ldy * ldy)
-          if (ldist < 100) {
-            ctx!.globalAlpha = (1 - ldist / 100) * 0.08
-            ctx!.strokeStyle = `rgba(${accent}, 0.3)`
-            ctx!.lineWidth = 0.5
+      // Draw connections (constellation lines)
+      for (let i = 0; i < stars.length; i++) {
+        for (let j = i + 1; j < Math.min(i + 15, stars.length); j++) {
+          const a = stars[i], b = stars[j]
+          const dx = a.x - b.x
+          const dy = a.y - b.y
+          const dist = Math.sqrt(dx * dx + dy * dy)
+          if (dist < 150) {
+            const alpha = (1 - dist / 150) * 0.15
+            ctx!.globalAlpha = alpha
+            ctx!.strokeStyle = `rgba(${accent}, ${0.3 + Math.sin(time + a.phase + b.phase) * 0.15})`
+            ctx!.lineWidth = 0.8
             ctx!.beginPath()
-            ctx!.moveTo(p.x, p.y)
-            ctx!.lineTo(p2.x, p2.y)
+            ctx!.moveTo(a.x, a.y)
+            ctx!.lineTo(b.x, b.y)
             ctx!.stroke()
           }
         }
+      }
+
+      // Draw stars
+      for (const s of stars) {
+        const pulse = 0.6 + Math.sin(time * 2 + s.phase) * 0.3
+        const radius = s.size * pulse
+
+        // Glow
+        const grad = ctx!.createRadialGradient(s.x, s.y, 0, s.x, s.y, radius * 4)
+        grad.addColorStop(0, `rgba(${accent}, 0.15)`)
+        grad.addColorStop(1, `rgba(${accent}, 0)`)
+        ctx!.globalAlpha = 0.8
+        ctx!.fillStyle = grad
+        ctx!.beginPath()
+        ctx!.arc(s.x, s.y, radius * 4, 0, Math.PI * 2)
+        ctx!.fill()
+
+        // Core
+        ctx!.globalAlpha = 0.5 + pulse * 0.4
+        ctx!.fillStyle = `rgba(${accent}, 0.85)`
+        ctx!.beginPath()
+        ctx!.arc(s.x, s.y, radius, 0, Math.PI * 2)
+        ctx!.fill()
       }
 
       ctx!.globalAlpha = 1
@@ -172,7 +156,7 @@ function PhysicsParticles() {
       cancelAnimationFrame(animId)
       window.removeEventListener('resize', resize)
       window.removeEventListener('mousemove', onMove)
-      window.removeEventListener('click', onClick)
+      window.removeEventListener('mouseleave', onLeave)
     }
   }, [])
 
@@ -258,35 +242,7 @@ function Vignette() {
   )
 }
 
-/* ------------------------------------------------------------------ */
-/*  Layer 5 – Cursor Glow                                             */
-/* ------------------------------------------------------------------ */
-function CursorGlow() {
-  const ref = useRef<HTMLDivElement>(null)
-  const { scrollY } = useScroll()
-  const fade = useTransform(scrollY, [0, 500], [1, 0.3])
 
-  useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    let raf: number, x = -1000, y = -1000, tx = -1000, ty = -1000
-    const onMove = (e: MouseEvent) => { tx = e.clientX; ty = e.clientY }
-    const tick = () => {
-      x += (tx - x) * 0.08; y += (ty - y) * 0.08
-      const el = ref.current
-      if (el) { el.style.setProperty('--cx', `${x}px`); el.style.setProperty('--cy', `${y}px`) }
-      raf = requestAnimationFrame(tick)
-    }
-    window.addEventListener('mousemove', onMove, { passive: true })
-    raf = requestAnimationFrame(tick)
-    return () => { window.removeEventListener('mousemove', onMove); cancelAnimationFrame(raf) }
-  }, [])
-
-  return (
-    <motion.div ref={ref} aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10"
-      style={{ opacity: fade, background: 'radial-gradient(700px at var(--cx, -1000px) var(--cy, -1000px), rgba(var(--accent-rgb, 160,196,255), 0.06), rgba(var(--accent-rgb, 160,196,255), 0.02) 45%, transparent 70%)' }}
-    />
-  )
-}
 
 /* ------------------------------------------------------------------ */
 /*  Layer 6 – Cursor Ring                                             */
@@ -356,11 +312,10 @@ export function Background({ matrixActive }: { matrixActive?: boolean }) {
 
   return (
     <>
+      <Constellation />
       <AccentBloom />
-      <PhysicsParticles />
       <MatrixRain active={!!matrixActive} />
       <Vignette />
-      <CursorGlow />
       <CursorRing />
       <CRTGlitch active={glitchActive} />
     </>
