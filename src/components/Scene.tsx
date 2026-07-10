@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { ScrollControls, Environment, Float, AdaptiveDpr, AdaptiveEvents } from '@react-three/drei'
+import { Environment, Float, AdaptiveDpr, AdaptiveEvents } from '@react-three/drei'
 import * as THREE from 'three'
 import { Bagboy } from './Bagboy'
 
@@ -37,7 +37,6 @@ function GroundGrid() {
     <gridHelper
       args={[20, 20, '#00e5ff', '#7c3aed']}
       position={[0, -3, 0]}
-      rotation={[0, 0, 0]}
     />
   )
 }
@@ -113,7 +112,7 @@ function SceneContent() {
 
 export function Scene() {
   return (
-    <div className="pointer-events-none fixed inset-0 -z-10 hidden lg:block" aria-hidden="true">
+    <div className="pointer-events-none fixed inset-0 -z-10" aria-hidden="true">
       <Canvas
         camera={{ position: [0, 0.5, 5], fov: 45, near: 0.1, far: 100 }}
         dpr={[1, 1.5]}
@@ -126,9 +125,7 @@ export function Scene() {
         <AdaptiveDpr pixelated />
         <AdaptiveEvents />
         <Suspense fallback={null}>
-          <ScrollControls damping={0.5} pages={3} infinite={false}>
-            <SceneContent />
-          </ScrollControls>
+          <SceneContent />
           <Environment preset="night" />
         </Suspense>
       </Canvas>

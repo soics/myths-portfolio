@@ -1,6 +1,5 @@
 import { useRef, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { useScroll } from '@react-three/drei'
 import * as THREE from 'three'
 import { useStore } from '../lib/store'
 
@@ -55,13 +54,13 @@ function Sphere({ color, position, scale, emissiveIntensity = 0.3 }: {
 
 export function Bagboy() {
   const groupRef = useRef<THREE.Group>(null)
-  const scroll = useScroll()
-  const pose = useStore((s) => s.bagboyPose)
-  const activeSection = useStore((s) => s.activeSection)
-
   const armLRef = useRef<THREE.Mesh>(null)
   const armRRef = useRef<THREE.Mesh>(null)
   const bagRef = useRef<THREE.Mesh>(null)
+
+  const pose = useStore((s) => s.bagboyPose)
+  const activeSection = useStore((s) => s.activeSection)
+  const scrollY = useStore((s) => s.scrollY)
 
   const sectionColors: Record<string, THREE.Color> = useMemo(() => ({
     top: CYAN,
@@ -99,14 +98,17 @@ export function Bagboy() {
 
     const t = state.clock.elapsedTime
 
+    const docH = document.documentElement.scrollHeight - window.innerHeight
+    const scrollProgress = docH > 0 ? Math.min(scrollY / docH, 1) : 0
+
     // Idle float
     const floatY = Math.sin(t * 0.8) * 0.08
     const floatRot = Math.sin(t * 0.5) * 0.02
     groupRef.current.position.y = floatY
-    groupRef.current.rotation.y = floatRot + scroll.offset * Math.PI * 0.3
+    groupRef.current.rotation.y = floatRot + scrollProgress * Math.PI * 0.3
 
     // Scroll-based elevation
-    groupRef.current.position.y += scroll.offset * 0.5
+    groupRef.current.position.y += scrollProgress * 0.5
 
     // Arm animations based on pose
     if (armLRef.current && armRRef.current) {
