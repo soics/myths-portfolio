@@ -199,6 +199,47 @@ function Skills() {
   )
 }
 
+const tagAccents = [
+  'hover:border-blue-200/30 hover:bg-blue-500/8',
+  'hover:border-purple-200/30 hover:bg-purple-500/8',
+  'hover:border-emerald-200/30 hover:bg-emerald-500/8',
+  'hover:border-amber-200/30 hover:bg-amber-500/8',
+  'hover:border-rose-200/30 hover:bg-rose-500/8',
+  'hover:border-cyan-200/30 hover:bg-cyan-500/8',
+  'hover:border-violet-200/30 hover:bg-violet-500/8',
+  'hover:border-teal-200/30 hover:bg-teal-500/8',
+  'hover:border-orange-200/30 hover:bg-orange-500/8',
+]
+
+function SkillTag({ children, className }: { children: React.ReactNode; className?: string }) {
+  const ref = useRef<HTMLSpanElement>(null)
+  const [pos, setPos] = useState({ x: 0, y: 0 })
+
+  const handleMouse = (e: React.MouseEvent) => {
+    const rect = ref.current?.getBoundingClientRect()
+    if (!rect) return
+    setPos({
+      x: (e.clientX - rect.left - rect.width / 2) * 0.15,
+      y: (e.clientY - rect.top - rect.height / 2) * 0.15,
+    })
+  }
+
+  const handleLeave = () => setPos({ x: 0, y: 0 })
+
+  return (
+    <motion.span
+      ref={ref}
+      onMouseMove={handleMouse}
+      onMouseLeave={handleLeave}
+      animate={{ x: pos.x, y: pos.y }}
+      transition={{ type: 'spring', stiffness: 300, damping: 15 }}
+      className={className}
+    >
+      {children}
+    </motion.span>
+  )
+}
+
 function SkillPanel({ title, items, inView, index }: { title: string; items: string[]; inView: boolean; index: number }) {
   return (
     <motion.div
@@ -210,16 +251,20 @@ function SkillPanel({ title, items, inView, index }: { title: string; items: str
       <h3 className="mb-5 text-2xl font-semibold tracking-[-0.04em]">{title}</h3>
       <div className="flex flex-wrap gap-3">
         {items.map((item, i) => (
-          <motion.span
+          <motion.div
             key={item}
             initial={{ opacity: 0, scale: 0.8 }}
             animate={inView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ delay: index * 0.15 + i * 0.05 }}
-            whileHover={{ scale: 1.08, y: -2 }}
-            className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm text-white/70 transition hover:border-blue-200/30 hover:bg-white/[0.08]"
+            transition={{ delay: index * 0.15 + i * 0.05, ...softSpring }}
           >
-            {item}
-          </motion.span>
+            <SkillTag
+              className={`rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm text-white/70 transition-all duration-300 ${
+                tagAccents[i % tagAccents.length]
+              }`}
+            >
+              {item}
+            </SkillTag>
+          </motion.div>
         ))}
       </div>
     </motion.div>
