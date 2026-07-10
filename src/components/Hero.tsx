@@ -204,7 +204,7 @@ export function Hero() {
                     duration: 1, ease: [0.22, 1, 0.36, 1], delay: 0.4 + i * 0.07,
                     rotateZ: mWobble ? { duration: 0.6, ease: 'easeInOut' } : undefined,
                   }}
-                  className={`inline-block text-[clamp(5rem,18vw,11rem)] font-black leading-[0.78] tracking-[-0.10em] text-white ${isM ? 'cursor-pointer select-none' : ''}`}
+                  className={`inline-block text-[clamp(5rem,18vw,11rem)] font-black leading-[0.85] tracking-[-0.04em] text-white ${isM ? 'cursor-pointer select-none' : ''}`}
                   onClick={isM ? handleMClick : undefined}
                   style={{ textShadow: '0 0 80px rgba(160,196,255,0.05), 0 1px 0 rgba(255,255,255,0.04), 0 2px 0 rgba(255,255,255,0.03), 0 4px 0 rgba(255,255,255,0.02), 0 8px 20px rgba(0,0,0,0.3)' }}
                 >
