@@ -34,11 +34,11 @@ const welcome = `Type 'help' for available commands.`
 
 const easterEggsFound: string[] = []
 const eggDescriptions: Record<string, string> = {
-  konami: '↑↑↓↓←→←→BA — Konami Code',
+  konami: 'Konami Code (↑↑↓↓←→←→BA)',
   mclicks: 'Click the "m" in myths 5 times',
-  sackboy: 'Click Sackboy 10 times',
-  rabbit: 'Click "rabbit hole" 3 times',
+  sackboy: 'Click Sackboy 3 times',
   myths: 'Type "myths" anywhere',
+  mythsClick: 'Click "myths" in the hero 3 times',
   play: 'Type "play" in the terminal',
 }
 
@@ -55,7 +55,7 @@ export function createCommands(sfx: SideEffects): Command[] {
     {
       name: 'whoami',
       description: 'Display current user',
-      handler: () => `${site.realName} — aka "${site.name}"`,
+      handler: () => `${site.realName} (also known as ${site.name})`,
     },
     {
       name: 'ls',
@@ -126,7 +126,7 @@ export function createCommands(sfx: SideEffects): Command[] {
     {
       name: 'project',
       description: 'Show current project status',
-      handler: () => 'Building: myths-portfolio (React + TypeScript + Tailwind v4 + Motion)\nStatus: In progress — deployed on Vercel',
+      handler: () => 'Building: myths-portfolio (React + TypeScript + Tailwind v4 + Motion)\nStatus: Live on Vercel, still iterating',
     },
     {
       name: 'skills',

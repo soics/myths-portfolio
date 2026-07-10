@@ -1,7 +1,7 @@
 export const site = {
   name: 'myths',
   realName: 'Richard Germain',
-  title: 'Aspiring Full-Stack Developer & Scripter',
+  title: 'Builder & Experimenter',
   githubUser: 'soics',
   email: 'richardgermain29@gmail.com',
   instagram: 'https://instagram.com/mv.lls/',

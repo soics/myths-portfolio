@@ -46,7 +46,7 @@ function PhaseCard({ chapter, index, inView: sectionInView, isLast }: {
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <span className="mb-1.5 block text-[10px] font-mono uppercase tracking-[0.25em] text-cyan/35">
-                PHASE.{chapter.number} — {phase.phase.toUpperCase()}
+                PHASE.{chapter.number} / {phase.phase.toUpperCase()}
               </span>
               <h3 className="text-xl font-semibold tracking-[-0.02em] text-white/90 md:text-2xl">{chapter.title}</h3>
               <p className="mt-2.5 max-w-xl text-[15px] leading-[1.8] text-white/60">{chapter.text}</p>

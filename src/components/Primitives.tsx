@@ -74,7 +74,7 @@ function SackboyButton() {
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
             className="fixed bottom-6 right-6 z-50 rounded-xl border border-white/[0.06] bg-deep/90 px-5 py-3 text-xs text-white/50 shadow-[0_8px_32px_rgba(0,0,0,0.5)] backdrop-blur-xl"
           >
-            Classic Sackboy!  <span className="text-white/30">— myths</span>
+            Classic Sackboy!  <span className="text-white/30">myths</span>
           </motion.div>
         )}
       </AnimatePresence>

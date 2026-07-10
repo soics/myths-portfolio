@@ -90,7 +90,7 @@ function SkipLink() {
   )
 }
 
-const EASTER_MSG = `You found me. Type 'help' in the terminal (backtick).`
+const EASTER_MSG = `You found me. Type 'help' in the terminal.`
 
 const KONAMI_MSG = `
   ██╗  ██╗ ██████╗ ███╗   ██╗ █████╗ ███╗   ███╗██╗
@@ -99,7 +99,7 @@ const KONAMI_MSG = `
   ██╔═██╗ ██║   ██║██║╚██╗██║██╔══██║██║╚██╔╝██║██║
   ██║  ██╗╚██████╔╝██║ ╚████║██║  ██║██║ ╚═╝ ██║███████╗
   ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝
-  You found me. — myths
+  You found me.
 `
 
 function FooterSecret() {
@@ -119,7 +119,7 @@ function FooterSecret() {
     <footer className="px-5 py-10 text-center text-sm text-white/35">
       <p>&copy; {new Date().getFullYear()} myths.</p>
       <button type="button" onClick={handleClick} className="text-[10px] text-white/15 transition-colors hover:text-white/30 cursor-pointer">
-        {clickCount === 0 ? '— signal lost —' : clickCount === 1 ? 'searching...' : 'almost there...'}
+        {clickCount === 0 ? 'signal lost' : clickCount === 1 ? 'searching...' : 'almost there...'}
       </button>
 
       <AnimatePresence>
@@ -133,7 +133,7 @@ function FooterSecret() {
             <p className="text-xs leading-relaxed text-white/50">
               &ldquo;The signal is faint but still burning.&rdquo;
             </p>
-            <p className="mt-2 text-[10px] text-white/25">&mdash; bagboy</p>
+            <p className="mt-2 text-[10px] text-white/25">bagboy</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -220,8 +220,8 @@ function App() {
   useTypedSequence('myths', () => {
     console.log(EASTER_MSG)
     setTerminalOpen(true)
-    document.title = '⚡ myths — hidden mode'
-    setTimeout(() => { document.title = 'myths — digital universe' }, 2000)
+    document.title = '⚡ myths // hidden mode'
+    setTimeout(() => { document.title = 'myths // digital universe' }, 2000)
   })
 
   useEffect(() => {

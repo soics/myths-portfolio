@@ -9,7 +9,12 @@ interface TerminalProps {
 }
 
 export function Terminal({ open, onClose, sideEffects }: TerminalProps) {
-  const { state, processCommand } = useTerminal(sideEffects)
+  const { state, processCommand, addEasterEgg } = useTerminal(sideEffects)
+  useEffect(() => {
+    const w = window as unknown as Record<string, (key: string) => void>
+    w.__addEasterEgg = addEasterEgg
+    return () => { delete w.__addEasterEgg }
+  }, [addEasterEgg])
   const [input, setInput] = useState('')
   const [cursorVisible, setCursorVisible] = useState(true)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -88,7 +93,7 @@ export function Terminal({ open, onClose, sideEffects }: TerminalProps) {
               <button onClick={onClose} className="h-3 w-3 rounded-full bg-red-400/60 transition-colors hover:bg-red-400/90" aria-label="Close terminal" />
               <span className="h-3 w-3 rounded-full bg-yellow-400/40" />
               <span className="h-3 w-3 rounded-full bg-green-400/40" />
-              <span className="ml-3 text-[11px] font-mono text-white/35">myths@universe:~ — backtick to toggle</span>
+              <span className="ml-3 text-[11px] font-mono text-white/35">myths@universe:~ (backtick to toggle)</span>
             </div>
 
             {/* Output */}

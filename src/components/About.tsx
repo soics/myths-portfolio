@@ -4,10 +4,10 @@ import { ArrowUpRight, Signal, Cpu } from 'lucide-react'
 import { site } from '../data/site'
 
 const bioParagraphs = [
-  'I am a junior developer who codes because I love building things. I do not pretend to have shipped at scale. What I have is curiosity — the drive to understand how things work and the patience to actually learn them.',
-  'My best lessons have come from mistakes: shipping broken builds, committing secrets, wrestling with git at 2 AM. Every error message taught me more than any tutorial ever did.',
-  'I believe the gap between "beginner" and "professional" is not talent — it is simply the number of mistakes you have made and learned from. I am still early in that process, and I am okay with that.',
-  'Keep building. Keep breaking things. Keep getting better. One day the work will speak for itself.',
+  'I code because I love building things. Not because I have a title or a roadmap. I like taking things apart, seeing how they work, and putting them back together slightly better than before.',
+  'My best lessons have come from breaking things. Shipping broken builds, committing secrets at 2 AM, wrestling with git until 4 AM. Every error message taught me more than any tutorial ever did.',
+  'I dont pretend to have it figured out. What I have is curiosity. The drive to understand, the patience to actually learn, and the willingness to try things even when I might fail.',
+  'Keep building. Keep exploring. Keep getting better.',
 ]
 
 const metrics = [
@@ -19,7 +19,7 @@ const metrics = [
 const logEntries = [
   { date: '2026-07-09', entry: 'Security audit complete. 18 attack vectors tested.' },
   { date: '2026-07-08', entry: 'Deployed to Vercel. Custom domain pending.' },
-  { date: '2026-07-05', entry: 'Portfolio rebuild — Tailwind v4 + Motion + React 19.' },
+  { date: '2026-07-05', entry: 'Portfolio rebuild with Tailwind v4 + Motion + React 19.' },
   { date: '2026-06-28', entry: '9Router configuration. 276 models routed.' },
 ]
 

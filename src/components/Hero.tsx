@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { motion, useScroll, useTransform } from 'motion/react'
+import { useState, useEffect, useCallback } from 'react'
+import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react'
 import { ArrowRight, Terminal, Sparkles } from 'lucide-react'
 import { site } from '../data/site'
 
@@ -133,6 +133,19 @@ export function Hero() {
   const fade = useTransform(scrollY, [0, 400], [1, 0])
 
   const phrases = site.phrases
+  const clickRef = { current: 0 }
+  const [showQuote, setShowQuote] = useState(false)
+
+  const handleNameClick = useCallback(() => {
+    clickRef.current++
+    if (clickRef.current >= 3) {
+      clickRef.current = 0
+      setShowQuote(true)
+      setTimeout(() => setShowQuote(false), 5000)
+      ;(window as unknown as { __triggerGlitch?: () => void }).__triggerGlitch?.()
+      ;(window as unknown as { __addEasterEgg?: (key: string) => void }).__addEasterEgg?.('mythsClick')
+    }
+  }, [])
 
   return (
     <motion.section id="top" style={{ opacity: fade }}
@@ -158,17 +171,41 @@ export function Hero() {
             <span className="h-[1px] w-8 bg-cyan/30" />
           </motion.div>
 
-          {/* Name — holographic entrance */}
+          {/* Name */}
           <motion.h1
             initial={{ opacity: 0, y: 40, filter: 'blur(8px)' }}
             animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
             className="text-[clamp(3rem,12vw,8rem)] font-black leading-[0.88] tracking-[-0.04em]"
           >
-            <span className="bg-gradient-to-r from-white via-white to-cyan/60 bg-clip-text text-transparent">
-              {site.name}
-            </span>
+            <button
+              type="button"
+              onClick={handleNameClick}
+              className="cursor-pointer bg-transparent border-none p-0 inline"
+              aria-label="Click for a secret"
+            >
+              <span className="bg-gradient-to-r from-white via-white to-cyan/60 bg-clip-text text-transparent transition-all duration-300 hover:to-cyan/40">
+                {site.name}
+              </span>
+            </button>
           </motion.h1>
+
+          <AnimatePresence>
+            {showQuote && (
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 max-w-lg rounded-2xl border border-white/[0.08] bg-deep/95 px-6 py-5 text-center shadow-[0_16px_48px_rgba(0,0,0,0.6)] backdrop-blur-xl"
+              >
+                <p className="text-sm leading-relaxed text-white/55 italic">
+                  &ldquo;all change is not growth, as all movement is not forward&rdquo;
+                </p>
+                <p className="mt-2 text-[10px] text-white/25">myths</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Real name */}
           <motion.p
