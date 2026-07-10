@@ -79,7 +79,7 @@ export function Contact() {
               <Radio size={14} className="text-violet/50" />
               <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-violet/40">TRANSMISSION</span>
             </div>
-            <h2 className="text-balance text-4xl font-semibold tracking-[-0.04em] text-white md:text-5xl">Send a signal.</h2>
+            <h2 className="text-balance text-4xl font-semibold tracking-[-0.04em] text-white md:text-5xl">Send a message.</h2>
             <p className="mt-5 max-w-md text-base leading-8 text-white/60">
               Open to advice, feedback, beginner-friendly opportunities, collaborations, and people who care about building.
             </p>
