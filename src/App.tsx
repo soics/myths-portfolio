@@ -32,6 +32,14 @@ function SkipLink() {
   )
 }
 
+function SectionDivider() {
+  return (
+    <div className="mx-auto max-w-6xl px-5" aria-hidden="true">
+      <div className="h-px bg-gradient-to-r from-transparent via-white/8 to-transparent" />
+    </div>
+  )
+}
+
 function App() {
   return (
     <>
@@ -41,10 +49,15 @@ function App() {
       <Header />
       <main id="main-content">
         <Hero />
+        <SectionDivider />
         <About />
+        <SectionDivider />
         <Skills />
+        <SectionDivider />
         <ProjectsSection />
+        <SectionDivider />
         <Journey />
+        <SectionDivider />
         <Contact />
       </main>
       <footer className="px-5 py-10 text-center text-sm text-white/30">

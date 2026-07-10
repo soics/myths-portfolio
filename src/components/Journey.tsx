@@ -33,7 +33,7 @@ export function Journey() {
           <p className="mt-5 max-w-2xl text-lg leading-8 text-white/55">The path is intentionally simple: learn, build, connect the pieces, repeat.</p>
         </motion.div>
 
-        <div className="relative grid gap-6 pl-10 md:pl-0">
+        <div className="relative grid gap-6 pl-0 md:pl-10">
           <motion.div
             style={{ height: lineHeight }}
             className="absolute left-[22px] top-12 w-px bg-gradient-to-b from-blue-300/30 via-blue-200/15 to-transparent md:left-[22px]"
