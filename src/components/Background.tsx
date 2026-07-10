@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion, useScroll, useTransform, useMotionValue, useSpring } from 'motion/react'
 
 /* ------------------------------------------------------------------ */
@@ -80,61 +80,226 @@ function GeometricShape() {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Layer 3 – Poppable Particles                                      */
+/*  Layer 3 – Physics Canvas Particles (replaces React DOM particles)  */
 /* ------------------------------------------------------------------ */
-interface PopParticle { id: number; x: number; y: number; size: number; popped: boolean; delay: number; popX: number; popY: number }
+function PhysicsParticles() {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
 
-function Particles() {
-  const [particles, setParticles] = useState<PopParticle[]>(() =>
-    Array.from({ length: 50 }, (_, i) => ({
-      id: i, x: Math.random() * 100, y: Math.random() * 100,
-      size: Math.random() * 1.8 + 0.4, popped: false, delay: Math.random() * 20,
-      popX: 0, popY: 0,
-    }))
-  )
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
 
-  const popCount = useRef(0)
+    let animId: number
+    let w = 0, h = 0
+    const mouse = { x: -1000, y: -1000, px: -1000, py: -1000 }
 
-  const pop = useCallback((id: number) => {
-    setParticles(prev => prev.map(p =>
-      p.id === id ? { ...p, popped: true, popX: (Math.random() - 0.5) * 60, popY: (Math.random() - 0.5) * 60 } : p
-    ))
-    popCount.current++
-    if (popCount.current >= 5) {
-      setTimeout(() => {
-        setParticles(prev => prev.map(p => ({ ...p, popped: false })))
-        popCount.current = 0
-      }, 1500)
+    interface Part {
+      x: number; y: number; vx: number; vy: number; size: number
+      alpha: number; life: number; maxLife: number
+    }
+
+    const particles: Part[] = []
+
+    function resize() {
+      w = canvas!.width = window.innerWidth
+      h = canvas!.height = window.innerHeight
+    }
+    resize()
+    window.addEventListener('resize', resize)
+
+    function spawnBurst(cx: number, cy: number, count: number) {
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2
+        const speed = 1 + Math.random() * 3
+        const maxLife = 80 + Math.random() * 120
+        particles.push({
+          x: cx + (Math.random() - 0.5) * 4,
+          y: cy + (Math.random() - 0.5) * 4,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          size: 1 + Math.random() * 2.5,
+          alpha: 0.3 + Math.random() * 0.4,
+          life: 0,
+          maxLife,
+        })
+      }
+    }
+
+    // Initial ambient particles
+    for (let i = 0; i < 60; i++) {
+      particles.push({
+        x: Math.random() * w, y: Math.random() * h,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        size: 0.5 + Math.random() * 1.5,
+        alpha: 0.1 + Math.random() * 0.3,
+        life: Math.random() * 200,
+        maxLife: 200 + Math.random() * 200,
+      })
+    }
+
+    const onMove = (e: MouseEvent) => {
+      mouse.px = mouse.x; mouse.py = mouse.y
+      mouse.x = e.clientX; mouse.y = e.clientY
+      const dx = mouse.x - mouse.px
+      const dy = mouse.y - mouse.py
+      const dist = Math.sqrt(dx * dx + dy * dy)
+      if (dist > 3) spawnBurst(mouse.x, mouse.y, 2)
+    }
+    const onClick = (e: MouseEvent) => spawnBurst(e.clientX, e.clientY, 25)
+    window.addEventListener('mousemove', onMove, { passive: true })
+    window.addEventListener('click', onClick, { passive: true })
+
+    function tick() {
+      ctx!.clearRect(0, 0, w, h)
+
+      // Get accent color from CSS
+      const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent-rgb').trim() || '160,196,255'
+
+      // Update and draw particles
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i]
+        p.life++
+        p.x += p.vx
+        p.y += p.vy
+
+        // Friction
+        p.vx *= 0.98
+        p.vy *= 0.98
+
+        // Mouse repulsion
+        const dx = p.x - mouse.x
+        const dy = p.y - mouse.y
+        const dist = Math.sqrt(dx * dx + dy * dy)
+        if (dist < 120 && dist > 0) {
+          const force = (120 - dist) / 120 * 0.5
+          p.vx += (dx / dist) * force
+          p.vy += (dy / dist) * force
+        }
+
+        // Wrap around edges
+        if (p.x < -20) p.x = w + 20
+        if (p.x > w + 20) p.x = -20
+        if (p.y < -20) p.y = h + 20
+        if (p.y > h + 20) p.y = -20
+
+        // Fade out and remove dead particles
+        const lifeRatio = p.life / p.maxLife
+        if (lifeRatio > 0.7) p.alpha *= 0.97
+        if (lifeRatio >= 1 || p.alpha < 0.01) {
+          particles.splice(i, 1)
+          continue
+        }
+
+        // Draw particle
+        ctx!.globalAlpha = p.alpha
+        ctx!.fillStyle = `rgba(${accent}, 0.6)`
+        ctx!.beginPath()
+        ctx!.arc(p.x, p.y, p.size, 0, Math.PI * 2)
+        ctx!.fill()
+
+        // Draw connection lines between close particles
+        for (let j = i - 1; j >= 0 && j > i - 10; j--) {
+          const p2 = particles[j]
+          const ldx = p.x - p2.x
+          const ldy = p.y - p2.y
+          const ldist = Math.sqrt(ldx * ldx + ldy * ldy)
+          if (ldist < 100) {
+            ctx!.globalAlpha = (1 - ldist / 100) * 0.08
+            ctx!.strokeStyle = `rgba(${accent}, 0.3)`
+            ctx!.lineWidth = 0.5
+            ctx!.beginPath()
+            ctx!.moveTo(p.x, p.y)
+            ctx!.lineTo(p2.x, p2.y)
+            ctx!.stroke()
+          }
+        }
+      }
+
+      ctx!.globalAlpha = 1
+      animId = requestAnimationFrame(tick)
+    }
+
+    animId = requestAnimationFrame(tick)
+
+    return () => {
+      cancelAnimationFrame(animId)
+      window.removeEventListener('resize', resize)
+      window.removeEventListener('mousemove', onMove)
+      window.removeEventListener('click', onClick)
     }
   }, [])
 
   return (
-    <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden" aria-hidden="true">
-      {particles.map((p) => {
-        if (p.popped) {
-          return (
-            <motion.div
-              key={p.id}
-              initial={{ scale: 1, opacity: 1, x: 0, y: 0 }}
-              animate={{ scale: 3, opacity: 0, x: p.popX, y: p.popY }}
-              transition={{ duration: 0.6, ease: 'easeOut' }}
-              className="absolute rounded-full bg-blue-200/30 shadow-[0_0_6px_rgba(160,196,255,0.3)]"
-              style={{ left: `${p.x}%`, top: `${p.y}%`, width: p.size * 2, height: p.size * 2 }}
-            />
-          )
-        }
-        return (
-          <motion.div
-            key={p.id}
-            className="absolute rounded-full bg-white/15"
-            style={{ left: `${p.x}%`, top: `${p.y}%`, width: p.size, height: p.size }}
-            animate={{ y: [0, -30 - (p.id % 20), 0], opacity: [0, 0.4, 0] }}
-            transition={{ duration: 18 + (p.id % 20), repeat: Infinity, delay: p.delay, ease: 'easeInOut' }}
-            onClick={() => pop(p.id)}
-          />
-        )
-      })}
-    </div>
+    <canvas
+      ref={canvasRef}
+      className="pointer-events-none fixed inset-0 -z-10"
+      aria-hidden="true"
+    />
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/*  Layer 3b – Matrix Rain Canvas                                     */
+/* ------------------------------------------------------------------ */
+function MatrixRain({ active }: { active: boolean }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+
+  useEffect(() => {
+    if (!active) return
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    let animId: number
+    let w = 0, h = 0
+    const fontSize = 14
+    const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEF'
+    let drops: number[] = []
+
+    function resize() {
+      w = canvas!.width = window.innerWidth
+      h = canvas!.height = window.innerHeight
+      const cols = Math.floor(w / fontSize)
+      drops = Array.from({ length: cols }, () => Math.floor(Math.random() * -h / fontSize))
+    }
+    resize()
+    window.addEventListener('resize', resize)
+
+    function tick() {
+      ctx!.fillStyle = 'rgba(0, 10, 0, 0.05)'
+      ctx!.fillRect(0, 0, w, h)
+      ctx!.font = `${fontSize}px monospace`
+
+      for (let i = 0; i < drops.length; i++) {
+        const char = chars[Math.floor(Math.random() * chars.length)]
+        const x = i * fontSize
+        const y = drops[i] * fontSize
+        ctx!.fillStyle = `rgba(0, 255, 65, ${0.1 + Math.random() * 0.4})`
+        ctx!.fillText(char, x, y)
+        if (y > h && Math.random() > 0.975) drops[i] = 0
+        drops[i]++
+      }
+      animId = requestAnimationFrame(tick)
+    }
+    animId = requestAnimationFrame(tick)
+
+    return () => {
+      cancelAnimationFrame(animId)
+      window.removeEventListener('resize', resize)
+    }
+  }, [active])
+
+  if (!active) return null
+  return (
+    <canvas
+      ref={canvasRef}
+      className="pointer-events-none fixed inset-0 z-30 opacity-30"
+      aria-hidden="true"
+    />
   )
 }
 
@@ -234,7 +399,7 @@ function CRTGlitch({ active }: { active: boolean }) {
 /*  Main Export                                                       */
 /* ------------------------------------------------------------------ */
 
-export function Background() {
+export function Background({ matrixActive }: { matrixActive?: boolean }) {
   const [glitchActive, setGlitchActive] = useState(false)
 
   useEffect(() => {
@@ -250,7 +415,8 @@ export function Background() {
       <AuroraBlobs />
       <DotGrid />
       <GeometricShape />
-      <Particles />
+      <PhysicsParticles />
+      <MatrixRain active={!!matrixActive} />
       <Vignette />
       <CursorGlow />
       <CursorRing />
