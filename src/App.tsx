@@ -525,13 +525,22 @@ function Contact() {
   )
 }
 
+function SkipLink() {
+  return (
+    <a href="#main-content" className="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:left-4 focus-visible:top-4 focus-visible:z-50 focus-visible:rounded-xl focus-visible:bg-white focus-visible:px-5 focus-visible:py-3 focus-visible:text-sm focus-visible:font-semibold focus-visible:text-black focus-visible:shadow-lg">
+      Skip to content
+    </a>
+  )
+}
+
 function App() {
   return (
     <>
+      <SkipLink />
       <ScrollProgress />
       <Background />
       <Header />
-      <main>
+      <main id="main-content">
         <Hero />
         <About />
         <Skills />
