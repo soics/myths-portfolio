@@ -99,12 +99,11 @@ function BagboyButton() {
       className={`focus-ring flex items-center gap-2 rounded-lg px-3 py-2 text-[11px] font-mono transition-all duration-300 ${
         pulse ? 'bg-cyan/8 text-cyan/50' : 'text-white/35 hover:bg-white/[0.04] hover:text-white/55'
       }`}
-      aria-label="Say hi to bagboy"
+      aria-label="Sackboy easter egg"
     >
       <span className={`transition-transform duration-300 ${pulse ? 'scale-110' : ''}`}>
         [~]
       </span>
-      <span className="hidden md:inline">bagboy</span>
     </button>
   )
 }

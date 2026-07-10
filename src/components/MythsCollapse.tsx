@@ -304,7 +304,7 @@ export function MythsCollapse({ onExit }: { onExit?: () => void }) {
         </div>
       )}
       {phase === 'rebuild' && (
-        <div className="fixed bottom-4 left-4 z-[110] text-[10px] font-mono tracking-[0.1em] text-white/15 select-none">bagboy is watching</div>
+          <div className="fixed bottom-4 left-4 z-[110] text-[10px] font-mono tracking-[0.1em] text-white/15 select-none">something is watching</div>
       )}
       {showMessage && (
         <div className="pointer-events-none fixed inset-0 z-[105] flex items-center justify-center">
