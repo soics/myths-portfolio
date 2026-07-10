@@ -18,6 +18,7 @@ export interface SideEffects {
   scrollTo: (id: string) => void
   matrix: () => void
   setTheme: (theme: string) => void
+  playGame: () => void
 }
 
 const asciiBanner = `
@@ -38,6 +39,7 @@ const eggDescriptions: Record<string, string> = {
   sackboy: 'Click Sackboy 10 times',
   rabbit: 'Click "rabbit hole" 3 times',
   myths: 'Type "myths" anywhere',
+  play: 'Type "play" in the terminal',
 }
 
 export function createCommands(sfx: SideEffects): Command[] {
@@ -217,6 +219,14 @@ export function createCommands(sfx: SideEffects): Command[] {
       handler: () => {
         const mapped = ['Steel', 'Copper', 'Titanium', 'Plywood', 'Tempered Glass', 'Rebar', 'Concrete', 'Cast Iron', 'Brass']
         return strengths.map((s, i) => `  ${mapped[i % mapped.length].padEnd(16)} ${s}`).join('\n')
+      },
+    },
+    {
+      name: 'play',
+      description: 'Launch SIGNAL SURVIVOR minigame',
+      handler: () => {
+        sfx.playGame()
+        return '→ Initializing SIGNAL SURVIVOR...\n→ Use mouse to dodge incoming signals.\n→ Survive as long as you can.'
       },
     },
   ]

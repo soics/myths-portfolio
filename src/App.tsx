@@ -3,6 +3,7 @@ import { useSpring } from 'motion/react'
 import { motion, useScroll, AnimatePresence } from 'motion/react'
 import { Scene } from './components/Scene'
 import { Background } from './components/Background'
+import { SecretGame } from './components/SecretGame'
 import { Terminal } from './components/Terminal'
 import { Header } from './components/Primitives'
 import { Hero } from './components/Hero'
@@ -149,6 +150,7 @@ const THEMES: Record<string, { accent: string; bg: string; raised: string; text:
 
 function App() {
   const [terminalOpen, setTerminalOpen] = useState(false)
+  const [gameOpen, setGameOpen] = useState(false)
 
   const glitch = useCallback(() => {
     const w = window as unknown as Record<string, () => void>
@@ -169,7 +171,11 @@ function App() {
     root.style.setProperty('--text-color', t.text)
   }, [])
 
-  const sideEffects: SideEffects = { glitch, scrollTo, matrix: glitch, setTheme }
+  const playGame = useCallback(() => {
+    setGameOpen(true)
+  }, [])
+
+  const sideEffects: SideEffects = { glitch, scrollTo, matrix: glitch, setTheme, playGame }
 
   // Scroll tracker for bagboy
   useEffect(() => {
@@ -207,6 +213,10 @@ function App() {
     console.log(KONAMI_MSG)
   })
 
+  useTypedSequence('game', () => {
+    setGameOpen(true)
+  })
+
   useTypedSequence('myths', () => {
     console.log(EASTER_MSG)
     setTerminalOpen(true)
@@ -228,6 +238,7 @@ function App() {
       <Background />
       <ErrorBoundary><Scene /></ErrorBoundary>
       <Terminal open={terminalOpen} onClose={() => setTerminalOpen(false)} sideEffects={sideEffects} />
+      <SecretGame open={gameOpen} onClose={() => setGameOpen(false)} />
       <Header />
       <main id="main-content">
         <Hero />
