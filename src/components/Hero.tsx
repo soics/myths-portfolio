@@ -189,7 +189,7 @@ export function Hero() {
       <motion.div style={{ y, perspective: 800 }} className="relative z-10 mx-auto w-full max-w-6xl">
         {/* Massive left-aligned name */}
         <div className="relative max-w-[85%] md:max-w-[70%]">
-          <h1 className="flex flex-wrap overflow-hidden gap-1">
+          <h1 className="flex flex-wrap overflow-hidden">
             {site.name.split('').map((char, i) => {
               const isM = i === 0
               return (
