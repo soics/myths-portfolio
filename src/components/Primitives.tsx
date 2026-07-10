@@ -105,7 +105,7 @@ export function Header() {
     <>
       <motion.header
         animate={{ y: hidden ? -120 : 0 }}
-        transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
+        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
         className="fixed left-0 right-0 top-0 z-30 px-4 pt-4"
       >
         <div

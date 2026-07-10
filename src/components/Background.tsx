@@ -73,7 +73,8 @@ function GeometricShape() {
         className="absolute inset-[15%] rounded-full border border-white/[0.02]" />
       <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.03, 0.08, 0.03] }}
         transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute left-1/2 top-1/2 h-[20vh] w-[20vh] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br from-blue-400/10 to-purple-400/10 blur-3xl" />
+        className="absolute left-1/2 top-1/2 h-[20vh] w-[20vh] -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
+        style={{ background: `radial-gradient(circle, rgba(var(--accent-rgb, 160,196,255), 0.12), transparent 70%)` }} />
     </motion.div>
   )
 }
@@ -173,7 +174,7 @@ function CursorGlow() {
 
   return (
     <motion.div ref={ref} aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10"
-      style={{ opacity: fade, background: 'radial-gradient(700px at var(--cx, -1000px) var(--cy, -1000px), rgba(160,196,255,0.06), rgba(139,92,246,0.02) 45%, transparent 70%)' }}
+      style={{ opacity: fade, background: 'radial-gradient(700px at var(--cx, -1000px) var(--cy, -1000px), rgba(var(--accent-rgb, 160,196,255), 0.06), rgba(var(--accent-rgb, 160,196,255), 0.02) 45%, transparent 70%)' }}
     />
   )
 }
@@ -207,7 +208,7 @@ function CursorRing() {
 
   return (
     <div ref={ref} aria-hidden="true" className="pointer-events-none fixed left-0 top-0 z-50 hidden md:block"
-      style={{ borderRadius: '50%', border: '1px solid rgba(160,196,255,0.12)', willChange: 'transform, width, height' }}
+      style={{ borderRadius: '50%', border: '1px solid rgba(var(--accent-rgb, 160,196,255), 0.12)', willChange: 'transform, width, height' }}
     />
   )
 }

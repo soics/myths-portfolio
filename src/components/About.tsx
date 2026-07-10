@@ -1,6 +1,6 @@
 import { motion } from 'motion/react'
 import { ArrowUpRight, Terminal } from 'lucide-react'
-import { site, strengths } from '../data/site'
+import { site } from '../data/site'
 import { useTilt } from '../hooks/useTilt'
 
 const highlightWords = ['curiosity', 'mistakes', 'building things', 'thousands of juniors', 'unlearn']
@@ -14,25 +14,15 @@ const bioParagraphs = [
 
 export function About() {
   return (
-    <section id="about" className="px-5 py-28">
+    <section id="about" className="px-5 py-32">
       <div className="mx-auto max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           className="relative"
         >
-          {/* Label */}
-          <motion.p
-            initial={{ opacity: 0, x: -12 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="mb-4 text-xs font-semibold uppercase tracking-[0.35em] text-accent-dim/60"
-          >
-            About
-          </motion.p>
-
           {/* Decorative background letter */}
           <span
             className="pointer-events-none absolute -left-6 -top-16 select-none text-[16rem] font-black leading-none tracking-[-0.08em] text-white/[0.015]"
@@ -51,7 +41,7 @@ export function About() {
                     initial={{ opacity: 0, y: 16 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ delay: 0.15 + pIdx * 0.1, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+                    transition={{ delay: 0.15 + pIdx * 0.1, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                     className="text-[15px] leading-[1.85] text-white/55"
                   >
                     {para.split(' ').map((word, wIdx) => {
@@ -64,7 +54,7 @@ export function About() {
                               initial={{ scaleX: 0 }}
                               whileInView={{ scaleX: 1 }}
                               viewport={{ once: true }}
-                              transition={{ delay: 0.3 + pIdx * 0.1 + wIdx * 0.004, duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+                              transition={{ delay: 0.3 + pIdx * 0.1 + wIdx * 0.004, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                               className="absolute -bottom-px left-0 h-px w-full origin-left bg-accent/20"
                             />
                           )}
@@ -93,26 +83,25 @@ export function About() {
               </motion.a>
             </div>
 
-            {/* Sidebar — Status + Strengths */}
+            {/* Sidebar — Now card */}
             <motion.div
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.3, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+              transition={{ delay: 0.3, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
               className="lg:w-[38%]"
             >
-              {/* Now card */}
-              <div ref={useTilt(8)} className="glass-lift rounded-2xl p-5" style={{ transformStyle: 'preserve-3d' }}>
-                <div className="flex items-center gap-3 border-b border-white/[0.04] pb-3">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent/8">
-                    <Terminal size={14} className="text-accent-dim/60" />
+              <div ref={useTilt(8)} className="glass-lift rounded-2xl p-6" style={{ transformStyle: 'preserve-3d' }}>
+                <div className="flex items-center gap-3 border-b border-white/[0.04] pb-4">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent/8">
+                    <Terminal size={15} className="text-accent-dim/60" />
                   </div>
                   <div>
-                    <p className="text-xs font-medium text-white/90">Now</p>
+                    <p className="text-sm font-medium text-white/90">Now</p>
                     <p className="text-[11px] text-white/30">Current status</p>
                   </div>
                 </div>
-                <div className="mt-4 space-y-3">
+                <div className="mt-5 space-y-4">
                   {[
                     { label: 'Focus', value: 'Full-stack fundamentals' },
                     { label: 'Building', value: 'Open-source + portfolio' },
@@ -120,38 +109,14 @@ export function About() {
                   ].map((item, i) => (
                     <motion.div
                       key={item.label}
-                      initial={{ opacity: 0, x: -6 }}
+                      initial={{ opacity: 0, x: -8 }}
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
-                      transition={{ delay: 0.4 + i * 0.08, duration: 0.4 }}
-                      className="flex items-center justify-between gap-4"
+                      transition={{ delay: 0.4 + i * 0.08, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                      className="group"
                     >
-                      <span className="text-xs text-white/30">{item.label}</span>
-                      <span className="text-xs font-medium text-white/70">{item.value}</span>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Strengths */}
-              <div ref={useTilt(6)} className="glass-sm mt-4 rounded-2xl p-5" style={{ transformStyle: 'preserve-3d' }}>
-                <p className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-white/25">Strengths</p>
-                <div className="grid grid-cols-2 gap-x-4 gap-y-2.5">
-                  {strengths.map((s, i) => (
-                    <motion.div
-                      key={s}
-                      initial={{ opacity: 0, x: -6 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: 0.5 + i * 0.04, duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-                      className="group flex items-center gap-2.5"
-                    >
-                      <motion.div
-                        animate={{ scale: [1, 1.3, 1], opacity: [0.4, 0.8, 0.4] }}
-                        transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', delay: i * 0.2 }}
-                        className="h-1 w-1 shrink-0 rounded-full bg-accent/40"
-                      />
-                      <span className="text-xs text-white/55 transition-colors duration-300 group-hover:text-white/80">{s}</span>
+                      <span className="text-[11px] text-white/25">{item.label}</span>
+                      <p className="mt-0.5 text-sm font-medium text-white/75">{item.value}</p>
                     </motion.div>
                   ))}
                 </div>

@@ -13,13 +13,59 @@ import { useKonamiCode } from './hooks/useKonamiCode'
 import { useTypedSequence } from './hooks/useTilt'
 import './styles/globals.css'
 
+/* ------------------------------------------------------------------ */
+/*  Signature: scroll-reactive accent shift                           */
+/* ------------------------------------------------------------------ */
+
+const SECTION_ACCENTS = [
+  { id: 'top',    accent: '160,196,255', name: 'blue' },
+  { id: 'about',  accent: '167,139,250', name: 'purple' },
+  { id: 'skills', accent: '52,211,153',  name: 'emerald' },
+  { id: 'projects', accent: '251,191,36', name: 'amber' },
+  { id: 'journey', accent: '103,232,249', name: 'cyan' },
+  { id: 'contact', accent: '251,191,36', name: 'warm' },
+] as const
+
+function BackgroundAccent() {
+  const [activeAccent, setActiveAccent] = useState('160,196,255')
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            const sectionId = entry.target.id
+            const found = SECTION_ACCENTS.find(a => a.id === sectionId)
+            if (found) setActiveAccent(found.accent)
+          }
+        }
+      },
+      { threshold: 0.3, rootMargin: '0px 0px -20% 0px' },
+    )
+
+    const targets = SECTION_ACCENTS.map(a => document.getElementById(a.id)).filter(Boolean) as Element[]
+    targets.forEach(t => observer.observe(t))
+    return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
+    document.documentElement.style.setProperty('--accent-rgb', activeAccent)
+  }, [activeAccent])
+
+  return null
+}
+
+/* ------------------------------------------------------------------ */
+/*  Utility Components                                                */
+/* ------------------------------------------------------------------ */
+
 function ScrollProgress() {
   const { scrollYProgress } = useScroll()
   const scaleX = useSpring(scrollYProgress, { stiffness: 200, damping: 30 })
   return (
     <motion.div
       style={{ scaleX }}
-      className="fixed left-0 top-0 z-50 h-[2px] origin-left bg-gradient-to-r from-blue-300/60 to-transparent"
+      className="fixed left-0 top-0 z-50 h-[2px] origin-left bg-gradient-to-r from-accent/60 to-transparent"
     />
   )
 }
@@ -32,14 +78,6 @@ function SkipLink() {
     >
       Skip to content
     </a>
-  )
-}
-
-function SectionDivider() {
-  return (
-    <div className="mx-auto max-w-6xl px-5" aria-hidden="true">
-      <div className="h-px bg-gradient-to-r from-transparent via-white/8 to-transparent" />
-    </div>
   )
 }
 
@@ -112,9 +150,12 @@ function FooterSecret() {
   )
 }
 
+/* ------------------------------------------------------------------ */
+/*  App                                                               */
+/* ------------------------------------------------------------------ */
+
 function App() {
   useEffect(() => {
-    // Hidden message in source
     console.log('👀 Looking for secrets? Try ↑↑↓↓←→←→BA')
   }, [])
 
@@ -122,20 +163,16 @@ function App() {
     <>
       <SkipLink />
       <ScrollProgress />
+      <BackgroundAccent />
       <Background />
       <EasterEggEngine />
       <Header />
       <main id="main-content">
         <Hero />
-        <SectionDivider />
         <About />
-        <SectionDivider />
         <Skills />
-        <SectionDivider />
         <ProjectsSection />
-        <SectionDivider />
         <Journey />
-        <SectionDivider />
         <Contact />
       </main>
       <FooterSecret />

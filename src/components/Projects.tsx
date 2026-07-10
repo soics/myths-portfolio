@@ -213,17 +213,9 @@ export function ProjectsSection() {
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="mb-12"
         >
-          <motion.p
-            initial={{ opacity: 0, x: -12 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="mb-4 text-xs font-semibold uppercase tracking-[0.35em] text-accent-dim/60"
-          >
-            Projects
-          </motion.p>
           <h2 className="text-balance text-4xl font-semibold tracking-[-0.06em] text-white md:text-5xl">
             {state.repos.length > 0 ? 'Live from GitHub.' : 'Loaded from GitHub.'}
           </h2>

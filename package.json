@@ -21,6 +21,7 @@
   "author": "Richard Germain",
   "license": "MIT",
   "dependencies": {
+    "@fontsource/geist-sans": "^5.2.5",
     "@supabase/supabase-js": "^2.110.1",
     "@vitejs/plugin-react": "^6.0.3",
     "lucide-react": "^1.23.0",
