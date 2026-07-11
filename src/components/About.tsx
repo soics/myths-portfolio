@@ -87,7 +87,7 @@ export function Manifesto() {
             className="space-y-5"
           >
             {/* Metrics dashboard */}
-            <div className="glass-lift rounded-2xl overflow-hidden">
+            <LiquidGlass variant="panel" tilt={4} className="!rounded-2xl !overflow-hidden">
               <div className="border-b border-white/[0.05] px-5 py-3.5 flex items-center gap-3">
                 <Cpu size={13} className="text-cyan/40" />
                 <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/40">System Metrics</span>
@@ -109,10 +109,10 @@ export function Manifesto() {
                   </div>
                 ))}
               </div>
-            </div>
+            </LiquidGlass>
 
             {/* Dev log */}
-            <div className="glass rounded-2xl p-5">
+            <LiquidGlass variant="panel" tilt={4} className="!rounded-2xl !p-5">
               <div className="flex items-center gap-2 mb-4">
                 <span className="h-1.5 w-1.5 rounded-full bg-cyan/40 signal-pulse" />
                 <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/40">Dev Log</span>
@@ -125,7 +125,7 @@ export function Manifesto() {
                   </div>
                 ))}
               </div>
-            </div>
+            </LiquidGlass>
           </motion.div>
         </div>
       </div>

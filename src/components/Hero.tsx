@@ -312,18 +312,22 @@ export function Hero() {
             transition={{ delay: 2.2, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             className="mt-12 flex flex-wrap gap-4"
           >
-            <a href="#projects"
-              className="focus-ring group inline-flex items-center gap-3 rounded-full bg-cyan px-7 py-3.5 text-sm font-semibold text-deep transition-all hover:bg-white hover:shadow-[0_0_32px_rgba(212,212,220,0.15)] active:scale-[0.97]"
-            >
-              <span>Explore the world</span>
-              <ArrowRight size={15} className="transition group-hover:translate-x-1" />
-            </a>
-            <a href="#about"
-              className="focus-ring group inline-flex items-center gap-2 rounded-full border border-white/10 px-7 py-3.5 text-sm font-medium text-white/60 transition-all hover:border-white/20 hover:text-white/80 active:scale-[0.97]"
-            >
-              <Sparkles size={14} className="text-violet/50" />
-              <span>Origin story</span>
-            </a>
+            <LiquidGlass variant="button" tilt={6} className="!rounded-full !bg-cyan !px-7 !py-3.5 !text-sm !font-semibold !text-deep">
+              <a href="#projects"
+                className="focus-ring group inline-flex items-center gap-3 transition-all hover:shadow-[0_0_32px_rgba(212,212,220,0.15)] active:scale-[0.97]"
+              >
+                <span>Explore the world</span>
+                <ArrowRight size={15} className="transition group-hover:translate-x-1" />
+              </a>
+            </LiquidGlass>
+            <LiquidGlass variant="button" tilt={6} className="!rounded-full !border !border-white/10 !px-7 !py-3.5 !text-sm !font-medium !text-white/60">
+              <a href="#about"
+                className="focus-ring group inline-flex items-center gap-2 transition-all hover:border-white/20 hover:text-white/80 active:scale-[0.97]"
+              >
+                <Sparkles size={14} className="text-violet/50" />
+                <span>Origin story</span>
+              </a>
+            </LiquidGlass>
           </motion.div>
 
           <motion.div

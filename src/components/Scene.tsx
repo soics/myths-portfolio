@@ -133,7 +133,6 @@ function FloatingGeometry() {
 function SceneContent() {
   return (
     <>
-      <LiquidGlassPlane />
       <AmbientLighting />
       <GroundGrid />
       <Particles count={120} />

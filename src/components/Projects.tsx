@@ -48,67 +48,69 @@ function barStr(lang: string | null): string {
 
 function FeaturedRepo({ repo, index }: { repo: GitHubRepo; index: number }) {
   return (
-    <motion.a
-      initial={{ opacity: 0, y: 60, scale: 0.95 }}
-      whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true, margin: '-60px' }}
-      transition={{ delay: index * 0.12, type: 'spring', stiffness: 50, damping: 20 }}
-      whileHover={{ y: -6, scale: 1.002 }}
-      className="focus-ring group relative block overflow-hidden rounded-[20px] transition-all duration-500 hover:shadow-[0_32px_80px_rgba(0,0,0,0.5)]"
-      href={repo.html_url}
-      target="_blank"
-      rel="noreferrer"
-    >
-      <div className={`absolute inset-0 bg-gradient-to-b opacity-40 ${colorStr(repo.language, langAccents)}`} />
-      <div className={`absolute left-0 right-0 top-0 h-[3px] bg-gradient-to-r ${barStr(repo.language)}`} />
+          <LiquidGlass variant="panel" tilt={4} className="!rounded-[20px] !overflow-hidden">
+            <motion.a
+              initial={{ opacity: 0, y: 60, scale: 0.95 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ delay: index * 0.12, type: 'spring', stiffness: 50, damping: 20 }}
+              whileHover={{ y: -6, scale: 1.002 }}
+              href={repo.html_url}
+              target="_blank"
+              rel="noreferrer"
+              className="focus-ring group relative block overflow-hidden transition-all duration-500 hover:shadow-[0_32px_80px_rgba(0,0,0,0.5)]"
+            >
+              <div className={`absolute inset-0 bg-gradient-to-b opacity-40 ${colorStr(repo.language, langAccents)}`} />
+              <div className={`absolute left-0 right-0 top-0 h-[3px] bg-gradient-to-r ${barStr(repo.language)}`} />
 
-      <div className="glass-lift relative p-8 md:p-10">
-        <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
-          <div className="flex-1">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5">
-                <Satellite size={15} className="text-cyan/40" />
-              </div>
-              <span className="text-[10px] font-mono text-white/30 uppercase tracking-[0.15em]">
-                DISCOVERY_{String(index + 1).padStart(2, '0')}
-              </span>
-            </div>
-            <h3 className="text-2xl font-semibold tracking-[-0.03em] text-white/90 md:text-3xl">{repo.name}</h3>
-            <p className="mt-3 max-w-2xl text-[15px] leading-[1.7] text-white/60">{repo.description || 'A public repository.'}</p>
+              <div className="glass-lift relative p-8 md:p-10">
+                <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5">
+                        <Satellite size={15} className="text-cyan/40" />
+                      </div>
+                      <span className="text-[10px] font-mono text-white/30 uppercase tracking-[0.15em]">
+                        DISCOVERY_{String(index + 1).padStart(2, '0')}
+                      </span>
+                    </div>
+                    <h3 className="text-2xl font-semibold tracking-[-0.03em] text-white/90 md:text-3xl">{repo.name}</h3>
+                    <p className="mt-3 max-w-2xl text-[15px] leading-[1.7] text-white/60">{repo.description || 'A public repository.'}</p>
 
-            {projectNotes[repo.name] && (
-              <div className="mt-5 flex items-start gap-2.5 rounded-xl bg-white/5 px-4 py-3 border border-white/5">
-                <Code2 size={13} className="mt-0.5 shrink-0 text-cyan/40" />
-                <div>
-                  <span className="text-[9px] font-semibold uppercase tracking-[0.15em] text-white/30">Field Notes</span>
-                  <p className="mt-1 text-[13px] leading-[1.6] text-white/45">{projectNotes[repo.name]}</p>
+                    {projectNotes[repo.name] && (
+                      <div className="mt-5 flex items-start gap-2.5 rounded-xl bg-white/5 px-4 py-3 border border-white/5">
+                        <Code2 size={13} className="mt-0.5 shrink-0 text-cyan/40" />
+                        <div>
+                          <span className="text-[9px] font-semibold uppercase tracking-[0.15em] text-white/30">Field Notes</span>
+                          <p className="mt-1 text-[13px] leading-[1.6] text-white/45">{projectNotes[repo.name]}</p>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="mt-5 flex flex-wrap items-center gap-3">
+                      {repo.language && (
+                        <span className="inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-medium text-white/60">
+                          <span className="h-1.5 w-1.5 rounded-sm bg-current opacity-60" />
+                          {repo.language}
+                        </span>
+                      )}
+                      <span className="inline-flex items-center gap-1 text-xs text-white/40"><Star size={11} /> {repo.stargazers_count}</span>
+                      <span className="inline-flex items-center gap-1 text-xs text-white/40"><GitBranch size={11} /> {repo.forks_count}</span>
+                      <span className="text-xs text-white/25">{new Date(repo.updated_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
+                    </div>
+                  </div>
+
+                  <motion.div
+                    initial={{ x: 0 }}
+                    whileHover={{ x: 4, opacity: 1 }}
+                    className="hidden shrink-0 md:block"
+                  >
+                    <ExternalLink className="text-white/20 transition-all group-hover:text-white/50" size={18} />
+                  </motion.div>
                 </div>
               </div>
-            )}
-
-            <div className="mt-5 flex flex-wrap items-center gap-3">
-              {repo.language && (
-                <span className="inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-medium text-white/60">
-                  <span className="h-1.5 w-1.5 rounded-sm bg-current opacity-60" />
-                  {repo.language}
-                </span>
-              )}
-              <span className="inline-flex items-center gap-1 text-xs text-white/40"><Star size={11} /> {repo.stargazers_count}</span>
-              <span className="inline-flex items-center gap-1 text-xs text-white/40"><GitBranch size={11} /> {repo.forks_count}</span>
-              <span className="text-xs text-white/25">{new Date(repo.updated_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
-            </div>
-          </div>
-
-          <motion.div
-            initial={{ x: 0 }}
-            whileHover={{ x: 4, opacity: 1 }}
-            className="hidden shrink-0 md:block"
-          >
-            <ExternalLink className="text-white/20 transition-all group-hover:text-white/50" size={18} />
-          </motion.div>
-        </div>
-      </div>
-    </motion.a>
+            </motion.a>
+          </LiquidGlass>
   )
 }
 

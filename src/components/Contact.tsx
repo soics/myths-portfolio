@@ -84,15 +84,19 @@ export function Contact() {
               Open to advice, feedback, beginner-friendly opportunities, collaborations, and people who care about building.
             </p>
           </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-80px' }}
-            transition={{ delay: 0.2, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="mt-8"
-          >
-            <SocialLinks />
-          </motion.div>
+          <LiquidGlass variant="panel" tilt={4} className="!rounded-[18px] !p-6 md:!p-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-80px' }}
+              transition={{ delay: 0.2, type: 'spring', stiffness: 70, damping: 20 }}
+            >
+              <h3 className="text-[10px] font-mono uppercase tracking-[0.25em] text-cyan/40">ORIGIN STORY</h3>
+              <p className="mt-3 text-lg leading-[1.7] text-white/80">
+                {bioParagraphs[0]}
+              </p>
+            </motion.div>
+          </LiquidGlass>
         </div>
 
         {/* Right — form */}

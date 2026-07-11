@@ -32,6 +32,7 @@ export function LiquidGlass({
     panel: 'bg-deep/60 backdrop-blur-xl border border-white/[0.06]',
     ghost: 'bg-transparent border-0',
     hero: 'bg-deep/40 backdrop-blur-lg border border-white/[0.04]',
+    button: 'bg-deep/40 backdrop-blur-md border border-white/[0.04] !rounded-lg !px-4 !py-2',
   }
 
   return (

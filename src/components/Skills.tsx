@@ -80,34 +80,34 @@ export function Tools() {
           </div>
 
           {/* Strengths */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ delay: 0.2, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="glass-lift rounded-2xl overflow-hidden"
-          >
-            <div className="border-b border-white/[0.05] px-5 py-3.5 flex items-center gap-2">
-              <Zap size={13} className="text-amber/40" />
-              <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/40">Traits</span>
-            </div>
-            <div className="p-5">
-              <div className="flex flex-wrap gap-2">
-                {strengths.map((s, i) => {
-                  const sc = strengthColors[i % strengthColors.length]
-                  return (
-                    <motion.span
-                      key={s}
-                      initial={{ opacity: 0, scale: 0.85 }}
-                      animate={inView ? { opacity: 1, scale: 1 } : {}}
-                      transition={{ delay: i * 0.04, type: 'spring', stiffness: 200, damping: 18 }}
-                      className={`inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-[11px] font-medium transition-all hover:scale-105 ${sc.color}`}
-                    >
-                      <span className="h-1.5 w-1.5 rounded-sm opacity-60" style={{ backgroundColor: 'currentColor' }} />
-                      <span className="text-[8px] uppercase tracking-[0.1em] opacity-40">{sc.name}</span>
-                      <span className="opacity-80">{s}</span>
-                    </motion.span>
-                  )
-                })}
+          <LiquidGlass variant="panel" tilt={4} className="!rounded-2xl !overflow-hidden">
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={inView ? { opacity: 1, x: 0 } : {}}
+              transition={{ delay: 0.2, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <div className="border-b border-white/[0.05] px-5 py-3.5 flex items-center gap-2">
+                <Zap size={13} className="text-amber/40" />
+                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/40">Traits</span>
+              </div>
+              <div className="p-5">
+                <div className="flex flex-wrap gap-2">
+                  {strengths.map((s, i) => {
+                    const sc = strengthColors[i % strengthColors.length]
+                    return (
+                      <motion.span
+                        key={s}
+                        initial={{ opacity: 0, scale: 0.85 }}
+                        animate={inView ? { opacity: 1, scale: 1 } : {}}
+                        transition={{ delay: i * 0.04, type: 'spring', stiffness: 200, damping: 18 }}
+                        className={`inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-[11px] font-medium transition-all hover:scale-105 ${sc.color}`}
+                      >
+                        <span className="h-1.5 w-1.5 rounded-sm opacity-60" style={{ backgroundColor: 'currentColor' }} />
+                        <span className="text-[8px] uppercase tracking-[0.1em] opacity-40">{sc.name}</span>
+                        <span className="opacity-80">{s}</span>
+                      </motion.span>
+                    )
+                  })}
               </div>
             </div>
           </motion.div>
