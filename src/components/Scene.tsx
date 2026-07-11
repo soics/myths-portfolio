@@ -52,6 +52,26 @@ function AmbientLighting() {
   )
 }
 
+function LiquidGlassPlane() {
+  return (
+    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -4.5, 0]}> 
+      <planeGeometry args={[100, 100]} />
+      <meshPhysicalMaterial
+        color="#8888a0"
+        transmission={0.9}
+        roughness={0.1}
+        ior={1.5}
+        thickness={0.5}
+        envMapIntensity={1.5}
+        clearcoat={1}
+        clearcoatRoughness={0.1}
+        transparent
+        opacity={0.85}
+      />
+    </mesh>
+  )
+}
+
 function FloatingGeometry() {
   return (
     <>
@@ -60,11 +80,15 @@ function FloatingGeometry() {
           <octahedronGeometry />
           <meshPhysicalMaterial
             color="#d4d4dc"
-            metalness={0.6}
-            roughness={0.2}
+            transmission={0.85}
+            roughness={0.05}
+            ior={1.45}
+            thickness={0.3}
+            envMapIntensity={2}
+            clearcoat={0.5}
+            clearcoatRoughness={0.1}
             transparent
-            opacity={0.15}
-            wireframe
+            opacity={0.6}
           />
         </mesh>
       </Float>
@@ -73,11 +97,15 @@ function FloatingGeometry() {
           <icosahedronGeometry />
           <meshPhysicalMaterial
             color="#8888a0"
-            metalness={0.6}
-            roughness={0.2}
+            transmission={0.8}
+            roughness={0.08}
+            ior={1.4}
+            thickness={0.4}
+            envMapIntensity={1.8}
+            clearcoat={0.4}
+            clearcoatRoughness={0.15}
             transparent
-            opacity={0.15}
-            wireframe
+            opacity={0.55}
           />
         </mesh>
       </Float>
@@ -86,11 +114,15 @@ function FloatingGeometry() {
           <torusGeometry args={[1, 0.3, 8, 16]} />
           <meshPhysicalMaterial
             color="#a09080"
-            metalness={0.5}
-            roughness={0.2}
+            transmission={0.75}
+            roughness={0.1}
+            ior={1.35}
+            thickness={0.35}
+            envMapIntensity={1.6}
+            clearcoat={0.3}
+            clearcoatRoughness={0.2}
             transparent
-            opacity={0.15}
-            wireframe
+            opacity={0.5}
           />
         </mesh>
       </Float>
@@ -101,6 +133,7 @@ function FloatingGeometry() {
 function SceneContent() {
   return (
     <>
+      <LiquidGlassPlane />
       <AmbientLighting />
       <GroundGrid />
       <Particles count={120} />
