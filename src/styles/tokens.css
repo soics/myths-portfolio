@@ -265,6 +265,42 @@ button { cursor: pointer; }
   50% { opacity: 0.4; transform: scale(1); }
 }
 
+/* Liquid Glass ripple */
+.lg-panel {
+  transition: box-shadow 0.4s ease, border-color 0.4s ease;
+}
+.lg-panel:hover {
+  box-shadow: var(--glass-crystal);
+  border-color: rgba(212, 212, 220, 0.10);
+}
+
+.lg-ripple-overlay {
+  pointer-events: none;
+}
+.lg-ripple .lg-ripple-overlay::after {
+  content: '';
+  position: absolute;
+  left: var(--lg-ripple-x, 50%);
+  top: var(--lg-ripple-y, 50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(212, 212, 220, 0.15);
+  transform: translate(-50%, -50%) scale(0);
+  animation: lg-ripple-burst 0.6s ease-out forwards;
+}
+
+@keyframes lg-ripple-burst {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(40);
+    opacity: 0;
+  }
+}
+
 .myths-egg-cracks {
   position: relative;
 }

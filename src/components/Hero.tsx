@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react'
 import { ArrowRight, Sparkles } from 'lucide-react'
 import { site } from '../data/site'
 import { useStore } from '../lib/store'
+import { LiquidGlass } from './LiquidGlass'
 
 function TypeWriter({ text, delay = 0, speed = 40 }: { text: string; delay?: number; speed?: number }) {
   const [displayed, setDisplayed] = useState('')
@@ -261,16 +262,18 @@ export function Hero() {
             transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
             className={`text-[clamp(3rem,12vw,8rem)] font-black leading-[0.88] tracking-[-0.04em] ${shake ? 'myth-shake' : ''}`}
           >
-            <button
-              type="button"
-              onClick={handleNameClick}
-              className={`cursor-pointer bg-transparent border-none p-0 inline transition-all duration-300 ${distort ? 'myth-distort' : ''} ${clickCount >= 3 ? 'myths-egg-cracks' : ''}`}
-              aria-label="Click for a secret"
-            >
-              <span className={`bg-gradient-to-r from-white via-white to-cyan/60 bg-clip-text text-transparent ${glowClass}`}>
-                {site.name}
-              </span>
-            </button>
+            <LiquidGlass variant="hero" tilt={12} className="inline-block !rounded-xl px-4 py-2 -mx-4 -my-2">
+              <button
+                type="button"
+                onClick={handleNameClick}
+                className={`cursor-pointer bg-transparent border-none p-0 inline transition-all duration-300 ${distort ? 'myth-distort' : ''} ${clickCount >= 3 ? 'myths-egg-cracks' : ''}`}
+                aria-label="Click for a secret"
+              >
+                <span className={`block bg-gradient-to-r from-white via-white to-cyan/60 bg-clip-text text-transparent ${glowClass}`}>
+                  {site.name}
+                </span>
+              </button>
+            </LiquidGlass>
           </motion.h1>
 
           {/* Click feedback */}

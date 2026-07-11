@@ -13,6 +13,7 @@ import { Tools } from './components/Skills'
 import { ProjectsSection } from './components/Projects'
 import { Blueprint } from './components/Journey'
 import { Contact } from './components/Contact'
+import { LiquidGlass } from './components/LiquidGlass'
 import { useStore } from './lib/store'
 import { useKonamiCode } from './hooks/useKonamiCode'
 import { useTypedSequence } from './hooks/useTilt'
@@ -244,12 +245,24 @@ function App() {
       {mythsEggActive && <MythsCollapse />}
       <Header />
       <main id="main-content">
-        <Hero />
-        <Manifesto />
-        <Tools />
-        <ProjectsSection />
-        <Blueprint />
-        <Contact />
+        <LiquidGlass variant="ghost" tilt={6} className="!rounded-none !border-0">
+          <Hero />
+        </LiquidGlass>
+        <LiquidGlass variant="ghost" tilt={6} className="!rounded-none !border-0">
+          <Manifesto />
+        </LiquidGlass>
+        <LiquidGlass variant="ghost" tilt={6} className="!rounded-none !border-0">
+          <Tools />
+        </LiquidGlass>
+        <LiquidGlass variant="ghost" tilt={6} className="!rounded-none !border-0">
+          <ProjectsSection />
+        </LiquidGlass>
+        <LiquidGlass variant="ghost" tilt={6} className="!rounded-none !border-0">
+          <Blueprint />
+        </LiquidGlass>
+        <LiquidGlass variant="ghost" tilt={6} className="!rounded-none !border-0">
+          <Contact />
+        </LiquidGlass>
       </main>
       <FooterSecret />
     </>
