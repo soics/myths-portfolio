@@ -1,14 +1,8 @@
 import { useRef } from 'react'
 import { motion, useInView, useScroll, useTransform } from 'motion/react'
-import { chapters } from '../data/site'
+import { chapters, phaseData } from '../data/site'
 import { Map } from 'lucide-react'
 import { LiquidGlass } from './LiquidGlass'
-
-const phaseData = [
-  { phase: 'Foundation', pct: 100, pctLabel: 'SECURED' },
-  { phase: 'Framing', pct: 65, pctLabel: 'IN PROGRESS' },
-  { phase: 'Finishing', pct: 25, pctLabel: 'INITIALIZED' },
-]
 
 function PhaseCard({ chapter, index, inView: sectionInView, isLast }: {
   chapter: typeof chapters[number]; index: number; inView: boolean; isLast: boolean

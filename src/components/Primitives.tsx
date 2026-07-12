@@ -5,11 +5,11 @@ import { site } from '../data/site'
 import { useTilt } from '../hooks/useTilt'
 
 const navLinks = [
-  ['01', 'Origin', '#about'],
-  ['02', 'Capabilities', '#skills'],
-  ['03', 'Discoveries', '#projects'],
-  ['04', 'Path', '#journey'],
-  ['05', 'Signal', '#contact'],
+  { label: 'Origin', href: '#about' },
+  { label: 'Capabilities', href: '#skills' },
+  { label: 'Discoveries', href: '#projects' },
+  { label: 'Path', href: '#journey' },
+  { label: 'Signal', href: '#contact' },
 ] as const
 
 function useActiveSection(ids: string[]) {
@@ -85,7 +85,7 @@ function SackboyButton() {
 }
 
 
-function NavLink({ num, label, href, active }: { num: string; label: string; href: string; active: boolean }) {
+function NavLink({ label, href, active }: { label: string; href: string; active: boolean }) {
   const ref = useTilt<HTMLAnchorElement>(5)
   return (
     <a
@@ -95,7 +95,6 @@ function NavLink({ num, label, href, active }: { num: string; label: string; hre
         active ? 'text-white/90 bg-white/[0.04]' : 'text-white/55 hover:bg-white/[0.04] hover:text-white/80'
       }`}
     >
-      <span className="mr-1.5 font-mono text-[9px] opacity-30">{num}</span>
       {label}
       {active && (
         <motion.span
@@ -192,10 +191,10 @@ export function Header() {
             </div>
 
             <div className="hidden items-center gap-0.5 md:flex">
-              {navLinks.map(([num, label, href]) => {
+              {navLinks.map(({ label, href }) => {
                 const active = activeSection === href.slice(1)
                 return (
-                  <NavLink key={href} num={num} label={label} href={href} active={active} />
+                  <NavLink key={href} label={label} href={href} active={active} />
                 )
               })}
             </div>

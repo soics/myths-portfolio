@@ -77,13 +77,12 @@ function trackGlobal() {
 const allowedOrigins = [
   'https://myths-portfolio.vercel.app',
 ]
-const honeypotField = 'website'
 
 function originAllowed(origin: string): boolean {
-  if (allowedOrigins.includes(origin)) return true
-  if (origin.endsWith('.vercel.app')) return true
-  return false
+  return allowedOrigins.includes(origin)
 }
+
+const honeypotField = `hp_${crypto.randomUUID().slice(0, 4)}`
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const requestId = crypto.randomUUID().slice(0, 8)

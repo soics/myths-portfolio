@@ -6,7 +6,7 @@ export const site = {
   email: 'richardgermain29@gmail.com',
   instagram: 'https://instagram.com/mv.lls/',
   github: 'https://github.com/soics',
-  tiktok: 'oycc',
+  tiktok: 'https://tiktok.com/@oycc',
   phrases: ['Building. Learning. Becoming.', 'Creating my future one line of code at a time.', 'I am not finished. I am building.'],
 }
 
@@ -19,6 +19,38 @@ export const projectNotes: Record<string, string> = {
   'instagram-bot': 'Local Instagram DM automation with Ollama: phi3:mini for text replies, llava for image analysis, Meta TTS pipeline. Whitelist-only, single-laptop, controlled personal tool.',
   'ai-brain': 'AI operating system integrating terminal CLI, multiple model providers (OpenAI, Claude, Ollama), and cloud memory via Supabase + pgvector. Task-router with auto-classification.',
 }
+
+export const bioParagraphs = [
+  'I code because I love building things. Not because I have a title or a roadmap. I like taking things apart, seeing how they work, and putting them back together slightly better than before.',
+  'My best lessons have come from breaking things. Shipping broken builds, committing secrets at 2 AM, wrestling with git until 4 AM. Every error message taught me more than any tutorial ever did.',
+  'I dont pretend to have it figured out. What I have is curiosity. The drive to understand, the patience to actually learn, and the willingness to try things even when I might fail.',
+  'Keep building. Keep exploring. Keep getting better.',
+]
+
+export const metrics = [
+  { label: 'Learning Hours', value: '1,200+', sub: 'and counting' },
+  { label: 'Lines Written', value: '50K+', sub: 'across projects' },
+  { label: 'Bugs Fixed', value: '300+', sub: 'each one a lesson' },
+]
+
+export const logEntries = [
+  { date: '2026-07-09', entry: 'Security audit complete. 18 attack vectors tested.' },
+  { date: '2026-07-08', entry: 'Deployed to Vercel. Custom domain pending.' },
+  { date: '2026-07-05', entry: 'Portfolio rebuild with Tailwind v4 + Motion + React 19.' },
+  { date: '2026-06-28', entry: '9Router configuration. 276 models routed.' },
+]
+
+export const skillTiers = [
+  { label: 'Building', skills: ['HTML', 'CSS', 'JavaScript'], color: 'from-cyan/20 to-cyan/5', barColor: 'bg-cyan/40' },
+  { label: 'Growing', skills: ['TypeScript', 'React', 'Node.js'], color: 'from-violet/20 to-violet/5', barColor: 'bg-violet/40' },
+  { label: 'Exploring', skills: ['Git', 'GitHub', 'Supabase'], color: 'from-amber/20 to-amber/5', barColor: 'bg-amber/40' },
+]
+
+export const phaseData = [
+  { phase: 'Foundation', pct: 100, pctLabel: 'SECURED' },
+  { phase: 'Framing', pct: 65, pctLabel: 'IN PROGRESS' },
+  { phase: 'Finishing', pct: 25, pctLabel: 'INITIALIZED' },
+]
 
 export const chapters = [
   { number: '01', title: 'Learning fundamentals', text: 'Building a real base: markup, styling, JavaScript, version control, and small daily reps.', phase: 'Foundation' },

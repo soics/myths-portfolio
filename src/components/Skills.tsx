@@ -1,14 +1,8 @@
 import { useRef } from 'react'
 import { motion, useInView } from 'motion/react'
 import { Cpu, Zap, Code2 } from 'lucide-react'
-import { strengths } from '../data/site'
+import { strengths, skillTiers } from '../data/site'
 import { LiquidGlass } from './LiquidGlass'
-
-const skillTiers = [
-  { label: 'Building', skills: ['HTML', 'CSS', 'JavaScript'], color: 'from-cyan/20 to-cyan/5', barColor: 'bg-cyan/40' },
-  { label: 'Growing', skills: ['TypeScript', 'React', 'Node.js'], color: 'from-violet/20 to-violet/5', barColor: 'bg-violet/40' },
-  { label: 'Exploring', skills: ['Git', 'GitHub', 'Supabase'], color: 'from-amber/20 to-amber/5', barColor: 'bg-amber/40' },
-]
 
 const strengthColors = [
   { name: 'Core', color: 'border-cyan/20 bg-cyan/5 text-cyan' },
