@@ -1,11 +1,5 @@
 import { useEffect, useRef } from 'react'
 
-/**
- * True 3D perspective tilt — directly manipulates DOM at 60fps
- * via requestAnimationFrame, bypassing React render cycle.
- * Also exposes a CSS variable for an optional light highlight
- * via the `.ui-tilt` class.
- */
 export function useTilt<T extends HTMLElement>(maxDeg = 10) {
   const ref = useRef<T>(null)
 
@@ -62,27 +56,4 @@ export function useTilt<T extends HTMLElement>(maxDeg = 10) {
   }, [maxDeg])
 
   return ref
-}
-
-/**
- * Hook to detect when the user types a specific string sequence.
- * Fires `onMatch` when the sequence is typed in order.
- */
-export function useTypedSequence(seq: string, onMatch: () => void) {
-  const buf = useRef('')
-
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      buf.current += e.key.toLowerCase()
-      if (buf.current.length > seq.length) {
-        buf.current = buf.current.slice(-seq.length)
-      }
-      if (buf.current === seq) {
-        buf.current = ''
-        onMatch()
-      }
-    }
-    window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
-  }, [seq, onMatch])
 }

@@ -308,11 +308,6 @@ button { cursor: pointer; }
   50% { opacity: 1; }
 }
 
-@keyframes data-stream {
-  0% { background-position: 0 0; }
-  100% { background-position: 0 40px; }
-}
-
 @keyframes slide-up {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
@@ -325,66 +320,6 @@ button { cursor: pointer; }
   60% { transform: translate(-1px, -1px); }
   80% { transform: translate(1px, 2px); }
   100% { transform: translate(0); }
-}
-
-@keyframes game-hover {
-  0%, 100% { transform: translateY(0); box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
-  50% { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
-}
-
-@keyframes crack-fracture {
-  0% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
-  25% { clip-path: polygon(0 2%, 98% 0, 100% 98%, 2% 100%); }
-  50% { clip-path: polygon(2% 0, 100% 3%, 97% 100%, 0 97%); }
-  75% { clip-path: polygon(0 1%, 99% 2%, 100% 99%, 1% 98%); }
-  100% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
-}
-
-@keyframes collapse-flash {
-  0%, 100% { opacity: 0; }
-  50% { opacity: 0.6; }
-}
-
-@keyframes myth-glow-1 {
-  0%, 100% { text-shadow: 0 0 8px rgba(212,212,220,0.25); }
-  50% { text-shadow: 0 0 16px rgba(212,212,220,0.4); }
-}
-
-@keyframes myth-glow-2 {
-  0%, 100% { text-shadow: 0 0 12px rgba(212,212,220,0.4), 0 0 30px rgba(212,212,220,0.15); }
-  50% { text-shadow: 0 0 20px rgba(212,212,220,0.6), 0 0 50px rgba(212,212,220,0.2); }
-}
-
-@keyframes myth-glow-3 {
-  0%, 100% { text-shadow: 0 0 15px rgba(212,212,220,0.5), 0 0 40px rgba(212,212,220,0.2); }
-  50% { text-shadow: 0 0 25px rgba(212,212,220,0.7), 0 0 60px rgba(212,212,220,0.3), 0 0 80px rgba(136,136,160,0.15); }
-}
-
-@keyframes myth-distort {
-  0%, 100% { transform: skew(0deg, 0deg); }
-  20% { transform: skew(0.3deg, -0.1deg); }
-  40% { transform: skew(-0.2deg, 0.2deg); }
-  60% { transform: skew(0.1deg, -0.3deg); }
-  80% { transform: skew(-0.3deg, 0.1deg); }
-}
-
-@keyframes myth-shake {
-  0%, 100% { transform: translate(0, 0); }
-  10% { transform: translate(-1px, 1px); }
-  20% { transform: translate(2px, -1px); }
-  30% { transform: translate(-2px, 2px); }
-  40% { transform: translate(1px, -1px); }
-  50% { transform: translate(-1px, 2px); }
-  60% { transform: translate(2px, 1px); }
-  70% { transform: translate(-2px, -1px); }
-  80% { transform: translate(1px, -2px); }
-  90% { transform: translate(-1px, 1px); }
-}
-
-@keyframes collapse-imminent {
-  0%, 100% { opacity: 0; transform: scale(0.95); }
-  10%, 90% { opacity: 0.15; }
-  50% { opacity: 0.4; transform: scale(1); }
 }
 
 /* Liquid Glass ripple */
@@ -421,24 +356,6 @@ button { cursor: pointer; }
     transform: translate(-50%, -50%) scale(40);
     opacity: 0;
   }
-}
-
-.myths-egg-cracks {
-  position: relative;
-}
-.myths-egg-cracks::before {
-  content: '';
-  position: absolute;
-  inset: -4px;
-  background:
-    linear-gradient(45deg, transparent 48%, rgba(212,212,220,0.12) 49%, rgba(212,212,220,0.12) 51%, transparent 52%),
-    linear-gradient(135deg, transparent 48%, rgba(212,212,220,0.08) 49%, rgba(212,212,220,0.08) 51%, transparent 52%),
-    linear-gradient(225deg, transparent 48%, rgba(212,212,220,0.1) 49%, rgba(212,212,220,0.1) 51%, transparent 52%),
-    linear-gradient(315deg, transparent 48%, rgba(212,212,220,0.06) 49%, rgba(212,212,220,0.06) 51%, transparent 52%);
-  opacity: 0.6;
-  pointer-events: none;
-  mix-blend-mode: overlay;
-  animation: crack-fracture 4s ease-in-out infinite;
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { useScroll, useMotionValueEvent, motion, AnimatePresence } from 'motion/react'
-import { AtSign, GitBranch, Mail, Music2, Command } from 'lucide-react'
+import { GitBranch, Mail, Command } from 'lucide-react'
 import { site } from '../data/site'
 import { useTilt } from '../hooks/useTilt'
 
@@ -205,17 +205,7 @@ export function Header() {
                 <Command size={14} />
                 <span className="hidden text-[11px] md:inline">K</span>
               </HeaderIconButton>
-              <HeaderIconButton
-                onClick={() => {
-                  const w = window as unknown as Record<string, () => void>
-                  w.__openTerminal?.()
-                }}
-                aria-label="Open terminal"
-                tone="cyan"
-              >
-                <span className="font-mono text-[11px] tracking-[0.1em]">_</span>
-                <span className="hidden text-[10px] md:inline">`</span>
-              </HeaderIconButton>
+
               <HeaderIconLink href={site.github} external aria-label="GitHub">
                 <GitBranch size={15} />
               </HeaderIconLink>
@@ -333,50 +323,4 @@ function CommandPalette({ onClose }: { onClose: () => void }) {
   )
 }
 
-function SocialChip({ item }: { item: { icon: typeof GitBranch; label: string; href: string | null } }) {
-  const ref = useTilt<HTMLAnchorElement>(7)
-  const spanRef = useTilt<HTMLSpanElement>(7)
-  const isLink = !!item.href
-  const sharedClass = `focus-ring glass ui-tilt inline-flex items-center gap-2 rounded-full px-4 py-3 text-sm text-white/55 transition-all duration-300 hover:-translate-y-0.5 hover:text-white hover:shadow-[0_4px_20px_rgba(0,0,0,0.3)] ${isLink ? 'cursor-pointer' : 'cursor-default'}`
-  const inner = (
-    <>
-      <item.icon size={15} />
-      {item.label}
-    </>
-  )
-  if (isLink) {
-    return (
-      <a
-        ref={ref}
-        href={item.href!}
-        target="_blank"
-        rel="noreferrer"
-        className={sharedClass}
-      >
-        {inner}
-      </a>
-    )
-  }
-  return (
-    <span ref={spanRef} className={sharedClass}>
-      {inner}
-    </span>
-  )
-}
 
-export function SocialLinks() {
-  const items = [
-    { icon: GitBranch, label: 'GitHub', href: site.github },
-    { icon: AtSign, label: 'Instagram', href: site.instagram },
-    { icon: Music2, label: `TikTok: ${site.tiktok}`, href: null },
-    { icon: Mail, label: 'Email', href: `mailto:${site.email}` },
-  ]
-
-  return (
-    <div className="flex flex-wrap gap-3">
-      {items.map((item) => (
-        <SocialChip key={item.label} item={item} />
-      ))}
-    </div>
-  )
-}

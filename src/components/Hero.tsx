@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion, useScroll, useTransform } from 'motion/react'
 import { ArrowRight, Sparkles } from 'lucide-react'
 import { site } from '../data/site'
 import { LiquidGlass } from './LiquidGlass'
-import { useTilt } from '../hooks/useTilt'
+import { useStore } from '../lib/store'
 
 function TypeWriter({ text, delay = 0, speed = 40 }: { text: string; delay?: number; speed?: number }) {
   const [displayed, setDisplayed] = useState('')
@@ -35,36 +35,6 @@ function TypeWriter({ text, delay = 0, speed = 40 }: { text: string; delay?: num
         />
       )}
     </span>
-  )
-}
-
-function DataStreams() {
-  const streams = [
-    { label: 'STATUS', value: 'ACTIVE', color: 'text-cyan' },
-    { label: 'MODE', value: 'BUILD', color: 'text-amber' },
-    { label: 'SIGNAL', value: 'STABLE', color: 'text-cyan' },
-    { label: 'UPTIME', value: 'ONLINE', color: 'text-cyan' },
-  ]
-
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ delay: 2.5, duration: 0.8 }}
-      className="pointer-events-none absolute right-6 top-24 z-10 hidden md:block"
-    >
-      <div className="space-y-2 text-right">
-        {streams.map((s) => (
-          <div key={s.label} className="group flex items-center gap-3 justify-end">
-            <span className="text-[10px] font-mono text-white/20 tracking-[0.15em]">{s.label}</span>
-            <span className={`text-[11px] font-mono font-semibold ${s.color}`}>
-              {s.value}
-            </span>
-            <span className={`h-1.5 w-1.5 rounded-full ${s.color.replace('text-', 'bg-')} signal-pulse`} />
-          </div>
-        ))}
-      </div>
-    </motion.div>
   )
 }
 
@@ -100,38 +70,23 @@ function HolographicRing() {
   )
 }
 
-function CommandPrompt() {
-  const openTerminal = () => {
-    const w = window as unknown as Record<string, () => void>
-    w.__openTerminal?.()
-  }
-  const ref = useTilt<HTMLButtonElement>(7)
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 2.8, duration: 0.6 }}
-      className="pointer-events-none absolute bottom-8 left-6 z-10 hidden md:block"
-    >
-      <button
-        ref={ref}
-        type="button"
-        onClick={openTerminal}
-        className="pointer-events-auto ui-tilt group flex items-center gap-2 rounded-full border border-cyan/10 bg-deep/60 px-4 py-2 text-[11px] font-mono text-white/40 backdrop-blur-sm transition-all hover:border-cyan/20 hover:text-white/70"
-      >
-        <span className="text-white/30">_</span>
-        <span className="tracking-[0.1em]">type ` to access systems</span>
-        <kbd className="ml-1 rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-[9px] text-white/30">`</kbd>
-      </button>
-    </motion.div>
-  )
-}
-
 export function Hero() {
   const { scrollY } = useScroll()
   const y = useTransform(scrollY, [0, 500], [0, 40])
   const fade = useTransform(scrollY, [0, 400], [1, 0])
+  const setEchoPrismActive = useStore((s) => s.setEchoPrismActive)
+  const [mythsClicks, setMythsClicks] = useState(0)
+
+  const handleMythsClick = useCallback(() => {
+    const next = mythsClicks + 1
+    setMythsClicks(next)
+    if (next >= 5) {
+      setMythsClicks(0)
+      setEchoPrismActive(true)
+    }
+  }, [mythsClicks, setEchoPrismActive])
+
+  const progress = mythsClicks / 5
 
   const phrases = site.phrases
 
@@ -140,8 +95,6 @@ export function Hero() {
       className="relative flex min-h-dvh items-center overflow-hidden px-5 pt-28"
     >
       <HolographicRing />
-      <DataStreams />
-      <CommandPrompt />
 
       <motion.div style={{ y }} className="relative z-10 mx-auto w-full max-w-6xl">
         <div className="max-w-4xl">
@@ -164,7 +117,20 @@ export function Hero() {
             transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
             className="text-[clamp(3rem,12vw,8rem)] font-black leading-[0.88] tracking-[-0.04em]"
           >
-            {site.name}
+            <button
+              type="button"
+              onClick={handleMythsClick}
+              className="focus-ring relative cursor-pointer transition-all duration-300 hover:opacity-80"
+              aria-label="Click myths name (easter egg)"
+            >
+              {site.name}
+              {mythsClicks > 0 && mythsClicks < 5 && (
+                <span
+                  className="absolute -bottom-2 left-0 h-[2px] rounded-full bg-cyan/30 transition-all duration-300"
+                  style={{ width: `${progress * 100}%` }}
+                />
+              )}
+            </button>
           </motion.h1>
 
           <motion.p

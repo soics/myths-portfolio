@@ -1,10 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useSpring } from 'motion/react'
-import { motion, useScroll, AnimatePresence } from 'motion/react'
-import { Background } from './components/Background'
-import { SecretGame } from './components/SecretGame'
-import { MythsCollapse } from './components/MythsCollapse'
-import { Terminal } from './components/Terminal'
+import { motion, useScroll } from 'motion/react'
 import { Header } from './components/Primitives'
 import { Hero } from './components/Hero'
 import { Manifesto } from './components/About'
@@ -13,10 +9,9 @@ import { ProjectsSection } from './components/Projects'
 import { Blueprint } from './components/Journey'
 import { Contact } from './components/Contact'
 import { LiquidGlass } from './components/LiquidGlass'
+import { EchoPrism } from './components/easter-eggs/EchoPrism'
+import { SignalRoom } from './components/easter-eggs/SignalRoom'
 import { useStore } from './lib/store'
-import { useKonamiCode } from './hooks/useKonamiCode'
-import { useTypedSequence } from './hooks/useTilt'
-import type { SideEffects } from './hooks/useTerminal'
 import './styles/globals.css'
 
 const SECTION_ZONES = [
@@ -90,95 +85,23 @@ function SkipLink() {
   )
 }
 
-const EASTER_MSG = `You found me. Type 'help' in the terminal.`
-
-const KONAMI_MSG = `
-  ██╗  ██╗ ██████╗ ███╗   ██╗ █████╗ ███╗   ███╗██╗
-  ██║ ██╔╝██╔═══██╗████╗  ██║██╔══██╗████╗ ████║██║
-  █████╔╝ ██║   ██║██╔██╗ ██║███████║██╔████╔██║██║
-  ██╔═██╗ ██║   ██║██║╚██╗██║██╔══██║██║╚██╔╝██║██║
-  ██║  ██╗╚██████╔╝██║ ╚████║██║  ██║██║ ╚═╝ ██║███████╗
-  ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝
-  You found me.
-`
-
-function FooterSecret() {
-  const [revealed, setRevealed] = useState(false)
-  const [clickCount, setClickCount] = useState(0)
-
-  const handleClick = () => {
-    const next = clickCount + 1
-    setClickCount(next)
-    if (next >= 3) {
-      setRevealed(true)
-      setTimeout(() => setRevealed(false), 5000)
-    }
-  }
-
-  return (
-    <footer className="px-5 py-10 text-center text-sm text-white/35">
-      <p>&copy; {new Date().getFullYear()} myths.</p>
-      <button type="button" onClick={handleClick} className="text-[10px] text-white/15 transition-colors hover:text-white/30 cursor-pointer">
-        {clickCount === 0 ? 'signal lost' : clickCount === 1 ? 'searching...' : 'almost there...'}
-      </button>
-
-      <AnimatePresence>
-        {revealed && (
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 max-w-md rounded-2xl border border-white/[0.08] bg-deep/95 px-6 py-4 text-center shadow-[0_16px_48px_rgba(0,0,0,0.6)] backdrop-blur-xl"
-          >
-              <p className="text-xs leading-relaxed text-white/50">
-                &ldquo;all change is not growth, as all movement is not forward&rdquo;
-              </p>
-              <p className="mt-2 text-[10px] text-white/25">myths</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </footer>
-  )
-}
-
-const THEMES: Record<string, { accent: string; bg: string; raised: string; text: string }> = {
-  dark:   { accent: '212,212,220', bg: '#121214', raised: '#1a1a1e', text: '#ececf0' },
-  warm:   { accent: '160,144,128', bg: '#141210', raised: '#1c1a16', text: '#ece8e4' },
-  matrix: { accent: '0,255,65',    bg: '#000500', raised: '#000a00', text: '#00ff41' },
-  mono:   { accent: '180,180,200', bg: '#0a0a0c', raised: '#121216', text: '#d0d0d8' },
-}
-
 function App() {
-  const [terminalOpen, setTerminalOpen] = useState(false)
-  const [gameOpen, setGameOpen] = useState(false)
-  const mythsEggActive = useStore((s) => s.mythsEggActive)
+  const echoPrismActive = useStore((s) => s.echoPrismActive)
+  const signalRoomActive = useStore((s) => s.signalRoomActive)
+  const setEchoPrismActive = useStore((s) => s.setEchoPrismActive)
+  const setSignalRoomActive = useStore((s) => s.setSignalRoomActive)
+  const [footerClicks, setFooterClicks] = useState(0)
 
-  const glitch = useCallback(() => {
-    const w = window as unknown as Record<string, () => void>
-    w.__triggerGlitch?.()
-  }, [])
+  const handleFooterClick = useCallback(() => {
+    const next = footerClicks + 1
+    setFooterClicks(next)
+    if (next >= 3) {
+      setFooterClicks(0)
+      setSignalRoomActive(true)
+    }
+  }, [footerClicks, setSignalRoomActive])
 
-  const scrollTo = useCallback((id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
-  }, [])
-
-  const setTheme = useCallback((name: string) => {
-    const t = THEMES[name]
-    if (!t) return
-    const root = document.documentElement
-    root.style.setProperty('--accent-rgb', t.accent)
-    root.style.setProperty('--bg-color', t.bg)
-    root.style.setProperty('--raised-color', t.raised)
-    root.style.setProperty('--text-color', t.text)
-  }, [])
-
-  const playGame = useCallback(() => {
-    setGameOpen(true)
-  }, [])
-
-  const sideEffects: SideEffects = { glitch, scrollTo, matrix: glitch, setTheme, playGame }
-
-  // Scroll tracker for bagboy
+  // Scroll tracker
   useEffect(() => {
     const handle = () => {
       useStore.getState().setScrollY(window.scrollY)
@@ -187,59 +110,11 @@ function App() {
     return () => window.removeEventListener('scroll', handle)
   }, [])
 
-  // Escape to close terminal
-  useEffect(() => {
-    const handle = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setTerminalOpen(false)
-    }
-    window.addEventListener('keydown', handle)
-    return () => window.removeEventListener('keydown', handle)
-  }, [])
-
-  // Backtick to toggle terminal
-  useEffect(() => {
-    const handle = (e: KeyboardEvent) => {
-      if (e.key === '`' || e.key === 'Backquote' || (e.ctrlKey && e.key === '`')) {
-        e.preventDefault()
-        setTerminalOpen(o => !o)
-      }
-    }
-    window.addEventListener('keydown', handle)
-    return () => window.removeEventListener('keydown', handle)
-  }, [])
-
-  useKonamiCode(() => {
-    glitch()
-    setTerminalOpen(true)
-    console.log(KONAMI_MSG)
-  })
-
-  useTypedSequence('game', () => {
-    setGameOpen(true)
-  })
-
-  useTypedSequence('myths', () => {
-    console.log(EASTER_MSG)
-    setTerminalOpen(true)
-    document.title = '⚡ myths // hidden mode'
-    setTimeout(() => { document.title = 'myths // digital universe' }, 2000)
-  })
-
-  useEffect(() => {
-    const w = window as unknown as Record<string, unknown>
-    w.__openTerminal = () => setTerminalOpen(true)
-    return () => { delete w.__openTerminal }
-  }, [])
-
   return (
     <>
       <SkipLink />
       <ScrollProgress />
       <BackgroundAccent />
-      <Background />
-      <Terminal open={terminalOpen} onClose={() => setTerminalOpen(false)} sideEffects={sideEffects} />
-      <SecretGame open={gameOpen} onClose={() => setGameOpen(false)} />
-      {mythsEggActive && <MythsCollapse />}
       <Header />
       <main id="main-content">
         <LiquidGlass variant="ghost" tilt={6} className="!rounded-none !border-0">
@@ -261,7 +136,17 @@ function App() {
           <Contact />
         </LiquidGlass>
       </main>
-      <FooterSecret />
+      <footer className="px-5 py-10 text-center text-sm text-white/35">
+        <button
+          type="button"
+          onClick={handleFooterClick}
+          className="focus-ring cursor-pointer transition-all hover:text-white/50"
+        >
+          &copy; {new Date().getFullYear()} myths.
+        </button>
+      </footer>
+      <EchoPrism active={echoPrismActive} onClose={() => setEchoPrismActive(false)} />
+      <SignalRoom active={signalRoomActive} onClose={() => setSignalRoomActive(false)} />
     </>
   )
 }
