@@ -21,22 +21,8 @@ export type GitHubRepo = {
   archived: boolean
 }
 
-const base = 'https://api.github.com/users/soics'
-
 export async function getGitHubData() {
-  const [profileResponse, reposResponse] = await Promise.all([
-    fetch(base),
-    fetch(`${base}/repos?sort=updated&per_page=12`),
-  ])
-
-  if (!profileResponse.ok || !reposResponse.ok) {
-    throw new Error('GitHub data unavailable')
-  }
-
-  const profile = (await profileResponse.json()) as GitHubProfile
-  const repos = ((await reposResponse.json()) as GitHubRepo[])
-    .filter((repo) => !repo.fork && !repo.archived)
-    .slice(0, 6)
-
-  return { profile, repos }
+  const res = await fetch('/api/github')
+  if (!res.ok) throw new Error('GitHub data unavailable')
+  return res.json() as Promise<{ profile: GitHubProfile; repos: GitHubRepo[] }>
 }
