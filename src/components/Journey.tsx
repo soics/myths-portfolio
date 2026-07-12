@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import { motion, useInView, useScroll, useTransform } from 'motion/react'
 import { chapters } from '../data/site'
 import { Map } from 'lucide-react'
+import { LiquidGlass } from './LiquidGlass'
 
 const phaseData = [
   { phase: 'Foundation', pct: 100, pctLabel: 'SECURED' },
@@ -68,7 +69,7 @@ function PhaseCard({ chapter, index, inView: sectionInView, isLast }: {
                     viewport={{ once: true }}
                     transition={{ delay: 0.3 + index * 0.1, duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
                     className="h-full rounded-full"
-                    style{{
+                    style={{
                       background: `linear-gradient(90deg, rgba(212,212,220,0.3), rgba(136,136,160,0.2))`,
                     }}
                   />

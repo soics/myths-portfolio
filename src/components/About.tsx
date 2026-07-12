@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import { motion, useInView } from 'motion/react'
 import { ArrowUpRight, Signal, Cpu } from 'lucide-react'
 import { site } from '../data/site'
+import { LiquidGlass } from './LiquidGlass'
 
 const bioParagraphs = [
   'I code because I love building things. Not because I have a title or a roadmap. I like taking things apart, seeing how they work, and putting them back together slightly better than before.',

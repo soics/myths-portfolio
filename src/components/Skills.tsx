@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import { motion, useInView } from 'motion/react'
 import { Cpu, Zap, Code2 } from 'lucide-react'
 import { strengths } from '../data/site'
+import { LiquidGlass } from './LiquidGlass'
 
 const skillTiers = [
   { label: 'Building', skills: ['HTML', 'CSS', 'JavaScript'], color: 'from-cyan/20 to-cyan/5', barColor: 'bg-cyan/40' },
@@ -111,6 +112,7 @@ export function Tools() {
               </div>
             </div>
           </motion.div>
+          </LiquidGlass>
         </div>
       </div>
     </section>

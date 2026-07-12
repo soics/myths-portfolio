@@ -5,8 +5,8 @@ interface Props {
   children: ReactNode
   className?: string
   as?: 'section' | 'div' | 'article' | 'span'
-  /** 'panel' = full glass bg+blur, 'ghost' = tilt+glow only, 'hero' = large text glass */
-  variant?: 'panel' | 'ghost' | 'hero'
+  /** 'panel' = full glass bg+blur, 'ghost' = tilt+glow only, 'hero' = large text glass, 'button' = compact glass button */
+  variant?: 'panel' | 'ghost' | 'hero' | 'button'
   tilt?: number
   onClick?: (e: React.MouseEvent) => void
 }

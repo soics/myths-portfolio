@@ -4,6 +4,7 @@ import { ArrowRight, Sparkles } from 'lucide-react'
 import { site } from '../data/site'
 import { useStore } from '../lib/store'
 import { LiquidGlass } from './LiquidGlass'
+import { useTilt } from '../hooks/useTilt'
 
 function TypeWriter({ text, delay = 0, speed = 40 }: { text: string; delay?: number; speed?: number }) {
   const [displayed, setDisplayed] = useState('')
@@ -105,6 +106,7 @@ function CommandPrompt() {
     const w = window as unknown as Record<string, () => void>
     w.__openTerminal?.()
   }
+  const ref = useTilt<HTMLButtonElement>(7)
 
   return (
     <motion.div
@@ -114,9 +116,10 @@ function CommandPrompt() {
       className="pointer-events-none absolute bottom-8 left-6 z-10 hidden md:block"
     >
       <button
+        ref={ref}
         type="button"
         onClick={openTerminal}
-        className="pointer-events-auto group flex items-center gap-2 rounded-full border border-cyan/10 bg-deep/60 px-4 py-2 text-[11px] font-mono text-white/40 backdrop-blur-sm transition-all hover:border-cyan/20 hover:text-white/70"
+        className="pointer-events-auto ui-tilt group flex items-center gap-2 rounded-full border border-cyan/10 bg-deep/60 px-4 py-2 text-[11px] font-mono text-white/40 backdrop-blur-sm transition-all hover:border-cyan/20 hover:text-white/70"
       >
         <span className="text-white/30">_</span>
         <span className="tracking-[0.1em]">type ` to access systems</span>
@@ -127,7 +130,6 @@ function CommandPrompt() {
 }
 
 const CLICK_LABELS = ['', 'signal changed', 'frequency unstable', 'structure cracking', 'collapse imminent', ''] as const
-const GLOW_LEVELS = ['', 'myth-glow-1', 'myth-glow-2', 'myth-glow-3', 'myth-glow-3'] as const
 
 function useAudio() {
   const ctxRef = useRef<AudioContext | null>(null)
@@ -173,6 +175,10 @@ export function Hero() {
   const [showImminent, setShowImminent] = useState(false)
   const { playTone } = useAudio()
 
+  const distort = clickCount >= 1
+  const glowLevel = Math.min(clickCount + 1, 3)
+  const glowClass = `myth-glow-${glowLevel}`
+
   const handleNameClick = useCallback(() => {
     const newCount = clickCount + 1
     increment()
@@ -203,13 +209,9 @@ export function Hero() {
     if (newCount >= 3) w.__triggerGlitch?.()
   }, [clickCount, increment, setActive, setPhase, playTone])
 
-  const glowClass = GLOW_LEVELS[clickCount] || ''
-  const distort = clickCount >= 2
-  const shake = clickCount >= 3
-
   return (
     <motion.section id="top" style={{ opacity: fade }}
-      className={`relative flex min-h-dvh items-center overflow-hidden px-5 pt-28 transition-all duration-700 ${clickCount >= 4 ? 'brightness-[0.6] saturate-[0.3]' : ''}`}
+      className="relative flex min-h-dvh items-center overflow-hidden px-5 pt-28"
     >
       <HolographicRing />
       <DataStreams />
@@ -260,7 +262,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 40, filter: 'blur(8px)' }}
             animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className={`text-[clamp(3rem,12vw,8rem)] font-black leading-[0.88] tracking-[-0.04em] ${shake ? 'myth-shake' : ''}`}
+            className="text-[clamp(3rem,12vw,8rem)] font-black leading-[0.88] tracking-[-0.04em]"
           >
             <LiquidGlass variant="hero" tilt={12} className="inline-block !rounded-xl px-4 py-2 -mx-4 -my-2">
               <button

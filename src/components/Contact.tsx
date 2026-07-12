@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { motion } from 'motion/react'
 import { CheckCircle2, Loader2, Radio } from 'lucide-react'
-import { SocialLinks } from './Primitives'
+import { site } from '../data/site'
+import { LiquidGlass } from './LiquidGlass'
 
 type FormState = 'idle' | 'loading' | 'success' | 'error'
 
@@ -93,7 +94,7 @@ export function Contact() {
             >
               <h3 className="text-[10px] font-mono uppercase tracking-[0.25em] text-cyan/40">ORIGIN STORY</h3>
               <p className="mt-3 text-lg leading-[1.7] text-white/80">
-                {bioParagraphs[0]}
+                {site.phrases[2] || 'I am not finished. I am building.'}
               </p>
             </motion.div>
           </LiquidGlass>

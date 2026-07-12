@@ -112,6 +112,128 @@ button { cursor: pointer; }
   backdrop-filter: blur(20px);
 }
 
+.ui-3d {
+  transform: perspective(900px) translateZ(0);
+  transform-style: preserve-3d;
+  transition:
+    transform 220ms var(--ease-out-expo),
+    box-shadow 220ms var(--ease-out-expo),
+    border-color 220ms var(--ease-out-expo),
+    background-color 220ms var(--ease-out-expo);
+  will-change: transform;
+}
+
+.ui-3d:hover {
+  transform: perspective(900px) translateY(-3px) translateZ(18px) rotateX(2deg);
+  box-shadow:
+    0 18px 50px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(212, 212, 220, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.ui-3d:active {
+  transform: perspective(900px) translateY(-1px) translateZ(8px) scale(0.99);
+}
+
+.ui-3d-soft {
+  transform: perspective(800px) translateZ(0);
+  transform-style: preserve-3d;
+  transition:
+    transform 200ms var(--ease-out-expo),
+    box-shadow 200ms var(--ease-out-expo),
+    border-color 200ms var(--ease-out-expo),
+    background-color 200ms var(--ease-out-expo);
+}
+
+.ui-3d-soft:hover {
+  transform: perspective(800px) translateY(-2px) translateZ(10px) rotateX(1.5deg);
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.36), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/*
+ * Per-element 3D tilt — driven by useTilt hook which sets
+ * --tilt-x, --tilt-y, --tilt-active, --light-x, --light-y.
+ * The element itself stays static when not hovered; on hover,
+ * it picks up a subtle rotation, a soft light highlight
+ * following the cursor, and a deeper shadow.
+ */
+.ui-tilt {
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
+  --tilt-active: 0;
+  --light-x: 50%;
+  --light-y: 50%;
+
+  position: relative;
+  transform: perspective(900px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) translateZ(0);
+  transform-style: preserve-3d;
+  transition:
+    box-shadow 240ms var(--ease-out-expo),
+    border-color 240ms var(--ease-out-expo),
+    background-color 240ms var(--ease-out-expo);
+  will-change: transform;
+}
+
+.ui-tilt::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(
+    120px 120px at var(--light-x) var(--light-y),
+    rgba(212, 212, 220, calc(0.14 * var(--tilt-active))),
+    transparent 70%
+  );
+  opacity: var(--tilt-active);
+  transition: opacity 200ms var(--ease-out-expo);
+  mix-blend-mode: screen;
+  z-index: 1;
+}
+
+.ui-tilt > * {
+  position: relative;
+  z-index: 2;
+}
+
+.ui-tilt-soft {
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
+  --tilt-active: 0;
+  --light-x: 50%;
+  --light-y: 50%;
+
+  position: relative;
+  transform: perspective(800px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) translateZ(0);
+  transform-style: preserve-3d;
+  transition:
+    box-shadow 200ms var(--ease-out-expo),
+    border-color 200ms var(--ease-out-expo),
+    background-color 200ms var(--ease-out-expo);
+  will-change: transform;
+}
+
+.ui-tilt-soft::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(
+    90px 90px at var(--light-x) var(--light-y),
+    rgba(212, 212, 220, calc(0.10 * var(--tilt-active))),
+    transparent 70%
+  );
+  opacity: var(--tilt-active);
+  transition: opacity 200ms var(--ease-out-expo);
+  mix-blend-mode: screen;
+}
+
+.ui-tilt-soft > * {
+  position: relative;
+  z-index: 2;
+}
+
 .text-balance { text-wrap: balance; }
 
 .mask-fade-bottom {
@@ -318,7 +440,6 @@ button { cursor: pointer; }
   mix-blend-mode: overlay;
   animation: crack-fracture 4s ease-in-out infinite;
 }
-
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.001ms !important;

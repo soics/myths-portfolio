@@ -1,7 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useSpring } from 'motion/react'
 import { motion, useScroll, AnimatePresence } from 'motion/react'
-import { Scene } from './components/Scene'
 import { Background } from './components/Background'
 import { SecretGame } from './components/SecretGame'
 import { MythsCollapse } from './components/MythsCollapse'
@@ -17,7 +16,6 @@ import { LiquidGlass } from './components/LiquidGlass'
 import { useStore } from './lib/store'
 import { useKonamiCode } from './hooks/useKonamiCode'
 import { useTypedSequence } from './hooks/useTilt'
-import { ErrorBoundary } from './components/ErrorBoundary'
 import type { SideEffects } from './hooks/useTerminal'
 import './styles/globals.css'
 
@@ -239,7 +237,6 @@ function App() {
       <ScrollProgress />
       <BackgroundAccent />
       <Background />
-      <ErrorBoundary><Scene /></ErrorBoundary>
       <Terminal open={terminalOpen} onClose={() => setTerminalOpen(false)} sideEffects={sideEffects} />
       <SecretGame open={gameOpen} onClose={() => setGameOpen(false)} />
       {mythsEggActive && <MythsCollapse />}

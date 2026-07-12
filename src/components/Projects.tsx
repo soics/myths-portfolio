@@ -3,6 +3,8 @@ import { motion, useInView } from 'motion/react'
 import { Code2, ExternalLink, GitBranch, Loader2, Star, Satellite } from 'lucide-react'
 import { getGitHubData, type GitHubProfile, type GitHubRepo } from '../lib/github'
 import { projectNotes } from '../data/site'
+import { useTilt } from '../hooks/useTilt'
+import { LiquidGlass } from './LiquidGlass'
 
 const langColors: Record<string, string> = {
   TypeScript: 'border-cyan/20 hover:border-cyan/40',
@@ -47,9 +49,11 @@ function barStr(lang: string | null): string {
 }
 
 function FeaturedRepo({ repo, index }: { repo: GitHubRepo; index: number }) {
+  const ref = useTilt<HTMLAnchorElement>(4)
   return (
           <LiquidGlass variant="panel" tilt={4} className="!rounded-[20px] !overflow-hidden">
             <motion.a
+              ref={ref}
               initial={{ opacity: 0, y: 60, scale: 0.95 }}
               whileInView={{ opacity: 1, y: 0, scale: 1 }}
               viewport={{ once: true, margin: '-60px' }}
@@ -58,7 +62,7 @@ function FeaturedRepo({ repo, index }: { repo: GitHubRepo; index: number }) {
               href={repo.html_url}
               target="_blank"
               rel="noreferrer"
-              className="focus-ring group relative block overflow-hidden transition-all duration-500 hover:shadow-[0_32px_80px_rgba(0,0,0,0.5)]"
+              className="focus-ring ui-tilt-soft group relative block overflow-hidden transition-all duration-500 hover:shadow-[0_32px_80px_rgba(0,0,0,0.5)]"
             >
               <div className={`absolute inset-0 bg-gradient-to-b opacity-40 ${colorStr(repo.language, langAccents)}`} />
               <div className={`absolute left-0 right-0 top-0 h-[3px] bg-gradient-to-r ${barStr(repo.language)}`} />

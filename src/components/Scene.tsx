@@ -52,26 +52,6 @@ function AmbientLighting() {
   )
 }
 
-function LiquidGlassPlane() {
-  return (
-    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -4.5, 0]}> 
-      <planeGeometry args={[100, 100]} />
-      <meshPhysicalMaterial
-        color="#8888a0"
-        transmission={0.9}
-        roughness={0.1}
-        ior={1.5}
-        thickness={0.5}
-        envMapIntensity={1.5}
-        clearcoat={1}
-        clearcoatRoughness={0.1}
-        transparent
-        opacity={0.85}
-      />
-    </mesh>
-  )
-}
-
 function FloatingGeometry() {
   return (
     <>

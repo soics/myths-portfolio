@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import { useScroll, useMotionValueEvent, motion, AnimatePresence } from 'motion/react'
 import { AtSign, GitBranch, Mail, Music2, Command } from 'lucide-react'
 import { site } from '../data/site'
-import { useStore } from '../lib/store'
+import { useTilt } from '../hooks/useTilt'
 
 const navLinks = [
   ['01', 'Origin', '#about'],
@@ -38,6 +38,7 @@ function SackboyButton() {
   const [glitchTrigger, setGlitchTrigger] = useState(false)
   const [show, setShow] = useState(false)
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  const ref = useTilt<HTMLAnchorElement>(12)
 
   const handleClick = useCallback(() => {
     countRef.current++
@@ -56,7 +57,8 @@ function SackboyButton() {
   return (
     <>
       <a
-        className={`focus-ring block shrink-0 transition-all duration-300 ${glitchTrigger ? 'animate-[glitch_0.3s_ease-in-out_3]' : ''}`}
+        ref={ref}
+        className={`focus-ring ui-tilt block shrink-0 transition-all duration-300 ${glitchTrigger ? 'animate-[glitch_0.3s_ease-in-out_3]' : ''}`}
         href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
         target="_blank"
         rel="noreferrer"
@@ -82,29 +84,58 @@ function SackboyButton() {
   )
 }
 
-function BagboyButton() {
-  const [pulse, setPulse] = useState(false)
-  const setPose = useStore((s) => s.setBagboyPose)
 
-  const handleClick = useCallback(() => {
-    setPulse(true)
-    setPose('wave')
-    setTimeout(() => { setPulse(false); setPose('idle') }, 2000)
-  }, [setPose])
+function NavLink({ num, label, href, active }: { num: string; label: string; href: string; active: boolean }) {
+  const ref = useTilt<HTMLAnchorElement>(5)
+  return (
+    <a
+      ref={ref}
+      href={href}
+      className={`focus-ring ui-tilt relative rounded-lg px-3.5 py-2 text-xs font-medium tracking-[0.02em] transition-all duration-300 ${
+        active ? 'text-white/90 bg-white/[0.04]' : 'text-white/55 hover:bg-white/[0.04] hover:text-white/80'
+      }`}
+    >
+      <span className="mr-1.5 font-mono text-[9px] opacity-30">{num}</span>
+      {label}
+      {active && (
+        <motion.span
+          layoutId="nav-indicator"
+          className="absolute inset-x-2.5 -bottom-px h-[1.5px] rounded-full bg-gradient-to-r from-cyan/50 to-violet/30"
+        />
+      )}
+    </a>
+  )
+}
 
+function HeaderIconButton({ children, tone, ...rest }: React.ButtonHTMLAttributes<HTMLButtonElement> & { tone?: 'cyan' }) {
+  const ref = useTilt<HTMLButtonElement>(8)
+  const base = tone === 'cyan'
+    ? 'text-cyan/30 hover:bg-cyan/10 hover:text-cyan/60'
+    : 'text-white/45 hover:bg-white/[0.04] hover:text-white/65'
   return (
     <button
-      type="button"
-      onClick={handleClick}
-      className={`focus-ring flex items-center gap-2 rounded-lg px-3 py-2 text-[11px] font-mono transition-all duration-300 ${
-        pulse ? 'bg-cyan/8 text-cyan/50' : 'text-white/35 hover:bg-white/[0.04] hover:text-white/55'
-      }`}
-      aria-label="Sackboy easter egg"
+      ref={ref}
+      type={rest.type ?? 'button'}
+      className={`focus-ring ui-tilt flex items-center gap-1.5 rounded-lg px-2.5 py-2 transition-all duration-300 ${base}`}
+      {...rest}
     >
-      <span className={`transition-transform duration-300 ${pulse ? 'scale-110' : ''}`}>
-        [~]
-      </span>
+      {children}
     </button>
+  )
+}
+
+function HeaderIconLink({ children, external, ...rest }: React.AnchorHTMLAttributes<HTMLAnchorElement> & { external?: boolean }) {
+  const ref = useTilt<HTMLAnchorElement>(10)
+  return (
+    <a
+      ref={ref}
+      target={external ? '_blank' : undefined}
+      rel={external ? 'noreferrer' : undefined}
+      className="focus-ring ui-tilt rounded-lg p-2 text-white/55 transition-all duration-300 hover:bg-white/[0.04] hover:text-white"
+      {...rest}
+    >
+      {children}
+    </a>
   )
 }
 
@@ -154,71 +185,43 @@ export function Header() {
           <nav className="flex items-center justify-between gap-4 text-sm text-white/70">
             <div className="flex items-center gap-2">
               <SackboyButton />
-              <BagboyButton />
+              <span className="hidden items-center gap-2 rounded-lg px-3 py-2 text-[11px] font-mono text-white/25 md:inline-flex">
+                <span>[~]</span>
+                <span>myths</span>
+              </span>
             </div>
 
             <div className="hidden items-center gap-0.5 md:flex">
               {navLinks.map(([num, label, href]) => {
                 const active = activeSection === href.slice(1)
                 return (
-                  <a
-                    key={href}
-                    href={href}
-                    className={`focus-ring relative rounded-lg px-3.5 py-2 text-xs font-medium tracking-[0.02em] transition-all duration-300 ${
-                      active ? 'text-white/90' : 'text-white/55 hover:bg-white/[0.04] hover:text-white/80'
-                    }`}
-                  >
-                    <span className="mr-1.5 font-mono text-[9px] opacity-30">{num}</span>
-                    {label}
-                    {active && (
-                      <motion.span
-                        layoutId="nav-indicator"
-                        className="absolute inset-x-2.5 -bottom-px h-[1.5px] rounded-full bg-gradient-to-r from-cyan/50 to-violet/30"
-                      />
-                    )}
-                  </a>
+                  <NavLink key={href} num={num} label={label} href={href} active={active} />
                 )
               })}
             </div>
 
             <div className="flex items-center gap-1">
-              <button
-                type="button"
-                onClick={() => setPaletteOpen((p) => !p)}
-                className="focus-ring flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-white/45 transition-all hover:bg-white/[0.04] hover:text-white/65"
-                aria-label="Command palette"
-              >
+              <HeaderIconButton onClick={() => setPaletteOpen((p) => !p)} aria-label="Command palette">
                 <Command size={14} />
                 <span className="hidden text-[11px] md:inline">K</span>
-              </button>
-              <button
-                type="button"
+              </HeaderIconButton>
+              <HeaderIconButton
                 onClick={() => {
                   const w = window as unknown as Record<string, () => void>
                   w.__openTerminal?.()
                 }}
-                className="focus-ring flex items-center gap-1 rounded-lg px-2 py-2 text-cyan/30 transition-all hover:bg-cyan/10 hover:text-cyan/60"
                 aria-label="Open terminal"
+                tone="cyan"
               >
                 <span className="font-mono text-[11px] tracking-[0.1em]">_</span>
                 <span className="hidden text-[10px] md:inline">`</span>
-              </button>
-              <a
-                className="focus-ring rounded-lg p-2 text-white/55 transition-all hover:bg-white/[0.04] hover:text-white"
-                href={site.github}
-                target="_blank"
-                rel="noreferrer"
-                aria-label="GitHub"
-              >
+              </HeaderIconButton>
+              <HeaderIconLink href={site.github} external aria-label="GitHub">
                 <GitBranch size={15} />
-              </a>
-              <a
-                className="focus-ring rounded-lg p-2 text-white/55 transition-all hover:bg-white/[0.04] hover:text-white"
-                href={`mailto:${site.email}`}
-                aria-label="Email"
-              >
+              </HeaderIconLink>
+              <HeaderIconLink href={`mailto:${site.email}`} aria-label="Email">
                 <Mail size={15} />
-              </a>
+              </HeaderIconLink>
             </div>
           </nav>
         </div>
@@ -226,6 +229,26 @@ export function Header() {
 
       {paletteOpen && <CommandPalette onClose={() => setPaletteOpen(false)} />}
     </>
+  )
+}
+
+function PaletteItem({ item, onSelect }: { item: { label: string; desc: string; href: string; external?: boolean }; onSelect: () => void }) {
+  const ref = useTilt<HTMLButtonElement>(4)
+  return (
+    <button
+      ref={ref}
+      type="button"
+      onClick={onSelect}
+      className="ui-tilt flex w-full items-center justify-between rounded-lg px-4 py-2.5 text-left text-sm transition-colors hover:bg-white/[0.04]"
+    >
+      <div>
+        <span className="text-white/80">{item.label}</span>
+        <span className="ml-3 text-xs text-white/35">{item.desc}</span>
+      </div>
+      {item.external && (
+        <span className="text-[10px] text-white/30">↗</span>
+      )}
+    </button>
   )
 }
 
@@ -299,20 +322,7 @@ function CommandPalette({ onClose }: { onClose: () => void }) {
 
         <div className="max-h-64 overflow-y-auto py-2">
           {filtered.map((item) => (
-            <button
-              key={item.label}
-              type="button"
-              onClick={() => handleSelect(item)}
-              className="flex w-full items-center justify-between px-4 py-2.5 text-left text-sm transition-colors hover:bg-white/[0.04]"
-            >
-              <div>
-                <span className="text-white/80">{item.label}</span>
-                <span className="ml-3 text-xs text-white/35">{item.desc}</span>
-              </div>
-              {item.external && (
-                <span className="text-[10px] text-white/30">↗</span>
-              )}
-            </button>
+            <PaletteItem key={item.label} item={item} onSelect={() => handleSelect(item)} />
           ))}
           {filtered.length === 0 && (
             <p className="px-4 py-8 text-center text-sm text-white/35">No results for &ldquo;{query}&rdquo;</p>
@@ -320,6 +330,37 @@ function CommandPalette({ onClose }: { onClose: () => void }) {
         </div>
       </motion.div>
     </motion.div>
+  )
+}
+
+function SocialChip({ item }: { item: { icon: typeof GitBranch; label: string; href: string | null } }) {
+  const ref = useTilt<HTMLAnchorElement>(7)
+  const spanRef = useTilt<HTMLSpanElement>(7)
+  const isLink = !!item.href
+  const sharedClass = `focus-ring glass ui-tilt inline-flex items-center gap-2 rounded-full px-4 py-3 text-sm text-white/55 transition-all duration-300 hover:-translate-y-0.5 hover:text-white hover:shadow-[0_4px_20px_rgba(0,0,0,0.3)] ${isLink ? 'cursor-pointer' : 'cursor-default'}`
+  const inner = (
+    <>
+      <item.icon size={15} />
+      {item.label}
+    </>
+  )
+  if (isLink) {
+    return (
+      <a
+        ref={ref}
+        href={item.href!}
+        target="_blank"
+        rel="noreferrer"
+        className={sharedClass}
+      >
+        {inner}
+      </a>
+    )
+  }
+  return (
+    <span ref={spanRef} className={sharedClass}>
+      {inner}
+    </span>
   )
 }
 
@@ -333,22 +374,9 @@ export function SocialLinks() {
 
   return (
     <div className="flex flex-wrap gap-3">
-      {items.map((item) => {
-        const Tag = item.href ? 'a' : 'span'
-        const props = item.href
-          ? { href: item.href, target: '_blank' as const, rel: 'noreferrer' as const }
-          : {}
-        return (
-          <Tag
-            key={item.label}
-            {...props}
-            className={`focus-ring glass inline-flex items-center gap-2 rounded-full px-4 py-3 text-sm text-white/55 transition-all duration-300 hover:-translate-y-0.5 hover:text-white hover:shadow-[0_4px_20px_rgba(0,0,0,0.3)] ${item.href ? 'cursor-pointer' : 'cursor-default'}`}
-          >
-            <item.icon size={15} />
-            {item.label}
-          </Tag>
-        )
-      })}
+      {items.map((item) => (
+        <SocialChip key={item.label} item={item} />
+      ))}
     </div>
   )
 }
