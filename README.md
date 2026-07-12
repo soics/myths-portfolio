@@ -1,67 +1,89 @@
 # myths Portfolio
 
-Dark cinematic personal developer portfolio for **Richard Germain** (`myths`) — an aspiring full-stack developer and scripter.
-
-Core message: **I am not finished. I am building.**
+Dark cinematic personal developer portfolio for **Richard Germain** (`myths`).
 
 ## Features
-- React + Vite + TypeScript
-- Tailwind CSS v4
-- Motion animations with reduced-motion support
-- GitHub API integration for `myths11v`
-- Supabase-ready contact form
-- Honest project empty state
-- Semantic single-page layout
-- OpenGraph, favicon, sitemap, robots.txt, JSON-LD
-- Free deployment path via Vercel or Netlify
 
-## Setup
+- React + Vite + TypeScript + Tailwind CSS v4
+- Motion spring animations with reduced-motion support
+- 3D interactive easter eggs (R3F + Drei)
+- GitHub API integration — shows your pinned repos
+- Supabase contact form with email fallback
+- Serverless API with rate limiting, validation, sanitization
+- SEO: OpenGraph, sitemap, robots.txt, JSON-LD schema
+- Accessibility: focus rings, semantic HTML, skip link
+- Single-page layout with scroll-progress bar
+
+## Quick Start
+
 ```bash
+git clone <repo-url>
+cd myths-portfolio
 npm install
 npm run dev
 ```
 
+## Configuration
+
+Edit `src/data/site.ts` to personalize:
+
+- `name`, `realName`, `title` — your info
+- `githubUser` — your GitHub username (fetches pinned repos)
+- `email` — contact form fallback
+- `instagram`, `github`, `tiktok` — social links
+- `phrases` — hero typewriter text
+
+## GitHub API Integration
+
+By default, repos are fetched client-side from the GitHub public API (rate-limited to 60 req/hr).
+
+For production, deploy the serverless proxy in `api/github.ts` (Vercel) — no env vars needed, uses your repo's Vercel URL as the referer.
+
 ## Supabase Contact Form
-Create `.env.local`:
+
+Optional. Create `.env.local`:
+
 ```env
 VITE_SUPABASE_URL=your_supabase_project_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
-Run `supabase/schema.sql` in Supabase SQL Editor.
+Run `supabase/schema.sql` in Supabase SQL Editor to create the `contact_messages` table with RLS.
 
-Security notes:
-- Use anon key only.
-- Never expose service role key.
-- RLS is enabled.
-- Anonymous users can insert contact messages only.
-- Anonymous users cannot read messages.
-
-Without Supabase env vars, the form falls back to email.
+Without Supabase env vars, the form falls back to email via `mailto:`.
 
 ## Scripts
+
 ```bash
-npm run dev
-npm run lint
-npm run build
-npm run preview
+npm run dev       # dev server
+npm run build     # typecheck + production build
+npm run lint      # ESLint
+npm run preview   # preview production build
 ```
 
 ## Deployment
-Recommended free hosting: **Vercel**.
 
-1. Push to GitHub under `https://github.com/myths11v`.
-2. Import repo into Vercel.
-3. Add Supabase env vars if using contact storage.
-4. Deploy.
+**Vercel** (recommended):
 
-Netlify also works with the same build settings:
+1. Push to GitHub
+2. Import repo into Vercel
+3. Add `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` as env vars (optional)
+4. Deploy — zero config
+
+**Netlify** also works:
 - Build command: `npm run build`
 - Publish directory: `dist`
 
-## Future Improvements
-- Add real finished projects as they ship.
-- Add blog posts from Supabase.
-- Add certificates only when earned.
-- Add GitHub activity visualization.
-- Add lightweight analytics if needed.
+## Tech Stack
+
+| Tool | Purpose |
+|------|---------|
+| React 19 | UI framework |
+| Vite 8 | Build tool |
+| TypeScript | Type safety |
+| Tailwind CSS v4 | Styling |
+| Motion | Animation library |
+| R3F + Drei | 3D easter eggs |
+| Lucide React | Icons |
+| Supabase | Contact form backend |
+| Vercel | Hosting + serverless functions |
