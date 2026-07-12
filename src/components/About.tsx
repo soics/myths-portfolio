@@ -1,8 +1,44 @@
 import { useRef } from 'react'
 import { motion, useInView } from 'motion/react'
-import { ArrowUpRight, Signal, Cpu } from 'lucide-react'
+import { ArrowUpRight, Ruler, HardHat } from 'lucide-react'
 import { site, bioParagraphs, metrics, logEntries } from '../data/site'
 import { LiquidGlass } from './LiquidGlass'
+
+function ProgressMeter() {
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, margin: '-60px' })
+  // Calculate pseudo-progress: weighted by learning breadth
+  const pct = Math.min(62, Math.round(
+    (bioParagraphs.length * 8) +
+    (metrics.reduce((a, m) => a + Number.parseInt(m.value), 0) / 100)
+  ))
+
+  return (
+    <div ref={ref} className="space-y-2">
+      <div className="flex items-center justify-between">
+        <span className="text-[10px] font-mono text-blueprint/40 tracking-[0.15em]">
+          PROGRESS TO FULL-STACK
+        </span>
+        <span className="text-[11px] font-mono text-construction/60">{pct}%</span>
+      </div>
+      <div className="progress-tube">
+        <motion.div
+          initial={{ width: 0 }}
+          animate={inView ? { width: `${pct}%` } : {}}
+          transition={{ delay: 0.4, duration: 2, ease: [0.16, 1, 0.3, 1] }}
+          className="progress-tube-fill"
+        />
+      </div>
+      <div className="flex justify-between text-[8px] font-mono text-concrete-mid/30">
+        <span>0%</span>
+        <span>25%</span>
+        <span>50%</span>
+        <span>75%</span>
+        <span>100%</span>
+      </div>
+    </div>
+  )
+}
 
 export function Manifesto() {
   const sectionRef = useRef(null)
@@ -11,7 +47,6 @@ export function Manifesto() {
   return (
     <section ref={sectionRef} id="about" className="px-5 py-32">
       <div className="mx-auto max-w-6xl">
-        {/* Section header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -20,11 +55,11 @@ export function Manifesto() {
           className="mb-16"
         >
           <div className="flex items-center gap-3 mb-4">
-            <Signal size={14} className="text-cyan/50" />
-            <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-cyan/40">ORIGIN.SIGNAL</span>
+            <Ruler size={14} className="text-blueprint/50" />
+            <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-blueprint/40">SITE.PLAN</span>
           </div>
           <h2 className="text-balance text-4xl font-semibold tracking-[-0.04em] text-white md:text-5xl">
-            This is the story behind the code.
+            The blueprint behind the build.
           </h2>
         </motion.div>
 
@@ -38,7 +73,7 @@ export function Manifesto() {
                 whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.15 + pIdx * 0.1, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                className="text-[15px] leading-[1.85] text-white/65"
+                className="text-[15px] leading-[1.85] text-concrete-light/65"
               >
                 {para}
               </motion.p>
@@ -52,10 +87,10 @@ export function Manifesto() {
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ delay: 0.6 }}
-              className="focus-ring mt-6 inline-flex items-center gap-2 text-sm text-cyan/50 transition-colors hover:text-cyan/70"
+              className="focus-ring mt-6 inline-flex items-center gap-2 text-sm text-blueprint/50 transition-colors hover:text-blueprint/70"
             >
               <ArrowUpRight size={14} />
-              View GitHub signal
+              View site on GitHub
             </motion.a>
           </div>
 
@@ -67,42 +102,28 @@ export function Manifesto() {
             transition={{ delay: 0.25, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
             className="space-y-5"
           >
-            {/* Metrics dashboard */}
+            {/* Progress meter */}
             <LiquidGlass variant="panel" tilt={4} className="!rounded-2xl !overflow-hidden">
               <div className="border-b border-white/[0.05] px-5 py-3.5 flex items-center gap-3">
-                <Cpu size={13} className="text-cyan/40" />
-                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/40">System Metrics</span>
+                <HardHat size={13} className="text-construction/40" />
+                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/40">Construction Progress</span>
               </div>
-              <div className="grid grid-cols-3 divide-x divide-white/[0.05]">
-                {metrics.map((m) => (
-                  <div key={m.label} className="px-4 py-5 text-center">
-                    <motion.span
-                      initial={{ opacity: 0, scale: 0.5 }}
-                      whileInView={{ opacity: 1, scale: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ type: 'spring', stiffness: 200, damping: 15, delay: 0.3 }}
-                      className="block text-2xl font-bold tracking-tight text-cyan"
-                    >
-                      {m.value}
-                    </motion.span>
-                    <span className="mt-1 block text-[10px] text-white/35 uppercase tracking-[0.1em]">{m.label}</span>
-                    <span className="block text-[9px] text-white/20 mt-0.5">{m.sub}</span>
-                  </div>
-                ))}
+              <div className="p-5">
+                <ProgressMeter />
               </div>
             </LiquidGlass>
 
-            {/* Dev log */}
+            {/* Site notes (dev log) */}
             <LiquidGlass variant="panel" tilt={4} className="!rounded-2xl !p-5">
               <div className="flex items-center gap-2 mb-4">
-                <span className="h-1.5 w-1.5 rounded-full bg-cyan/40 signal-pulse" />
-                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/40">Dev Log</span>
+                <span className="h-1.5 w-1.5 rounded-full bg-construction/40 safety-beacon" />
+                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/40">Site Notes</span>
               </div>
               <div className="space-y-2.5">
                 {logEntries.map((entry) => (
                   <div key={entry.date} className="flex gap-2.5 text-[11px]">
-                    <span className="shrink-0 font-mono text-cyan/30">{entry.date.slice(5)}</span>
-                    <span className="text-white/45 leading-[1.5]">{entry.entry}</span>
+                    <span className="shrink-0 font-mono text-blueprint/30">{entry.date.slice(5)}</span>
+                    <span className="text-concrete-light/45 leading-[1.5]">{entry.entry}</span>
                   </div>
                 ))}
               </div>

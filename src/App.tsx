@@ -11,16 +11,17 @@ import { Contact } from './components/Contact'
 import { LiquidGlass } from './components/LiquidGlass'
 import { EchoPrism } from './components/easter-eggs/EchoPrism'
 import { SignalRoom } from './components/easter-eggs/SignalRoom'
+import { ConstructionBackground } from './components/ConstructionBackground'
 import { useStore } from './lib/store'
 import './styles/globals.css'
 
 const SECTION_ZONES = [
-  { id: 'top',     accent: '200,200,210', name: 'terminal' },
-  { id: 'about',   accent: '200,200,210', name: 'origin'   },
-  { id: 'skills',  accent: '136,136,160', name: 'engine'   },
-  { id: 'projects',accent: '200,200,210', name: 'discover' },
-  { id: 'journey', accent: '160,144,128', name: 'forge'    },
-  { id: 'contact', accent: '136,136,160', name: 'transmit' },
+  { id: 'top',     accent: '56,189,248',  name: 'blueprint'    },
+  { id: 'about',   accent: '56,189,248',  name: 'site-plan'    },
+  { id: 'skills',  accent: '251,191,36',  name: 'materials'    },
+  { id: 'projects',accent: '56,189,248',  name: 'builds'       },
+  { id: 'journey', accent: '251,191,36',  name: 'construction' },
+  { id: 'contact', accent: '239,68,68',   name: 'hazard'       },
 ] as const
 
 function BackgroundAccent() {
@@ -68,7 +69,7 @@ function ScrollProgress() {
   const scaleX = useSpring(scrollYProgress, { stiffness: 200, damping: 30 })
   return (
     <motion.div
-      style={{ scaleX, background: 'linear-gradient(90deg, rgba(212,212,220,0.3), rgba(136,136,160,0.2), rgba(212,212,220,0.15))' }}
+      style={{ scaleX, background: 'repeating-linear-gradient(90deg, rgba(56,189,248,0.3) 0px, rgba(56,189,248,0.3) 8px, rgba(251,191,36,0.2) 8px, rgba(251,191,36,0.2) 16px)' }}
       className="fixed left-0 top-0 z-50 h-[1.5px] origin-left"
     />
   )
@@ -112,6 +113,7 @@ function App() {
 
   return (
     <>
+      <ConstructionBackground />
       <SkipLink />
       <ScrollProgress />
       <BackgroundAccent />

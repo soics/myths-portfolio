@@ -49,14 +49,14 @@ export function LiquidGlass({
         className="pointer-events-none absolute inset-0 -z-10"
         aria-hidden="true"
         style={{
-          background: 'radial-gradient(600px circle at var(--lg-glow-x, 50%) var(--lg-glow-y, 50%), rgba(212,212,220,0.06), transparent 60%)',
+          background: 'radial-gradient(600px circle at var(--lg-glow-x, 50%) var(--lg-glow-y, 50%), rgba(56,189,248,0.06), transparent 60%)',
         }}
       />
       <div
         className="pointer-events-none absolute inset-0 rounded-2xl -z-10"
         aria-hidden="true"
         style={{
-          background: 'linear-gradient(135deg, rgba(212,212,220,0.04) 0%, transparent 40%, transparent 60%, rgba(136,136,160,0.03) 100%)',
+          background: 'linear-gradient(135deg, rgba(56,189,248,0.04) 0%, transparent 40%, transparent 60%, rgba(251,191,36,0.03) 100%)',
         }}
       />
       <div

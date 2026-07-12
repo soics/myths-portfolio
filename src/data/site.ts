@@ -15,9 +15,9 @@ export const learningSkills = ['HTML', 'CSS', 'JavaScript', 'TypeScript', 'React
 export const strengths = ['Communication', 'Teamwork', 'Adaptability', 'Creative thinking', 'Learning ability', 'Problem solving', 'Curiosity', 'Persistence']
 
 export const projectNotes: Record<string, string> = {
-  'myths-portfolio': 'Personal portfolio with dark cinematic theme, 3D easter egg, Supabase contact form, deployed on Vercel.',
-  'instagram-bot': 'Local Instagram DM automation with Ollama: phi3:mini for text replies, llava for image analysis, Meta TTS pipeline. Whitelist-only, single-laptop, controlled personal tool.',
-  'ai-brain': 'AI operating system integrating terminal CLI, multiple model providers (OpenAI, Claude, Ollama), and cloud memory via Supabase + pgvector. Task-router with auto-classification.',
+  'myths-portfolio': 'Construction-site dark portfolio with blueprint grids, scaffolding frames, safety beacons, and real-time GitHub integration. Built with React 19, Vite 8, Tailwind CSS v4.',
+  'instagram-bot': 'Local Instagram DM automation rig: Ollama phi3:mini for text, llava for vision, Meta TTS for voice. Whitelist-only, single-laptop, personal tool — no cloud dependency.',
+  'ai-brain': 'Autonomous AI operating system: session syncing, concept extraction, Supabase + pgvector memory, 9Router provider pool, persistent daemon with daily/weekly maintenance cycles.',
 }
 
 export const bioParagraphs = [
@@ -41,9 +41,9 @@ export const logEntries = [
 ]
 
 export const skillTiers = [
-  { label: 'Building', skills: ['HTML', 'CSS', 'JavaScript'], color: 'from-cyan/20 to-cyan/5', barColor: 'bg-cyan/40' },
-  { label: 'Growing', skills: ['TypeScript', 'React', 'Node.js'], color: 'from-violet/20 to-violet/5', barColor: 'bg-violet/40' },
-  { label: 'Exploring', skills: ['Git', 'GitHub', 'Supabase'], color: 'from-amber/20 to-amber/5', barColor: 'bg-amber/40' },
+  { label: 'Building', skills: ['HTML', 'CSS', 'JavaScript'], color: 'from-blueprint/20 to-blueprint/5', barColor: 'bg-blueprint/40' },
+  { label: 'Growing', skills: ['TypeScript', 'React', 'Node.js'], color: 'from-construction/20 to-construction/5', barColor: 'bg-construction/40' },
+  { label: 'Exploring', skills: ['Git', 'GitHub', 'Supabase'], color: 'from-concrete-light/20 to-concrete-light/5', barColor: 'bg-concrete-light/40' },
 ]
 
 export const phaseData = [
