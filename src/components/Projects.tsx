@@ -6,16 +6,6 @@ import { projectNotes } from '../data/site'
 import { useTilt } from '../hooks/useTilt'
 import { LiquidGlass } from './LiquidGlass'
 
-const langColors: Record<string, string> = {
-  TypeScript: 'border-cyan/20 hover:border-cyan/40',
-  JavaScript: 'border-amber/20 hover:border-amber/40',
-  Python: 'border-emerald/20 hover:border-emerald/40',
-  HTML: 'border-orange/20 hover:border-orange/40',
-  CSS: 'border-sky/20 hover:border-sky/40',
-  Lua: 'border-blue/20 hover:border-blue/40',
-  Shell: 'border-green/20 hover:border-green/40',
-}
-
 const langAccents: Record<string, string> = {
   TypeScript: 'from-cyan/30 via-cyan/10 to-transparent',
   JavaScript: 'from-amber/30 via-amber/10 to-transparent',
@@ -38,10 +28,6 @@ const langBars: Record<string, string> = {
 
 function colorStr(lang: string | null, map: Record<string, string>): string {
   return map[lang || ''] || 'from-cyan/20 via-cyan/10 to-transparent'
-}
-
-function borderStr(lang: string | null): string {
-  return langColors[lang || ''] || 'border-cyan/10 hover:border-cyan/20'
 }
 
 function barStr(lang: string | null): string {
@@ -115,53 +101,6 @@ function FeaturedRepo({ repo, index }: { repo: GitHubRepo; index: number }) {
               </div>
             </motion.a>
           </LiquidGlass>
-  )
-}
-
-function RepoCard({ repo, inView, index }: { repo: GitHubRepo; inView: boolean; index: number }) {
-  return (
-    <motion.a
-      initial={{ opacity: 0, y: 40, scale: 0.95 }}
-      animate={inView ? { opacity: 1, y: 0, scale: 1 } : {}}
-      transition={{ delay: 0.1 + index * 0.06, type: 'spring', stiffness: 80, damping: 20 }}
-      whileHover={{ y: -8, scale: 1.01 }}
-      className={`focus-ring group relative block overflow-hidden rounded-[16px] border p-6 transition-all duration-400 hover:shadow-[0_20px_60px_rgba(0,0,0,0.4)] ${borderStr(repo.language)}`}
-      href={repo.html_url}
-      target="_blank"
-      rel="noreferrer"
-    >
-      <div className={`absolute inset-0 bg-gradient-to-b opacity-0 transition-opacity duration-500 group-hover:opacity-100 ${colorStr(repo.language, langAccents)}`} />
-      <div className={`absolute left-0 right-0 top-0 h-[2px] bg-gradient-to-r opacity-30 ${barStr(repo.language)}`} />
-
-      <div className="relative z-10">
-        <div className="mb-4 flex items-center justify-between">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5">
-            <Code2 className="text-white/40" size={15} />
-          </div>
-          <ExternalLink className="text-white/15 transition-all group-hover:text-white/45" size={14} />
-        </div>
-        <h3 className="text-lg font-semibold tracking-[-0.02em] text-white/85">{repo.name}</h3>
-        <p className="mt-1.5 line-clamp-2 text-sm leading-[1.7] text-white/55">{repo.description || 'A public repository.'}</p>
-        {projectNotes[repo.name] && (
-          <p className="mt-2 text-xs leading-[1.5] text-white/40 line-clamp-2">{projectNotes[repo.name]}</p>
-        )}
-        <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2">
-          {repo.language && (
-            <span className="inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] font-medium text-white/55">
-              <span className="h-1.5 w-1.5 rounded-sm bg-current opacity-60" />
-              {repo.language}
-            </span>
-          )}
-          {repo.stargazers_count > 0 && (
-            <span className="inline-flex items-center gap-1 text-xs text-white/35"><Star size={11} /> {repo.stargazers_count}</span>
-          )}
-          {repo.forks_count > 0 && (
-            <span className="inline-flex items-center gap-1 text-xs text-white/35"><GitBranch size={11} /> {repo.forks_count}</span>
-          )}
-          <span className="ml-auto text-xs text-white/25">{new Date(repo.updated_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
-        </div>
-      </div>
-    </motion.a>
   )
 }
 
@@ -239,15 +178,10 @@ export function ProjectsSection() {
         {!state.loading && !state.error && state.repos.length === 0 && <EmptyProjects profile={state.profile} inView={inView} />}
 
         {!state.loading && !state.error && state.repos.length > 0 && (
-          <div className="space-y-6">
-            <FeaturedRepo repo={state.repos[0]} index={0} />
-            {state.repos.length > 1 && (
-              <motion.div ref={ref} className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-                {state.repos.slice(1).map((repo, i) => (
-                  <RepoCard key={repo.id} repo={repo} inView={inView} index={i} />
-                ))}
-              </motion.div>
-            )}
+          <div ref={ref} className="space-y-6">
+            {state.repos.map((repo, i) => (
+              <FeaturedRepo key={repo.id} repo={repo} index={i} />
+            ))}
           </div>
         )}
       </div>
