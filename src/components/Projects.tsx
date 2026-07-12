@@ -142,6 +142,9 @@ function RepoCard({ repo, inView, index }: { repo: GitHubRepo; inView: boolean; 
         </div>
         <h3 className="text-lg font-semibold tracking-[-0.02em] text-white/85">{repo.name}</h3>
         <p className="mt-1.5 line-clamp-2 text-sm leading-[1.7] text-white/55">{repo.description || 'A public repository.'}</p>
+        {projectNotes[repo.name] && (
+          <p className="mt-2 text-xs leading-[1.5] text-white/40 line-clamp-2">{projectNotes[repo.name]}</p>
+        )}
         <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2">
           {repo.language && (
             <span className="inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] font-medium text-white/55">

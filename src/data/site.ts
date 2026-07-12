@@ -15,8 +15,9 @@ export const learningSkills = ['HTML', 'CSS', 'JavaScript', 'TypeScript', 'React
 export const strengths = ['Communication', 'Teamwork', 'Adaptability', 'Creative thinking', 'Learning ability', 'Problem solving', 'Curiosity', 'Persistence']
 
 export const projectNotes: Record<string, string> = {
-  'myths-portfolio': 'Design systems, React + Tailwind, accessibility, security hardening, Vercel deployment.',
-  'soics': 'Profile README — GitHub markdown, personal branding, documenting the journey publicly.',
+  'myths-portfolio': 'Personal portfolio with dark cinematic theme, 3D easter egg, Supabase contact form, deployed on Vercel.',
+  'instagram-bot': 'Local Instagram DM automation with Ollama: phi3:mini for text replies, llava for image analysis, Meta TTS pipeline. Whitelist-only, single-laptop, controlled personal tool.',
+  'ai-brain': 'AI operating system integrating terminal CLI, multiple model providers (OpenAI, Claude, Ollama), and cloud memory via Supabase + pgvector. Task-router with auto-classification.',
 }
 
 export const chapters = [
