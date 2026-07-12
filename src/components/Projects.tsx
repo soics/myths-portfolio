@@ -218,7 +218,7 @@ export function ProjectsSection() {
             <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-cyan/40">DISCOVERIES</span>
           </div>
           <h2 className="text-balance text-4xl font-semibold tracking-[-0.04em] text-white md:text-5xl">
-            {state.repos.length > 0 ? 'Live from the network.' : 'Scanning the network.'}
+            {state.repos.length > 0 ? 'Projects.' : 'Loading projects.'}
           </h2>
           <p className="mt-5 max-w-2xl text-base leading-8 text-white/60">Public repositories pulled in real time. Every push adds to the constellation.</p>
         </motion.div>
