@@ -67,9 +67,9 @@ function ConcreteName({ children, onClick, mythsClicks, progress }: {
               className="relative inline-block"
               style={{
                 textShadow: `
-                  0 1px 0 rgba(56,189,248,0.15),
-                  0 2px 0 rgba(56,189,248,0.10),
-                  0 3px 0 rgba(56,189,248,0.05),
+                  0 1px 0 rgba(200,200,200,0.15),
+                  0 2px 0 rgba(200,200,200,0.10),
+                  0 3px 0 rgba(200,200,200,0.05),
                   0 4px 8px rgba(0,0,0,0.5)
                 `,
               }}
@@ -173,7 +173,7 @@ export function Hero() {
             <LiquidGlass variant="button" tilt={6} className="!rounded-full !px-7 !py-3.5 !text-sm !font-semibold !text-deep !border-0 relative overflow-hidden">
               <div className="absolute inset-0 hazard-stripe opacity-80" />
               <a href="#projects"
-                className="focus-ring group relative inline-flex items-center gap-3 transition-all hover:shadow-[0_0_32px_rgba(251,191,36,0.15)] active:scale-[0.97]"
+                className="focus-ring group relative inline-flex items-center gap-3 transition-all hover:shadow-[0_0_32px_rgba(150,150,150,0.15)] active:scale-[0.97]"
               >
                 <HardHat size={15} />
                 <span>View blueprints</span>

@@ -22,7 +22,7 @@ function Particles({ count = 100 }: { count?: number }) {
     <points geometry={geo}>
       <pointsMaterial
         size={0.04}
-        color="#d4d4dc"
+        color="#d4d4d4"
         transparent
         opacity={0.25}
         sizeAttenuation
@@ -35,7 +35,7 @@ function Particles({ count = 100 }: { count?: number }) {
 function GroundGrid() {
   return (
     <gridHelper
-      args={[20, 20, '#d4d4dc', '#8888a0']}
+      args={[20, 20, '#d4d4d4', '#888888']}
       position={[0, -3, 0]}
     />
   )
@@ -44,10 +44,10 @@ function GroundGrid() {
 function AmbientLighting() {
   return (
     <>
-      <ambientLight intensity={0.3} color="#6060ff" />
+      <ambientLight intensity={0.3} color="#a0a0a0" />
       <directionalLight position={[5, 10, 5]} intensity={0.8} color="#ffffff" />
-      <directionalLight position={[-5, 5, -5]} intensity={0.3} color="#8888a0" />
-      <pointLight position={[0, 2, 0]} intensity={0.5} color="#d4d4dc" distance={10} decay={2} />
+      <directionalLight position={[-5, 5, -5]} intensity={0.3} color="#888888" />
+      <pointLight position={[0, 2, 0]} intensity={0.5} color="#d4d4d4" distance={10} decay={2} />
     </>
   )
 }
@@ -59,7 +59,7 @@ function FloatingGeometry() {
         <mesh position={[-4, 1, -6]} scale={0.15}>
           <octahedronGeometry />
           <meshPhysicalMaterial
-            color="#d4d4dc"
+            color="#d4d4d4"
             transmission={0.85}
             roughness={0.05}
             ior={1.45}
@@ -76,7 +76,7 @@ function FloatingGeometry() {
         <mesh position={[5, -1, -7]} scale={0.2}>
           <icosahedronGeometry />
           <meshPhysicalMaterial
-            color="#8888a0"
+            color="#888888"
             transmission={0.8}
             roughness={0.08}
             ior={1.4}
@@ -93,7 +93,7 @@ function FloatingGeometry() {
         <mesh position={[-3, -0.5, -8]} scale={0.12}>
           <torusGeometry args={[1, 0.3, 8, 16]} />
           <meshPhysicalMaterial
-            color="#a09080"
+            color="#909090"
             transmission={0.75}
             roughness={0.1}
             ior={1.35}

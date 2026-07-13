@@ -136,7 +136,7 @@ export function Contact() {
                 </label>
                 <input
                   required minLength={2} maxLength={80} name="name"
-                  className="focus-ring mt-1.5 w-full rounded-xl border border-white/[0.06] bg-black/40 px-4 py-3 text-sm text-white transition-all duration-300 placeholder:text-concrete-mid/20 focus:border-blueprint/15 focus:shadow-[0_0_24px_rgba(56,189,248,0.04)]"
+                  className="focus-ring mt-1.5 w-full rounded-xl border border-white/[0.06] bg-black/40 px-4 py-3 text-sm text-white transition-all duration-300 placeholder:text-concrete-mid/20 focus:border-blueprint/15 focus:shadow-[0_0_24px_rgba(200,200,200,0.04)]"
                   placeholder="Your name"
                 />
               </TapeField>
@@ -148,7 +148,7 @@ export function Contact() {
                 </label>
                 <input
                   required type="email" maxLength={120} name="email"
-                  className="focus-ring mt-1.5 w-full rounded-xl border border-white/[0.06] bg-black/40 px-4 py-3 text-sm text-white transition-all duration-300 placeholder:text-concrete-mid/20 focus:border-blueprint/15 focus:shadow-[0_0_24px_rgba(56,189,248,0.04)]"
+                  className="focus-ring mt-1.5 w-full rounded-xl border border-white/[0.06] bg-black/40 px-4 py-3 text-sm text-white transition-all duration-300 placeholder:text-concrete-mid/20 focus:border-blueprint/15 focus:shadow-[0_0_24px_rgba(200,200,200,0.04)]"
                   placeholder="your@email.com"
                 />
               </TapeField>
@@ -164,7 +164,7 @@ export function Contact() {
                 <textarea
                   required minLength={10} maxLength={2000} name="message" rows={5}
                   onChange={(e) => setMsgLen(e.target.value.length)}
-                  className="focus-ring mt-1.5 w-full resize-none rounded-xl border border-white/[0.06] bg-black/40 px-4 py-3 text-sm text-white transition-all duration-300 placeholder:text-concrete-mid/20 focus:border-blueprint/15 focus:shadow-[0_0_24px_rgba(56,189,248,0.04)]"
+                  className="focus-ring mt-1.5 w-full resize-none rounded-xl border border-white/[0.06] bg-black/40 px-4 py-3 text-sm text-white transition-all duration-300 placeholder:text-concrete-mid/20 focus:border-blueprint/15 focus:shadow-[0_0_24px_rgba(200,200,200,0.04)]"
                   placeholder="What's on your mind?"
                 />
               </TapeField>
@@ -175,7 +175,7 @@ export function Contact() {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
               disabled={status === 'loading'}
-              className="focus-ring mt-6 inline-flex w-full items-center justify-center gap-3 rounded-xl bg-gradient-to-b from-hazard/80 to-hazard/60 px-5 py-4 text-sm font-bold text-white transition-all hover:from-hazard/90 hover:to-hazard/70 hover:shadow-[0_0_32px_rgba(239,68,68,0.2)] active:from-hazard/70 active:to-hazard/50 disabled:opacity-60 relative overflow-hidden"
+              className="focus-ring mt-6 inline-flex w-full items-center justify-center gap-3 rounded-xl bg-gradient-to-b from-hazard/80 to-hazard/60 px-5 py-4 text-sm font-bold text-white transition-all hover:from-hazard/90 hover:to-hazard/70 hover:shadow-[0_0_32px_rgba(100,100,100,0.2)] active:from-hazard/70 active:to-hazard/50 disabled:opacity-60 relative overflow-hidden"
               type="submit"
             >
               {/* Hazard stripe top border */}

@@ -3,9 +3,9 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useStore } from '../lib/store'
 
-const ACCENT = new THREE.Color('#d4d4dc')
-const MUTED = new THREE.Color('#8888a0')
-const WARM = new THREE.Color('#a09080')
+const ACCENT = new THREE.Color('#d4d4d4')
+const MUTED = new THREE.Color('#888888')
+const WARM = new THREE.Color('#909090')
 const WHITE = new THREE.Color('#ececf0')
 
 function Part({ color, position, scale, rotation }: {

@@ -70,7 +70,7 @@ function PhaseCard({ chapter, index, inView: sectionInView, isLast }: {
                 transition={{ delay: 0.3 + index * 0.1, duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
                 className="h-full rounded-full relative"
                 style={{
-                  background: `repeating-linear-gradient(90deg, rgba(251,191,36,0.3) 0px, rgba(251,191,36,0.3) 8px, rgba(56,189,248,0.2) 8px, rgba(56,189,248,0.2) 16px)`,
+                  background: `repeating-linear-gradient(90deg, rgba(150,150,150,0.3) 0px, rgba(150,150,150,0.3) 8px, rgba(200,200,200,0.2) 8px, rgba(200,200,200,0.2) 16px)`,
                 }}
               />
             </div>
@@ -137,12 +137,12 @@ export function Blueprint() {
             className="absolute left-[21px] top-0 w-[6px] md:left-[31px] rounded-full overflow-hidden"
           >
             <div className="absolute inset-0" style={{
-              background: 'repeating-linear-gradient(180deg, rgba(251,191,36,0.25) 0px, rgba(251,191,36,0.25) 4px, rgba(56,189,248,0.15) 4px, rgba(56,189,248,0.15) 8px)',
+              background: 'repeating-linear-gradient(180deg, rgba(150,150,150,0.25) 0px, rgba(150,150,150,0.25) 4px, rgba(200,200,200,0.15) 4px, rgba(200,200,200,0.15) 8px)',
             }} />
             {/* Tick marks on tape */}
             <div className="absolute left-full top-0 bottom-0 w-4">
               <div className="h-full" style={{
-                background: `repeating-linear-gradient(180deg, transparent 0px, transparent 7px, rgba(56,189,248,0.1) 7px, rgba(56,189,248,0.1) 8px)`,
+                background: `repeating-linear-gradient(180deg, transparent 0px, transparent 7px, rgba(200,200,200,0.1) 7px, rgba(200,200,200,0.1) 8px)`,
               }} />
             </div>
           </motion.div>

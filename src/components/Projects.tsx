@@ -44,7 +44,7 @@ function FeaturedRepo({ repo, index }: { repo: GitHubRepo; index: number }) {
           {/* Blueprint measurement marks */}
           <div className="absolute left-0 top-0 bottom-0 w-3 opacity-10 measure-mark" />
           <div className="absolute bottom-0 left-0 right-0 h-3 opacity-10">
-            <div className="h-full w-full" style={{ background: `repeating-linear-gradient(90deg, rgba(56,189,248,0.1) 0px, rgba(56,189,248,0.1) 2px, transparent 2px, transparent 20px)` }} />
+            <div className="h-full w-full" style={{ background: `repeating-linear-gradient(90deg, rgba(200,200,200,0.1) 0px, rgba(200,200,200,0.1) 2px, transparent 2px, transparent 20px)` }} />
           </div>
 
           <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
@@ -108,7 +108,7 @@ function EmptyProjects({ profile, inView }: { profile: GitHubProfile | null; inV
       transition={{ type: 'spring', stiffness: 70, damping: 20 }}
       className="glass-lift relative overflow-hidden rounded-[20px] p-14 text-center md:p-16"
     >
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(56,189,248,0.03),transparent_70%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(200,200,200,0.03),transparent_70%)]" />
       <div className="relative z-10">
         <motion.div
           animate={{ rotate: [0, -3, 3, 0] }}

@@ -179,7 +179,7 @@ export function Header() {
           className={`mx-auto max-w-6xl rounded-2xl px-5 py-3 transition-all duration-500 ${
             atTop
               ? 'bg-transparent'
-              : 'bg-deep/80 border border-white/[0.05] shadow-[0_1px_0_rgba(56,189,248,0.03)] backdrop-blur-xl'
+              : 'bg-deep/80 border border-white/[0.05] shadow-[0_1px_0_rgba(200,200,200,0.03)] backdrop-blur-xl'
           }`}
         >
           <nav className="flex items-center justify-between gap-4 text-sm text-concrete-light/70">
