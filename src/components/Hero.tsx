@@ -171,7 +171,6 @@ export function Hero() {
             className="mt-12 flex flex-wrap gap-4"
           >
             <LiquidGlass variant="button" tilt={6} className="!rounded-full !px-7 !py-3.5 !text-sm !font-semibold !text-deep !border-0 relative overflow-hidden">
-              <div className="absolute inset-0 hazard-stripe opacity-80" />
               <a href="#projects"
                 className="focus-ring group relative inline-flex items-center gap-3 transition-all hover:shadow-[0_0_32px_rgba(150,150,150,0.15)] active:scale-[0.97]"
               >

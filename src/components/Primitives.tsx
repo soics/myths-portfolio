@@ -85,7 +85,7 @@ function SackboyButton() {
 }
 
 
-function NavLink({ label, href, active, index }: { label: string; href: string; active: boolean; index: number }) {
+function NavLink({ label, href, active }: { label: string; href: string; active: boolean }) {
   const ref = useTilt<HTMLAnchorElement>(5)
   return (
     <a
@@ -95,7 +95,6 @@ function NavLink({ label, href, active, index }: { label: string; href: string; 
         active ? 'text-white/90 bg-blueprint/10' : 'text-concrete-light/55 hover:bg-blueprint/5 hover:text-white/80'
       }`}
     >
-      <span className="mr-1.5 font-mono text-[9px] text-blueprint/30">{String(index + 1).padStart(2, '0')}</span>
       {label}
       {active && (
         <motion.span
@@ -192,10 +191,10 @@ export function Header() {
             </div>
 
             <div className="hidden items-center gap-0.5 md:flex">
-              {navLinks.map(({ label, href }, i) => {
+              {navLinks.map(({ label, href }) => {
                 const active = activeSection === href.slice(1)
                 return (
-                  <NavLink key={href} label={label} href={href} active={active} index={i} />
+                  <NavLink key={href} label={label} href={href} active={active} />
                 )
               })}
             </div>

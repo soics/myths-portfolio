@@ -16,12 +16,12 @@ import { useStore } from './lib/store'
 import './styles/globals.css'
 
 const SECTION_ZONES = [
-  { id: 'top',     accent: '56,189,248',  name: 'blueprint'    },
-  { id: 'about',   accent: '56,189,248',  name: 'site-plan'    },
-  { id: 'skills',  accent: '251,191,36',  name: 'materials'    },
-  { id: 'projects',accent: '56,189,248',  name: 'builds'       },
-  { id: 'journey', accent: '251,191,36',  name: 'construction' },
-  { id: 'contact', accent: '239,68,68',   name: 'hazard'       },
+  { id: 'top',     accent: '212,212,212', name: 'blueprint'    },
+  { id: 'about',   accent: '212,212,212', name: 'site-plan'    },
+  { id: 'skills',  accent: '161,161,170', name: 'materials'    },
+  { id: 'projects',accent: '212,212,212', name: 'builds'       },
+  { id: 'journey', accent: '161,161,170', name: 'construction' },
+  { id: 'contact', accent: '128,128,128', name: 'hazard'       },
 ] as const
 
 function BackgroundAccent() {
@@ -69,7 +69,7 @@ function ScrollProgress() {
   const scaleX = useSpring(scrollYProgress, { stiffness: 200, damping: 30 })
   return (
     <motion.div
-      style={{ scaleX, background: 'repeating-linear-gradient(90deg, rgba(56,189,248,0.3) 0px, rgba(56,189,248,0.3) 8px, rgba(251,191,36,0.2) 8px, rgba(251,191,36,0.2) 16px)' }}
+      style={{ scaleX, background: 'repeating-linear-gradient(90deg, rgba(200,200,200,0.3) 0px, rgba(200,200,200,0.3) 8px, rgba(150,150,150,0.2) 8px, rgba(150,150,150,0.2) 16px)' }}
       className="fixed left-0 top-0 z-50 h-[1.5px] origin-left"
     />
   )
