@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion, useScroll, useTransform } from 'motion/react'
-import { HardHat } from 'lucide-react'
+import { HardHat, ArrowRight } from 'lucide-react'
 import { site } from '../data/site'
 import { LiquidGlass } from './LiquidGlass'
 import { useStore } from '../lib/store'
@@ -92,6 +92,38 @@ function ConcreteName({ children, onClick, mythsClicks, progress }: {
   )
 }
 
+function HolographicRing() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.5 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+      className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-0"
+      aria-hidden="true"
+    >
+      <div className="relative h-[500px] w-[500px] md:h-[700px] md:w-[700px]">
+        <div className="absolute inset-0 rounded-full border border-blueprint/8" />
+        <div className="absolute inset-[15%] rounded-full border border-blueprint/12" />
+        <div className="absolute inset-[30%] rounded-full border border-construction/8" />
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+          className="absolute inset-0"
+        >
+          <div className="absolute left-1/2 top-0 h-2 w-2 -translate-x-1/2 rounded-full bg-blueprint/15 shadow-[0_0_8px_rgba(200,200,200,0.15)]" />
+        </motion.div>
+        <motion.div
+          animate={{ rotate: -360 }}
+          transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
+          className="absolute inset-[15%]"
+        >
+          <div className="absolute left-1/2 top-0 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-construction/10 shadow-[0_0_6px_rgba(150,150,150,0.15)]" />
+        </motion.div>
+      </div>
+    </motion.div>
+  )
+}
+
 export function Hero() {
   const { scrollY } = useScroll()
   const y = useTransform(scrollY, [0, 500], [0, 40])
@@ -115,6 +147,7 @@ export function Hero() {
       className="relative flex min-h-dvh items-center overflow-hidden px-5 pt-28"
     >
       <ConstructionLights />
+      <HolographicRing />
 
       <motion.div style={{ y }} className="relative z-10 mx-auto w-full max-w-6xl">
         <div className="max-w-4xl">
@@ -175,7 +208,8 @@ export function Hero() {
                 className="focus-ring group inline-flex items-center gap-2 transition-all hover:border-concrete-mid hover:text-concrete-light/80 active:scale-[0.97]"
               >
                 <HardHat size={14} className="text-concrete-light/40" />
-                <span>Site plans</span>
+                <span>View blueprints</span>
+                <ArrowRight size={14} className="transition group-hover:translate-x-1" />
               </a>
             </LiquidGlass>
             <LiquidGlass variant="button" tilt={6} className="!rounded-full !border !border-concrete-dark !bg-transparent !px-7 !py-3.5 !text-sm !font-medium !text-concrete-light/60">
