@@ -108,26 +108,32 @@ function CursorLevel() {
     let mx = 0, my = 0
     let bx = 0, by = 0
     let speed = 0
+    let paused = false
 
     const onMove = (e: MouseEvent) => {
       mx = e.clientX
       my = e.clientY
     }
 
-    const tick = () => {
-      const dx = mx - bx
-      const dy = my - by
-      bx += dx * 0.15
-      by += dy * 0.15
-      speed = Math.sqrt(dx * dx + dy * dy) * 0.08
+    const onVisibility = () => { paused = document.hidden }
+    document.addEventListener('visibilitychange', onVisibility)
 
-      const el = document.getElementById('cursor-level')
-      if (el) {
-        el.style.transform = `translate(${bx}px, ${by}px)`
-        const bubble = el.querySelector('.level-bubble') as HTMLElement
-        if (bubble) {
-          const shift = Math.min(speed, 6)
-          bubble.style.transform = `translate(-50%, -50%) translateX(${(dx > 0 ? shift : -shift) * 0.3}px) translateY(${(dy > 0 ? shift : -shift) * 0.3}px)`
+    const tick = () => {
+      if (!paused) {
+        const dx = mx - bx
+        const dy = my - by
+        bx += dx * 0.15
+        by += dy * 0.15
+        speed = Math.sqrt(dx * dx + dy * dy) * 0.08
+
+        const el = document.getElementById('cursor-level')
+        if (el) {
+          el.style.transform = `translate(${bx}px, ${by}px)`
+          const bubble = el.querySelector('.level-bubble') as HTMLElement
+          if (bubble) {
+            const shift = Math.min(speed, 6)
+            bubble.style.transform = `translate(-50%, -50%) translateX(${(dx > 0 ? shift : -shift) * 0.3}px) translateY(${(dy > 0 ? shift : -shift) * 0.3}px)`
+          }
         }
       }
       raf = requestAnimationFrame(tick)
@@ -138,6 +144,7 @@ function CursorLevel() {
 
     return () => {
       document.removeEventListener('mousemove', onMove)
+      document.removeEventListener('visibilitychange', onVisibility)
       cancelAnimationFrame(raf)
     }
   }, [])

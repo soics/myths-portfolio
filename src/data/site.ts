@@ -15,7 +15,7 @@ export const learningSkills = ['HTML', 'CSS', 'JavaScript', 'TypeScript', 'React
 export const strengths = ['Communication', 'Teamwork', 'Adaptability', 'Creative thinking', 'Learning ability', 'Problem solving', 'Curiosity', 'Persistence']
 
 export const projectNotes: Record<string, string> = {
-  'myths-portfolio': 'Construction-site dark portfolio with blueprint grids, scaffolding frames, safety beacons, and real-time GitHub integration. Built with React 19, Vite 8, Tailwind CSS v4.',
+  'myths-portfolio': 'Greyscale dark portfolio with blueprint grids, scaffolding frames, safety beacons, and real-time GitHub integration. Built with React 19, Vite 8, Tailwind CSS v4.',
   'instagram-bot': 'Local Instagram DM automation rig: Ollama phi3:mini for text, llava for vision, Meta TTS for voice. Whitelist-only, single-laptop, personal tool — no cloud dependency.',
   'ai-brain': 'Autonomous AI operating system: session syncing, concept extraction, Supabase + pgvector memory, 9Router provider pool, persistent daemon with daily/weekly maintenance cycles.',
 }
