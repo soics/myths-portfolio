@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useMemo, useRef } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { Float, Environment, Text, Sphere, MeshDistortMaterial } from '@react-three/drei'
 import * as THREE from 'three'
@@ -15,6 +15,10 @@ function genParticles(n: number) {
     p[i * 3 + 2] = Math.cos(phi) * radius
   }
   return p
+}
+
+function useParticleData(count: number) {
+  return useMemo(() => genParticles(count), [count])
 }
 
 function GlowingOrb() {
@@ -51,7 +55,7 @@ function GlowingOrb() {
 
 function Particles({ count = 120 }) {
   const ref = useRef<THREE.Points>(null)
-  const data = genParticles(count)
+  const data = useParticleData(count)
 
   useFrame((_, delta) => {
     if (!ref.current) return

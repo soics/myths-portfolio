@@ -74,12 +74,11 @@ function trackGlobal() {
   global.count++
 }
 
-const allowedOrigins = [
-  'https://myths-portfolio.vercel.app',
-]
-
 function originAllowed(origin: string): boolean {
-  return allowedOrigins.includes(origin)
+  const allowed = process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(',').map(s => s.trim())
+    : ['https://myths-portfolio.vercel.app']
+  return allowed.includes(origin)
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
