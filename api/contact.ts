@@ -82,8 +82,6 @@ function originAllowed(origin: string): boolean {
   return allowedOrigins.includes(origin)
 }
 
-const honeypotField = `hp_${crypto.randomUUID().slice(0, 4)}`
-
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const requestId = crypto.randomUUID().slice(0, 8)
 
@@ -128,7 +126,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
   }
 
-  if (String(req.body[honeypotField] || '').trim()) {
+  if (String(req.body.website || '').trim()) {
     return res.status(200).json({ ok: true })
   }
 

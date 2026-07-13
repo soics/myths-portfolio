@@ -11,6 +11,7 @@ export function useTilt<T extends HTMLElement>(maxDeg = 10) {
     let cx = 0.5, cy = 0.5, tx = 0.5, ty = 0.5
     let lx = 50, ly = 50
     let active = false
+    let paused = false
 
     const onMove = (e: MouseEvent) => {
       const rect = el.getBoundingClientRect()
@@ -28,14 +29,21 @@ export function useTilt<T extends HTMLElement>(maxDeg = 10) {
       active = false
     }
 
+    const onVisibility = () => {
+      paused = document.hidden
+    }
+    document.addEventListener('visibilitychange', onVisibility)
+
     const tick = () => {
-      cx += (tx - cx) * 0.12
-      cy += (ty - cy) * 0.12
-      el.style.setProperty('--tilt-x', `${(cx - 0.5) * maxDeg}deg`)
-      el.style.setProperty('--tilt-y', `${(cy - 0.5) * -maxDeg}deg`)
-      el.style.setProperty('--tilt-active', active ? '1' : '0')
-      el.style.setProperty('--light-x', `${lx}%`)
-      el.style.setProperty('--light-y', `${ly}%`)
+      if (!paused) {
+        cx += (tx - cx) * 0.12
+        cy += (ty - cy) * 0.12
+        el.style.setProperty('--tilt-x', `${(cx - 0.5) * maxDeg}deg`)
+        el.style.setProperty('--tilt-y', `${(cy - 0.5) * -maxDeg}deg`)
+        el.style.setProperty('--tilt-active', active ? '1' : '0')
+        el.style.setProperty('--light-x', `${lx}%`)
+        el.style.setProperty('--light-y', `${ly}%`)
+      }
       raf = requestAnimationFrame(tick)
     }
 
@@ -46,6 +54,7 @@ export function useTilt<T extends HTMLElement>(maxDeg = 10) {
     return () => {
       el.removeEventListener('mousemove', onMove)
       el.removeEventListener('mouseleave', onLeave)
+      document.removeEventListener('visibilitychange', onVisibility)
       cancelAnimationFrame(raf)
       el.style.removeProperty('--tilt-x')
       el.style.removeProperty('--tilt-y')

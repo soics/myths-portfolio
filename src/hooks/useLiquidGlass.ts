@@ -11,6 +11,7 @@ export function useLiquidGlass(opts?: { maxTilt?: number; perspective?: number }
 
     let raf: number
     let tx = 0.5, ty = 0.5
+    let paused = false
     const s = state.current
 
     const onMouseMove = (e: MouseEvent) => {
@@ -29,20 +30,24 @@ export function useLiquidGlass(opts?: { maxTilt?: number; perspective?: number }
 
     const onLeave = () => { tx = 0.5; ty = 0.5 }
 
+    const onVisibility = () => { paused = document.hidden }
+    document.addEventListener('visibilitychange', onVisibility)
+
     const tick = () => {
-      s.tiltX += (tx - s.tiltX) * 0.08
-      s.tiltY += (ty - s.tiltY) * 0.08
-      s.glowX += (tx - s.glowX) * 0.06
-      s.glowY += (ty - s.glowY) * 0.06
+      if (!paused) {
+        s.tiltX += (tx - s.tiltX) * 0.08
+        s.tiltY += (ty - s.tiltY) * 0.08
+        s.glowX += (tx - s.glowX) * 0.06
+        s.glowY += (ty - s.glowY) * 0.06
 
-      const rx = (s.tiltY - 0.5) * -maxTilt
-      const ry = (s.tiltX - 0.5) * maxTilt
+        const rx = (s.tiltY - 0.5) * -maxTilt
+        const ry = (s.tiltX - 0.5) * maxTilt
 
-      el.style.setProperty('--lg-tilt-x', `${ry}deg`)
-      el.style.setProperty('--lg-tilt-y', `${rx}deg`)
-      el.style.setProperty('--lg-glow-x', `${s.glowX * 100}%`)
-      el.style.setProperty('--lg-glow-y', `${s.glowY * 100}%`)
-
+        el.style.setProperty('--lg-tilt-x', `${ry}deg`)
+        el.style.setProperty('--lg-tilt-y', `${rx}deg`)
+        el.style.setProperty('--lg-glow-x', `${s.glowX * 100}%`)
+        el.style.setProperty('--lg-glow-y', `${s.glowY * 100}%`)
+      }
       raf = requestAnimationFrame(tick)
     }
 
@@ -57,6 +62,7 @@ export function useLiquidGlass(opts?: { maxTilt?: number; perspective?: number }
       el.removeEventListener('mouseleave', onLeave)
       el.removeEventListener('touchmove', onTouchMove)
       el.removeEventListener('touchend', onLeave)
+      document.removeEventListener('visibilitychange', onVisibility)
       cancelAnimationFrame(raf)
       el.style.removeProperty('--lg-tilt-x')
       el.style.removeProperty('--lg-tilt-y')

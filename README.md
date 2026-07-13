@@ -41,16 +41,18 @@ For production, deploy the serverless proxy in `api/github.ts` (Vercel) — no e
 
 ## Supabase Contact Form
 
-Optional. Create `.env.local`:
+Required for the form to submit. Create `.env.local`:
 
 ```env
 VITE_SUPABASE_URL=your_supabase_project_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_URL=your_supabase_project_url
+SUPABASE_SERVICE_KEY=your_service_role_key
 ```
 
-Run `supabase/schema.sql` in Supabase SQL Editor to create the `contact_messages` table with RLS.
+The form POSTs to the Vercel serverless function at `/api/contact`, which validates input, checks a honeypot, rate-limits by IP, and inserts into Supabase `contact_messages` using the service-role key.
 
-Without Supabase env vars, the form falls back to email via `mailto:`.
+Without Supabase env vars, the API logs the submission and returns success but does not persist the message.
 
 ## Scripts
 

@@ -159,14 +159,14 @@ export function ProjectsSection() {
         </motion.div>
 
         {state.loading && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="glass-sm flex items-center gap-3 rounded-[18px] p-6 text-sm text-concrete-light/50">
+          <motion.div role="status" aria-live="polite" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="glass-sm flex items-center gap-3 rounded-[18px] p-6 text-sm text-concrete-light/50">
             <Loader2 className="animate-spin text-blueprint/30" size={16} />
-            Measuring site...
+            <span>Measuring site...</span>
           </motion.div>
         )}
 
         {state.error && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="glass-sm rounded-[18px] p-6 text-sm text-concrete-light/45">
+          <motion.div role="alert" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="glass-sm rounded-[18px] p-6 text-sm text-concrete-light/45">
             Survey interrupted. Retrying...
           </motion.div>
         )}

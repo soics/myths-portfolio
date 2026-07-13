@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { lazy, Suspense, useEffect, useState, useCallback } from 'react'
 import { useSpring } from 'motion/react'
 import { motion, useScroll } from 'motion/react'
 import { Header } from './components/Primitives'
@@ -9,11 +9,12 @@ import { ProjectsSection } from './components/Projects'
 import { Blueprint } from './components/Journey'
 import { Contact } from './components/Contact'
 import { LiquidGlass } from './components/LiquidGlass'
-import { EchoPrism } from './components/easter-eggs/EchoPrism'
-import { SignalRoom } from './components/easter-eggs/SignalRoom'
 import { ConstructionBackground } from './components/ConstructionBackground'
 import { useStore } from './lib/store'
 import './styles/globals.css'
+
+const EchoPrism = lazy(() => import('./components/easter-eggs/EchoPrism').then(m => ({ default: m.EchoPrism })))
+const SignalRoom = lazy(() => import('./components/easter-eggs/SignalRoom').then(m => ({ default: m.SignalRoom })))
 
 const SECTION_ZONES = [
   { id: 'top',     accent: '212,212,212', name: 'blueprint'    },
@@ -147,8 +148,12 @@ function App() {
           &copy; {new Date().getFullYear()} myths.
         </button>
       </footer>
-      <EchoPrism active={echoPrismActive} onClose={() => setEchoPrismActive(false)} />
-      <SignalRoom active={signalRoomActive} onClose={() => setSignalRoomActive(false)} />
+      <Suspense fallback={null}>
+        <EchoPrism active={echoPrismActive} onClose={() => setEchoPrismActive(false)} />
+      </Suspense>
+      <Suspense fallback={null}>
+        <SignalRoom active={signalRoomActive} onClose={() => setSignalRoomActive(false)} />
+      </Suspense>
     </>
   )
 }
