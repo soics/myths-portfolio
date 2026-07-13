@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion, useScroll, useTransform } from 'motion/react'
-import { ArrowRight, HardHat } from 'lucide-react'
+import { HardHat } from 'lucide-react'
 import { site } from '../data/site'
 import { LiquidGlass } from './LiquidGlass'
 import { useStore } from '../lib/store'
@@ -170,13 +170,12 @@ export function Hero() {
             transition={{ delay: 2.2, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             className="mt-12 flex flex-wrap gap-4"
           >
-            <LiquidGlass variant="button" tilt={6} className="!rounded-full !px-7 !py-3.5 !text-sm !font-semibold !text-deep !border-0 relative overflow-hidden">
+            <LiquidGlass variant="button" tilt={6} className="!rounded-full !border !border-concrete-dark !bg-transparent !px-7 !py-3.5 !text-sm !font-medium !text-concrete-light/60">
               <a href="#projects"
-                className="focus-ring group relative inline-flex items-center gap-3 transition-all hover:shadow-[0_0_32px_rgba(150,150,150,0.15)] active:scale-[0.97]"
+                className="focus-ring group inline-flex items-center gap-2 transition-all hover:border-concrete-mid hover:text-concrete-light/80 active:scale-[0.97]"
               >
-                <HardHat size={15} />
-                <span>View blueprints</span>
-                <ArrowRight size={15} className="transition group-hover:translate-x-1" />
+                <HardHat size={14} className="text-concrete-light/40" />
+                <span>Site plans</span>
               </a>
             </LiquidGlass>
             <LiquidGlass variant="button" tilt={6} className="!rounded-full !border !border-concrete-dark !bg-transparent !px-7 !py-3.5 !text-sm !font-medium !text-concrete-light/60">
