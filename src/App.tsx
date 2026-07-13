@@ -12,6 +12,7 @@ import { LiquidGlass } from './components/LiquidGlass'
 import { EchoPrism } from './components/easter-eggs/EchoPrism'
 import { SignalRoom } from './components/easter-eggs/SignalRoom'
 import { ConstructionBackground } from './components/ConstructionBackground'
+import { Scene } from './components/Scene'
 import { useStore } from './lib/store'
 import './styles/globals.css'
 
@@ -114,6 +115,7 @@ function App() {
   return (
     <>
       <ConstructionBackground />
+      <Scene />
       <SkipLink />
       <ScrollProgress />
       <BackgroundAccent />
