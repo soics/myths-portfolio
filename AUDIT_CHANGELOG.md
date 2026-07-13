@@ -16,4 +16,4 @@ No fixes yet — Phase 0 reconnaissance complete.
 | `66bd135` | 2026-07-12 | — | Remove accidental .gitignore.bak from commit |
 | `818ac64` | 2026-07-12 | CODE-001/002, SEC-002, UX-001, CODE-003 | Memoize particle data, env-var origins, TypeWriter reset |
 | `4f1508c` | 2026-07-12 | PERF-004, SEC-003, SEC-004, CODE-001/002 (lint) | Remove unused font 800, harden CSP (no 'unsafe-inline'), upgrade @vercel/node, fix 15+ React 19 strict lint errors |
-| _(pending)_ | 2026-07-12 | PERF-008, CODE-004, CODE-005, SEO-003 | CursorLevel rAF visibility, fix JSON-LD url, fix stale descriptions, fix dep categories |
+| `b1a6202` | 2026-07-12 | PERF-008, CODE-004, CODE-005, SEO-003 | CursorLevel rAF visibility, fix JSON-LD url, fix stale descriptions, fix dep categories |
