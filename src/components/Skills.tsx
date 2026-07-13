@@ -74,10 +74,11 @@ export function Tools() {
           className="mb-14"
         >
           <div className="flex items-center gap-3 mb-4">
-            <Wrench size={14} className="text-blueprint/50" />
-            <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-blueprint/40">MATERIALS.LUMBER</span>
+            <div className="h-[1px] w-6 bg-gold/30" />
+            <Wrench size={14} className="text-construction/50" />
+            <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-construction/40">MATERIALS.LIST</span>
           </div>
-          <h2 className="text-balance text-4xl font-semibold tracking-[-0.04em] text-white md:text-5xl">
+          <h2 className="text-balance text-3xl font-semibold tracking-[-0.04em] text-white md:text-4xl">
             Tools I{"'"}m working with. Materials I{"'"}m made of.
           </h2>
           <p className="mt-5 max-w-2xl text-base leading-8 text-concrete-light/60">

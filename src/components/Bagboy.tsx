@@ -58,8 +58,8 @@ export function Bagboy() {
   const armRRef = useRef<THREE.Mesh>(null)
   const bagRef = useRef<THREE.Mesh>(null)
 
-  const pose = useStore((s) => s.bagboyPose)
   const activeSection = useStore((s) => s.activeSection)
+  const pose = 'idle' as 'idle' | 'wave' | 'point' | 'celebrate'
   const scrollY = useStore((s) => s.scrollY)
 
   const sectionColors: Record<string, THREE.Color> = useMemo(() => ({

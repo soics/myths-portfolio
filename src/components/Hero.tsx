@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform } from 'motion/react'
 import { HardHat, ArrowRight } from 'lucide-react'
 import { site } from '../data/site'
 import { LiquidGlass } from './LiquidGlass'
+import { Terminal } from './Terminal'
 import { useStore } from '../lib/store'
 
 function TypeWriter({ text, delay = 0, speed = 40 }: { text: string; delay?: number; speed?: number }) {
@@ -28,11 +29,7 @@ function TypeWriter({ text, delay = 0, speed = 40 }: { text: string; delay?: num
     <span>
       {displayed}
       {displayed.length < text.length && (
-        <motion.span
-          animate={{ opacity: [1, 0] }}
-          transition={{ duration: 0.5, repeat: Infinity, repeatType: 'reverse' }}
-          className="inline-block w-[2px] h-[1em] bg-blueprint/60 ml-0.5 align-middle"
-        />
+        <span className="inline-block w-[2px] h-[1em] bg-gold/60 ml-0.5 align-middle animate-cursor-blink" />
       )}
     </span>
   )
@@ -107,17 +104,17 @@ function HolographicRing() {
         <div className="absolute inset-[30%] rounded-full border border-construction/8" />
         <motion.div
           animate={{ rotate: 360 }}
-          transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+          transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
           className="absolute inset-0"
         >
-          <div className="absolute left-1/2 top-0 h-2 w-2 -translate-x-1/2 rounded-full bg-blueprint/15 shadow-[0_0_8px_rgba(200,200,200,0.15)]" />
+          <div className="absolute left-1/2 top-0 h-2.5 w-2.5 -translate-x-1/2 rounded-full bg-gold/40 shadow-[0_0_12px_rgba(196,164,85,0.3)]" />
         </motion.div>
         <motion.div
           animate={{ rotate: -360 }}
-          transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
+          transition={{ duration: 14, repeat: Infinity, ease: 'linear' }}
           className="absolute inset-[15%]"
         >
-          <div className="absolute left-1/2 top-0 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-construction/10 shadow-[0_0_6px_rgba(150,150,150,0.15)]" />
+          <div className="absolute left-1/2 top-0 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-gold/20 shadow-[0_0_8px_rgba(196,164,85,0.2)]" />
         </motion.div>
       </div>
     </motion.div>
@@ -157,9 +154,9 @@ export function Hero() {
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             className="mb-6 flex items-center gap-3"
           >
-            <span className="h-[1px] w-8 bg-blueprint/30" />
+            <span className="h-[1px] w-8 bg-gradient-to-r from-gold/50 to-blueprint/20" />
             <span className="flex items-center gap-2">
-              <span className="safety-beacon h-2 w-2 rounded-full bg-construction" />
+              <span className="safety-beacon h-2 w-2 rounded-full bg-gold" />
               <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-blueprint/50">
                 SITE.BLUEPRINT
               </span>
@@ -198,16 +195,25 @@ export function Hero() {
           </motion.div>
 
           <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 2.5, duration: 0.6 }}
+            className="mt-8"
+          >
+            <Terminal />
+          </motion.div>
+
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 2.2, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             className="mt-12 flex flex-wrap gap-4"
           >
-            <LiquidGlass variant="button" tilt={6} className="!rounded-full !border !border-concrete-dark !bg-transparent !px-7 !py-3.5 !text-sm !font-medium !text-concrete-light/60">
+            <LiquidGlass variant="button" tilt={6} className="!rounded-full !border !border-gold/25 !bg-gold-subtle !px-7 !py-3.5 !text-sm !font-medium !text-gold">
               <a href="#projects"
-                className="focus-ring group inline-flex items-center gap-2 transition-all hover:border-concrete-mid hover:text-concrete-light/80 active:scale-[0.97]"
+                className="focus-ring group inline-flex items-center gap-2 transition-all hover:text-gold/80 active:scale-[0.97]"
               >
-                <HardHat size={14} className="text-concrete-light/40" />
+                <HardHat size={14} className="text-gold/50" />
                 <span>View blueprints</span>
                 <ArrowRight size={14} className="transition group-hover:translate-x-1" />
               </a>

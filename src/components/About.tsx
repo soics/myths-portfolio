@@ -55,6 +55,7 @@ export function Manifesto() {
           className="mb-16"
         >
           <div className="flex items-center gap-3 mb-4">
+            <div className="h-[1px] w-6 bg-gold/30" />
             <Ruler size={14} className="text-blueprint/50" />
             <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-blueprint/40">SITE.PLAN</span>
           </div>

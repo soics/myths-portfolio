@@ -80,10 +80,11 @@ export function Contact() {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
             <div className="flex items-center gap-3 mb-4">
+              <div className="h-[1px] w-6 bg-gold/30" />
               <HardHat size={14} className="text-blueprint/50" />
               <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-blueprint/40">CONTACT.SITE</span>
             </div>
-            <h2 className="text-balance text-4xl font-semibold tracking-[-0.04em] text-white md:text-5xl">Leave a note.</h2>
+            <h2 className="text-balance text-3xl font-semibold tracking-[-0.04em] text-white md:text-4xl">Leave a note.</h2>
             <p className="mt-5 max-w-md text-base leading-8 text-concrete-light/60">
               Open to advice, feedback, beginner-friendly opportunities, collaborations, and people who care about building.
             </p>
@@ -175,7 +176,7 @@ export function Contact() {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
               disabled={status === 'loading'}
-              className="focus-ring mt-6 inline-flex w-full items-center justify-center gap-3 rounded-xl bg-gradient-to-b from-hazard/80 to-hazard/60 px-5 py-4 text-sm font-bold text-white transition-all hover:from-hazard/90 hover:to-hazard/70 hover:shadow-[0_0_32px_rgba(100,100,100,0.2)] active:from-hazard/70 active:to-hazard/50 disabled:opacity-60 relative overflow-hidden"
+              className="focus-ring mt-6 inline-flex w-full items-center justify-center gap-3 rounded-xl bg-gradient-to-b from-gold/80 to-gold/60 px-5 py-4 text-sm font-bold text-white transition-all hover:from-gold/90 hover:to-gold/70 hover:shadow-[0_0_32px_rgba(196,164,85,0.2)] active:from-gold/70 active:to-gold/50 disabled:opacity-60 relative overflow-hidden"
               type="submit"
             >
               {/* Hazard stripe top border */}

@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { motion, useInView, useScroll, useTransform } from 'motion/react'
 import { chapters, phaseData } from '../data/site'
-import { Map, Stamp } from 'lucide-react'
+import { Ruler, Stamp } from 'lucide-react'
 import { LiquidGlass } from './LiquidGlass'
 
 const phaseIcons = ['⬡', '△', '□']
@@ -123,10 +123,11 @@ export function Blueprint() {
           className="mb-12"
         >
           <div className="flex items-center gap-3 mb-4">
-            <Map size={14} className="text-construction/50" />
-            <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-construction/40">CONSTRUCTION.PLAN</span>
+            <div className="h-[1px] w-6 bg-gold/30" />
+            <Ruler size={14} className="text-concrete-light/50" />
+            <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-concrete-light/40">BUILD.PHASES</span>
           </div>
-          <h2 className="text-balance text-4xl font-semibold tracking-[-0.04em] text-white md:text-5xl">The architectural plan.</h2>
+          <h2 className="text-balance text-3xl font-semibold tracking-[-0.04em] text-white md:text-4xl">The architectural plan.</h2>
           <p className="mt-5 max-w-2xl text-base leading-8 text-concrete-light/60">Foundation → Framing → Finishing. Each phase is load-bearing.</p>
         </motion.div>
 

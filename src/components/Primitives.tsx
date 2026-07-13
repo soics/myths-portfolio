@@ -92,14 +92,14 @@ function NavLink({ label, href, active }: { label: string; href: string; active:
       ref={ref}
       href={href}
       className={`focus-ring ui-tilt relative rounded-lg px-3.5 py-2 text-xs font-medium tracking-[0.02em] transition-all duration-300 ${
-        active ? 'text-white/90 bg-blueprint/10' : 'text-concrete-light/55 hover:bg-blueprint/5 hover:text-white/80'
+        active ? 'text-white/90 bg-gold-subtle' : 'text-concrete-light/55 hover:bg-gold-subtle hover:text-white/80'
       }`}
     >
       {label}
       {active && (
         <motion.span
           layoutId="nav-indicator"
-          className="absolute inset-x-2.5 -bottom-px h-[1.5px] rounded-full bg-gradient-to-r from-blueprint/50 to-construction/30"
+          className="absolute inset-x-2.5 -bottom-px h-[1.5px] rounded-full bg-gradient-to-r from-gold/60 to-gold/20"
         />
       )}
     </a>
@@ -185,7 +185,7 @@ export function Header() {
             <div className="flex items-center gap-2">
               <SackboyButton />
               <span className="hidden items-center gap-2 rounded-lg px-3 py-2 text-[11px] font-mono text-concrete-mid/25 md:inline-flex">
-                <span className="safety-beacon h-1.5 w-1.5 rounded-full bg-construction" />
+                <span className="safety-beacon h-1.5 w-1.5 rounded-full bg-white/80" />
                 <span>myths@site:~/construction</span>
               </span>
             </div>

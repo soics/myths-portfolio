@@ -1,6 +1,6 @@
 import { useMemo, useRef } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { Float, Environment, MeshTransmissionMaterial } from '@react-three/drei'
+import { Float, MeshTransmissionMaterial } from '@react-three/drei'
 import * as THREE from 'three'
 import { motion, AnimatePresence } from 'motion/react'
 
@@ -9,21 +9,88 @@ function useParticleData(count: number) {
   return useMemo(() => {
     const p = new Float32Array(count * 3)
     for (let i = 0; i < count; i++) {
-      p[i * 3] = (Math.random() - 0.5) * 8
-      p[i * 3 + 1] = (Math.random() - 0.5) * 8
-      p[i * 3 + 2] = (Math.random() - 0.5) * 8
+      p[i * 3] = (Math.random() - 0.5) * 10
+      p[i * 3 + 1] = (Math.random() - 0.5) * 10
+      p[i * 3 + 2] = (Math.random() - 0.5) * 10
     }
     return p
   }, [count])
   /* eslint-enable react-hooks/purity */
 }
 
+function useOrbitData(count: number) {
+  /* eslint-disable react-hooks/purity */
+  return useMemo(() => {
+    const data: { angle: number; radius: number; speed: number; offset: number; scale: number }[] = []
+    for (let i = 0; i < count; i++) {
+      data.push({
+        angle: Math.random() * Math.PI * 2,
+        radius: 2 + Math.random() * 1.5,
+        speed: 0.3 + Math.random() * 0.4,
+        offset: Math.random() * Math.PI * 2,
+        scale: 0.15 + Math.random() * 0.1,
+      })
+    }
+    return data
+  }, [count])
+  /* eslint-enable react-hooks/purity */
+}
+
+function OrbitingPrisms({ mouse }: { mouse: React.MutableRefObject<{ x: number; y: number }> }) {
+  const groupRef = useRef<THREE.Group>(null)
+  const orbitData = useOrbitData(6)
+  const timeRef = useRef(0)
+
+  useFrame((_, delta) => {
+    if (!groupRef.current) return
+    timeRef.current += delta
+    const targetX = mouse.current.x * 1.5
+    const targetY = mouse.current.y * 1.5
+    groupRef.current.position.x += (targetX - groupRef.current.position.x) * 0.03
+    groupRef.current.position.y += (-targetY - groupRef.current.position.y) * 0.03
+        groupRef.current.children.forEach((child, i) => {
+          if (i < orbitData.length) {
+            const _d = orbitData[i]
+            const angle = _d.angle + timeRef.current * _d.speed
+            child.position.x = Math.cos(angle) * _d.radius
+            child.position.z = Math.sin(angle) * _d.radius
+            child.position.y = Math.sin(angle * 0.7 + _d.offset) * 0.5
+            child.rotation.x += delta * _d.speed
+            child.rotation.y += delta * _d.speed * 1.3
+      }
+    })
+  })
+
+  return (
+    <group ref={groupRef}>
+      {orbitData.map((_d, i) => (
+        <mesh key={i} scale={_d.scale}>
+          <tetrahedronGeometry args={[1, 0]} />
+          <MeshTransmissionMaterial
+            backside
+            thickness={0.3}
+            roughness={0.1}
+            metalness={0.2}
+            ior={1.3}
+            chromaticAberration={0.2}
+            color={i % 2 === 0 ? '#d4d4dc' : '#c4a455'}
+            clearcoat={0.5}
+            envMapIntensity={0.8}
+          />
+        </mesh>
+      ))}
+    </group>
+  )
+}
+
 function Prism({ mouse }: { mouse: React.MutableRefObject<{ x: number; y: number }> }) {
   const meshRef = useRef<THREE.Mesh>(null)
   const groupRef = useRef<THREE.Group>(null)
+  const hueRef = useRef(0)
 
   useFrame((_, delta) => {
     if (!meshRef.current || !groupRef.current) return
+    hueRef.current += delta * 0.05
     groupRef.current.rotation.x += delta * 0.15
     groupRef.current.rotation.y += delta * 0.25
     const targetX = mouse.current.x * 0.3
@@ -51,20 +118,21 @@ function Prism({ mouse }: { mouse: React.MutableRefObject<{ x: number; y: number
         </mesh>
         <mesh scale={1.8}>
           <octahedronGeometry args={[1, 0]} />
-          <meshBasicMaterial color="#d4d4dc" transparent opacity={0.04} wireframe />
+          <meshBasicMaterial color="#c4a455" transparent opacity={0.06} wireframe />
         </mesh>
       </Float>
     </group>
   )
 }
 
-function Particles({ count = 80 }) {
+function Particles({ count = 120 }) {
   const ref = useRef<THREE.Points>(null)
   const data = useParticleData(count)
 
   useFrame((_, delta) => {
     if (!ref.current) return
-    ref.current.rotation.y += delta * 0.05
+    ref.current.rotation.y += delta * 0.03
+    ref.current.rotation.x += delta * 0.01
   })
 
   return (
@@ -72,7 +140,7 @@ function Particles({ count = 80 }) {
       <bufferGeometry>
         <bufferAttribute attach="attributes-position" args={[data, 3]} />
       </bufferGeometry>
-      <pointsMaterial size={0.03} color="#8888a0" transparent opacity={0.5} sizeAttenuation />
+      <pointsMaterial size={0.025} color="#a1a1aa" transparent opacity={0.4} sizeAttenuation />
     </points>
   )
 }
@@ -85,8 +153,8 @@ function PrismScene({ mouse }: { mouse: React.MutableRefObject<{ x: number; y: n
       <directionalLight position={[5, 5, 5]} intensity={1.5} color="#d4d4dc" />
       <directionalLight position={[-3, -2, 4]} intensity={0.8} color="#8888a0" />
       <Prism mouse={mouse} />
+      <OrbitingPrisms mouse={mouse} />
       <Particles />
-      <Environment preset="night" />
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2.5, 0]}>
         <planeGeometry args={[20, 20]} />
         <meshBasicMaterial color="#0a0a0c" transparent opacity={0.3} />

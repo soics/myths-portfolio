@@ -20,6 +20,11 @@
   --color-hazard-dim: rgba(128, 128, 128, 0.4);
   --color-hazard-glow: rgba(128, 128, 128, 0.08);
 
+  --color-gold: #c4a455;
+  --color-gold-dim: rgba(196, 164, 85, 0.5);
+  --color-gold-glow: rgba(196, 164, 85, 0.12);
+  --color-gold-subtle: rgba(196, 164, 85, 0.06);
+
   --color-concrete-light: #a1a1aa;
   --color-concrete-mid: #71717a;
   --color-concrete-dark: #3f3f46;
@@ -141,8 +146,8 @@ button { cursor: pointer; }
 }
 
 @keyframes beacon-pulse {
-  0%, 100% { opacity: 0.2; box-shadow: 0 0 4px rgba(255, 255, 255, 0.05); }
-  50% { opacity: 0.8; box-shadow: 0 0 20px rgba(255, 255, 255, 0.15); }
+  0%, 100% { opacity: 0.4; box-shadow: 0 0 4px rgba(255, 255, 255, 0.1); }
+  50% { opacity: 1; box-shadow: 0 0 24px rgba(255, 255, 255, 0.3), 0 0 60px rgba(255, 255, 255, 0.1); }
 }
 
 /* Light sweep */
@@ -512,6 +517,15 @@ button { cursor: pointer; }
 @keyframes signal-pulse {
   0%, 100% { opacity: 0.3; }
   50% { opacity: 1; }
+}
+
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.animate-cursor-blink {
+  animation: cursor-blink 0.8s step-end infinite;
 }
 
 @keyframes float {
