@@ -149,6 +149,7 @@ export function ProjectsSection() {
           className="mb-12"
         >
           <div className="flex items-center gap-3 mb-4">
+            <div className="h-[1px] w-6 bg-gold/30" />
             <Construction size={14} className="text-construction/50" />
             <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-construction/40">BUILD.LIST</span>
           </div>

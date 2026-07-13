@@ -46,7 +46,8 @@ async function sendNotification(name: string, email: string, message: string, re
 }
 
 function sanitize(str: string): string {
-  return str.replace(/<[^>]*>/g, '').replace(/[<>]/g, '').replace(/[^\x20-\x7E\n]/g, '').trim()
+  // eslint-disable-next-line no-control-regex
+  return str.replace(/<[^>]*>/g, '').replace(/[<>]/g, '').replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '').trim()
 }
 
 function checkRateLimit(req: VercelRequest): boolean {
