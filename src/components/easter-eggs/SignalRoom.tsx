@@ -4,21 +4,21 @@ import { Float, Environment, Text, Sphere, MeshDistortMaterial } from '@react-th
 import * as THREE from 'three'
 import { motion, AnimatePresence } from 'motion/react'
 
-function genParticles(n: number) {
-  const p = new Float32Array(n * 3)
-  for (let i = 0; i < n; i++) {
-    const radius = 2 + Math.random() * 4
-    const theta = Math.random() * Math.PI * 2
-    const phi = Math.random() * Math.PI * 2
-    p[i * 3] = Math.cos(theta) * Math.sin(phi) * radius
-    p[i * 3 + 1] = Math.sin(theta) * Math.sin(phi) * radius
-    p[i * 3 + 2] = Math.cos(phi) * radius
-  }
-  return p
-}
-
 function useParticleData(count: number) {
-  return useMemo(() => genParticles(count), [count])
+  /* eslint-disable react-hooks/purity */
+  return useMemo(() => {
+    const p = new Float32Array(count * 3)
+    for (let i = 0; i < count; i++) {
+      const radius = 2 + Math.random() * 4
+      const theta = Math.random() * Math.PI * 2
+      const phi = Math.random() * Math.PI * 2
+      p[i * 3] = Math.cos(theta) * Math.sin(phi) * radius
+      p[i * 3 + 1] = Math.sin(theta) * Math.sin(phi) * radius
+      p[i * 3 + 2] = Math.cos(phi) * radius
+    }
+    return p
+  }, [count])
+  /* eslint-enable react-hooks/purity */
 }
 
 function GlowingOrb() {

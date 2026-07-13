@@ -4,18 +4,18 @@ import { Float, Environment, MeshTransmissionMaterial } from '@react-three/drei'
 import * as THREE from 'three'
 import { motion, AnimatePresence } from 'motion/react'
 
-function genParticles(n: number) {
-  const p = new Float32Array(n * 3)
-  for (let i = 0; i < n; i++) {
-    p[i * 3] = (Math.random() - 0.5) * 8
-    p[i * 3 + 1] = (Math.random() - 0.5) * 8
-    p[i * 3 + 2] = (Math.random() - 0.5) * 8
-  }
-  return p
-}
-
 function useParticleData(count: number) {
-  return useMemo(() => genParticles(count), [count])
+  /* eslint-disable react-hooks/purity */
+  return useMemo(() => {
+    const p = new Float32Array(count * 3)
+    for (let i = 0; i < count; i++) {
+      p[i * 3] = (Math.random() - 0.5) * 8
+      p[i * 3 + 1] = (Math.random() - 0.5) * 8
+      p[i * 3 + 2] = (Math.random() - 0.5) * 8
+    }
+    return p
+  }, [count])
+  /* eslint-enable react-hooks/purity */
 }
 
 function Prism({ mouse }: { mouse: React.MutableRefObject<{ x: number; y: number }> }) {

@@ -5,6 +5,7 @@ import * as THREE from 'three'
 import { Bagboy } from './Bagboy'
 
 function useParticles(count: number) {
+  /* eslint-disable react-hooks/purity */
   return useMemo(() => {
     const geo = new THREE.BufferGeometry()
     const positions = new Float32Array(count * 3)
@@ -16,6 +17,7 @@ function useParticles(count: number) {
     geo.setAttribute('position', new THREE.BufferAttribute(positions, 3))
     return geo
   }, [count])
+  /* eslint-enable react-hooks/purity */
 }
 
 function Particles({ count = 100 }: { count?: number }) {

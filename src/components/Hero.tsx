@@ -10,11 +10,9 @@ function TypeWriter({ text, delay = 0, speed = 40 }: { text: string; delay?: num
   const [started, setStarted] = useState(false)
 
   useEffect(() => {
-    setDisplayed('')
-    setStarted(false)
     const startTimer = setTimeout(() => setStarted(true), delay * 1000)
     return () => clearTimeout(startTimer)
-  }, [delay, text])
+  }, [delay])
 
   useEffect(() => {
     if (!started) return
