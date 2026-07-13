@@ -1,9 +1,0 @@
-node_modules
-dist
-.env
-.env.local
-*.log
-.DS_Store
-.vercel
-implementation-plan.md
-.env*
