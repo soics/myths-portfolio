@@ -6,10 +6,9 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     proxy: {
-      '/oembed': {
-        target: 'https://open.spotify.com',
+      '/api': {
+        target: 'https://myths-portfolio.vercel.app',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/oembed/, '/oembed'),
       },
     },
   },

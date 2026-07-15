@@ -13,7 +13,7 @@ export function SpotifyEngine() {
     const store = useMusicStore.getState()
     store.setPlaybackMode('loading')
 
-    fetch(`https://open.spotify.com/oembed?url=https://open.spotify.com/playlist/${PLAYLIST_ID}`)
+    fetch(`/api/spotify-oembed?url=https://open.spotify.com/playlist/${PLAYLIST_ID}`)
       .then(res => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
         return res.json()
