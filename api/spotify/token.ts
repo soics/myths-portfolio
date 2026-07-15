@@ -6,20 +6,38 @@ const CACHE: { token: string; expiresAt: number } = { token: '', expiresAt: 0 }
 async function getAccessToken(): Promise<string> {
   if (Date.now() < CACHE.expiresAt) return CACHE.token
 
-  const basic = Buffer.from(`${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`).toString('base64')
+  const refreshToken = process.env.SPOTIFY_REFRESH_TOKEN
+  const clientId = process.env.SPOTIFY_CLIENT_ID!
+  const clientSecret = process.env.SPOTIFY_CLIENT_SECRET!
+
+  let body: URLSearchParams
+  let headers: Record<string, string>
+
+  if (refreshToken) {
+    body = new URLSearchParams({
+      grant_type: 'refresh_token',
+      refresh_token: refreshToken,
+      client_id: clientId,
+    })
+    headers = { 'Content-Type': 'application/x-www-form-urlencoded' }
+  } else {
+    const basic = Buffer.from(`${clientId}:${clientSecret}`).toString('base64')
+    body = new URLSearchParams({ grant_type: 'client_credentials' })
+    headers = {
+      Authorization: `Basic ${basic}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    }
+  }
 
   const res = await fetch(TOKEN_URL, {
     method: 'POST',
-    headers: {
-      Authorization: `Basic ${basic}`,
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: new URLSearchParams({ grant_type: 'client_credentials' }),
+    headers,
+    body: body.toString(),
   })
 
   if (!res.ok) {
-    const body = await res.text()
-    throw new Error(`Spotify token error ${res.status}: ${body}`)
+    const errBody = await res.text()
+    throw new Error(`Spotify token error ${res.status}: ${errBody}`)
   }
 
   const data = await res.json()
