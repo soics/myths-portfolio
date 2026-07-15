@@ -6,12 +6,11 @@ function AlbumArt({ src, isPlaying }: { src: string; isPlaying: boolean }) {
   return (
     <div className="relative size-7 shrink-0">
       <div
-        className={`size-full rounded-full overflow-hidden border border-white/[0.08] ${
-          isPlaying ? 'animate-[spin_3s_linear_infinite]' : ''
-        }`}
+        className={`size-full rounded-full overflow-hidden border border-white/[0.08]`}
         style={{
           willChange: 'transform',
           transform: 'translateZ(0)',
+          animation: isPlaying ? 'spin 3s linear infinite' : 'none',
           animationPlayState: isPlaying ? 'running' : 'paused',
         }}
       >
@@ -49,23 +48,20 @@ function PlaceholderDisc() {
 }
 
 export function CompactMusicPlayer({ onClick }: { onClick: () => void }) {
-  const tracks = useMusicStore((s) => s.tracks)
-  const currentTrackIndex = useMusicStore((s) => s.currentTrackIndex)
+  const playlist = useMusicStore((s) => s.playlist)
   const isPlaying = useMusicStore((s) => s.isPlaying)
   const playbackMode = useMusicStore((s) => s.playbackMode)
   const error = useMusicStore((s) => s.error)
 
-  const track = tracks[currentTrackIndex]
-  const albumImage = track?.album?.images?.[0]?.url
-
+  const albumImage = playlist?.images?.[0]?.url
   const ready = playbackMode !== 'idle' && playbackMode !== 'loading'
 
   return (
     <button
       type="button"
       onClick={ready ? onClick : undefined}
-      className="focus-ring group relative flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 transition-all duration-300 hover:bg-white/[0.03] active:scale-[0.97]"
-      aria-label={ready ? `Now Playing: ${track?.name || 'Unknown'} — Open music player` : 'Music player loading'}
+      className="focus-ring group relative flex cursor-pointer items-center gap-2 rounded-lg px-1 py-2 transition-all duration-300 hover:bg-white/[0.03] active:scale-[0.97]"
+      aria-label={ready ? `Open music player` : 'Music player loading'}
     >
       <AnimatePresence mode="wait">
         {ready && albumImage ? (
@@ -93,9 +89,9 @@ export function CompactMusicPlayer({ onClick }: { onClick: () => void }) {
 
       <div className="hidden flex-col items-start md:flex">
         <AnimatePresence mode="wait">
-          {ready && track ? (
-            <motion.div
-              key={track.id}
+          {ready && playlist ? (
+            <motion.span
+              key="ready"
               initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -4 }}
@@ -103,14 +99,14 @@ export function CompactMusicPlayer({ onClick }: { onClick: () => void }) {
               className="flex items-center gap-2 max-w-[160px]"
             >
               <span className="truncate text-[11px] font-mono text-concrete-mid/35 transition-colors group-hover:text-concrete-mid/55">
-                {track.name}
+                {playlist.name}
               </span>
               {isPlaying ? (
                 <Pause size={10} className="shrink-0 text-gold/40" />
               ) : (
                 <Play size={10} className="shrink-0 text-concrete-mid/25" />
               )}
-            </motion.div>
+            </motion.span>
           ) : (
             <motion.span
               key="loading"
