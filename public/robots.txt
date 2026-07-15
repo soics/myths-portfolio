@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /forbidden-scroll
 
 Sitemap: /sitemap.xml

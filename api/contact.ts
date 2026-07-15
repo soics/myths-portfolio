@@ -170,7 +170,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
     console.log(`[${requestId}] Message stored from ${email}`)
     sendNotification(name, email, message, requestId)
-    return res.status(200).json({ ok: true, request_id: requestId })
+    res.setHeader('X-Blessing', 'may-your-builds-never-fail')
+    return res.status(200).json({ ok: true, request_id: requestId, whisper: 'You noticed what others don\'t.' })
   }
 
   console.log(`[${requestId}] No Supabase configured — logged message from ${email}`)

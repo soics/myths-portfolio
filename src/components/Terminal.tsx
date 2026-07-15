@@ -31,7 +31,7 @@ export function Terminal() {
 
   return (
     <div
-      className="w-full max-w-xl rounded-lg border border-blueprint/15 bg-deep/60 backdrop-blur-sm font-mono text-xs"
+      className="focus-ring w-full max-w-xl rounded-lg border border-blueprint/15 bg-deep/60 backdrop-blur-sm font-mono text-xs"
       onClick={restart}
       role="button"
       tabIndex={0}

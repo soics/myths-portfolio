@@ -27,11 +27,11 @@ function FeaturedRepo({ repo, index }: { repo: GitHubRepo; index: number }) {
     <LiquidGlass variant="panel" tilt={4} className="!rounded-[20px] !overflow-hidden">
       <motion.a
         ref={ref}
-        initial={{ opacity: 0, y: 60, scale: 0.95 }}
-        whileInView={{ opacity: 1, y: 0, scale: 1 }}
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: '-60px' }}
-        transition={{ delay: index * 0.12, type: 'spring', stiffness: 50, damping: 20 }}
-        whileHover={{ y: -6, scale: 1.002 }}
+        transition={{ delay: index * 0.12, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        whileHover={{ y: -4 }}
         href={repo.html_url}
         target="_blank"
         rel="noreferrer"
@@ -40,17 +40,11 @@ function FeaturedRepo({ repo, index }: { repo: GitHubRepo; index: number }) {
         <div className={`absolute inset-0 bg-gradient-to-b opacity-30 ${mat.accent}`} />
         <div className={`absolute left-0 right-0 top-0 h-[3px] bg-gradient-to-r ${mat.bar}`} />
 
-        <div className="glass-lift relative p-8 md:p-10">
-          {/* Blueprint measurement marks */}
-          <div className="absolute left-0 top-0 bottom-0 w-3 opacity-10 measure-mark" />
-          <div className="absolute bottom-0 left-0 right-0 h-3 opacity-10">
-            <div className="h-full w-full" style={{ background: `repeating-linear-gradient(90deg, rgba(200,200,200,0.1) 0px, rgba(200,200,200,0.1) 2px, transparent 2px, transparent 20px)` }} />
-          </div>
-
+        <div className="glass-lift relative p-6 md:p-10">
           <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
-            <div className="flex-1">
+            <div className="flex-1 min-w-0">
               <div className="flex items-center gap-3 mb-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blueprint/10">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blueprint/10 shrink-0">
                   <Wrench size={15} className="text-blueprint/40" />
                 </div>
                 <span className="text-[10px] font-mono text-blueprint/30 uppercase tracking-[0.15em]">
@@ -60,13 +54,13 @@ function FeaturedRepo({ repo, index }: { repo: GitHubRepo; index: number }) {
                   {mat.material}
                 </span>
               </div>
-              <h3 className="text-2xl font-semibold tracking-[-0.03em] text-white/90 md:text-3xl">{repo.name}</h3>
-              <p className="mt-3 max-w-2xl text-[15px] leading-[1.7] text-concrete-light/60">{repo.description || 'A public repository.'}</p>
+              <h3 className="text-xl font-semibold tracking-[-0.03em] text-white/90 md:text-3xl truncate">{repo.name}</h3>
+              <p className="mt-3 max-w-2xl text-[15px] leading-[1.7] text-concrete-light/60 line-clamp-3">{repo.description || 'A public repository.'}</p>
 
               {projectNotes[repo.name] && (
                 <div className="mt-5 flex items-start gap-2.5 rounded-xl bg-blueprint/5 px-4 py-3 border border-blueprint/10">
                   <Wrench size={13} className="mt-0.5 shrink-0 text-blueprint/40" />
-                  <div>
+                  <div className="min-w-0">
                     <span className="text-[9px] font-semibold uppercase tracking-[0.15em] text-blueprint/30">Field Notes</span>
                     <p className="mt-1 text-[13px] leading-[1.6] text-concrete-light/45">{projectNotes[repo.name]}</p>
                   </div>
@@ -103,21 +97,21 @@ function FeaturedRepo({ repo, index }: { repo: GitHubRepo; index: number }) {
 function EmptyProjects({ profile, inView }: { profile: GitHubProfile | null; inView: boolean }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30, scale: 0.97 }}
-      animate={inView ? { opacity: 1, y: 0, scale: 1 } : {}}
-      transition={{ type: 'spring', stiffness: 70, damping: 20 }}
-      className="glass-lift relative overflow-hidden rounded-[20px] p-14 text-center md:p-16"
+      initial={{ opacity: 0, y: 30 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      className="glass-lift relative overflow-hidden rounded-[20px] p-10 text-center md:p-16"
     >
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(200,200,200,0.03),transparent_70%)]" />
       <div className="relative z-10">
         <motion.div
           animate={{ rotate: [0, -3, 3, 0] }}
           transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-          className="mx-auto mb-6 flex h-16 w-16 items-center justify-center"
+          className="mx-auto mb-6 flex h-14 w-14 md:h-16 md:w-16 items-center justify-center"
         >
-          <Construction size={36} className="text-construction/30" />
+          <Construction size={32} className="text-construction/30 md:text-[36px]" />
         </motion.div>
-        <h3 className="text-2xl font-semibold tracking-[-0.03em] text-white/85">Site prepared. Foundation pending.</h3>
+        <h3 className="text-xl font-semibold tracking-[-0.03em] text-white/85 md:text-2xl">Site prepared. Foundation pending.</h3>
         <p className="mx-auto mt-3 max-w-md text-sm leading-[1.7] text-concrete-light/55">Projects will be framed here as they take shape. The build site is ready.</p>
         <p className="mt-5 text-xs text-concrete-mid/30">Public repos: {profile?.public_repos ?? 0}</p>
       </div>
@@ -133,17 +127,23 @@ export function ProjectsSection() {
   const inView = useInView(ref, { once: true, margin: '-60px' })
 
   useEffect(() => {
+    let cancelled = false
     getGitHubData()
-      .then((data) => setState({ ...data, loading: false, error: null }))
-      .catch((err: Error) => setState({ profile: null, repos: [], loading: false, error: err.message }))
+      .then((data) => {
+        if (!cancelled) setState({ ...data, loading: false, error: null })
+      })
+      .catch((err: Error) => {
+        if (!cancelled) setState({ profile: null, repos: [], loading: false, error: err.message })
+      })
+    return () => { cancelled = true }
   }, [])
 
   return (
-    <section id="projects" className="px-5 py-28">
+    <section id="projects" className="px-5 py-24 md:py-28">
       <div className="mx-auto max-w-6xl">
         <motion.div
-          initial={{ opacity: 0, y: 20, filter: 'blur(4px)' }}
-          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           className="mb-12"
@@ -151,23 +151,23 @@ export function ProjectsSection() {
           <div className="flex items-center gap-3 mb-4">
             <div className="h-[1px] w-6 bg-gold/30" />
             <Construction size={14} className="text-construction/50" />
-            <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-construction/40">BUILD.LIST</span>
+            <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-construction/40">BUILD LIST</span>
           </div>
-          <h2 className="text-balance text-4xl font-semibold tracking-[-0.04em] text-white md:text-5xl">
+          <h2 className="text-balance text-3xl font-semibold tracking-[-0.04em] text-white md:text-5xl">
             {state.repos.length > 0 ? 'Projects.' : 'Loading projects.'}
           </h2>
           <p className="mt-5 max-w-2xl text-base leading-8 text-concrete-light/60">Every push adds to the structure.</p>
         </motion.div>
 
         {state.loading && (
-          <motion.div role="status" aria-live="polite" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="glass-sm flex items-center gap-3 rounded-[18px] p-6 text-sm text-concrete-light/50">
+          <motion.div role="status" aria-live="polite" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="glass flex items-center gap-3 rounded-[18px] p-6 text-sm text-concrete-light/50">
             <Loader2 className="animate-spin text-blueprint/30" size={16} />
             <span>Measuring site...</span>
           </motion.div>
         )}
 
         {state.error && (
-          <motion.div role="alert" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="glass-sm rounded-[18px] p-6 text-sm text-concrete-light/45">
+          <motion.div role="alert" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="glass rounded-[18px] p-6 text-sm text-concrete-light/45">
             Survey interrupted. Retrying...
           </motion.div>
         )}
@@ -175,7 +175,7 @@ export function ProjectsSection() {
         {!state.loading && !state.error && state.repos.length === 0 && <EmptyProjects profile={state.profile} inView={inView} />}
 
         {!state.loading && !state.error && state.repos.length > 0 && (
-          <div ref={ref} className="space-y-6">
+          <div className="grid gap-6 md:gap-8">
             {state.repos.map((repo, i) => (
               <FeaturedRepo key={repo.id} repo={repo} index={i} />
             ))}

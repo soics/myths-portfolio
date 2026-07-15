@@ -2,7 +2,7 @@ import { useRef, useEffect, useCallback } from 'react'
 
 export function useLiquidGlass(opts?: { maxTilt?: number; perspective?: number }) {
   const ref = useRef<HTMLDivElement>(null)
-  const state = useRef({ tiltX: 0.5, tiltY: 0.5, glowX: 0.5, glowY: 0.5 })
+  const state = useRef({ tiltX: 0.5, tiltY: 0.5, glowX: 0.5, glowY: 0.5, targetX: 0.5, targetY: 0.5 })
   const maxTilt = opts?.maxTilt ?? 8
 
   useEffect(() => {
@@ -10,35 +10,36 @@ export function useLiquidGlass(opts?: { maxTilt?: number; perspective?: number }
     if (!el) return
 
     let raf: number
-    let tx = 0.5, ty = 0.5
     let paused = false
     const s = state.current
 
+    const lerp = (a: number, b: number, t: number) => a + (b - a) * t
+
     const onMouseMove = (e: MouseEvent) => {
       const rect = el.getBoundingClientRect()
-      tx = (e.clientX - rect.left) / rect.width
-      ty = (e.clientY - rect.top) / rect.height
+      s.targetX = (e.clientX - rect.left) / rect.width
+      s.targetY = (e.clientY - rect.top) / rect.height
     }
 
     const onTouchMove = (e: TouchEvent) => {
       const t = e.touches[0]
       if (!t) return
       const rect = el.getBoundingClientRect()
-      tx = (t.clientX - rect.left) / rect.width
-      ty = (t.clientY - rect.top) / rect.height
+      s.targetX = (t.clientX - rect.left) / rect.width
+      s.targetY = (t.clientY - rect.top) / rect.height
     }
 
-    const onLeave = () => { tx = 0.5; ty = 0.5 }
+    const onLeave = () => { s.targetX = 0.5; s.targetY = 0.5 }
 
     const onVisibility = () => { paused = document.hidden }
     document.addEventListener('visibilitychange', onVisibility)
 
     const tick = () => {
       if (!paused) {
-        s.tiltX += (tx - s.tiltX) * 0.08
-        s.tiltY += (ty - s.tiltY) * 0.08
-        s.glowX += (tx - s.glowX) * 0.06
-        s.glowY += (ty - s.glowY) * 0.06
+        s.tiltX = lerp(s.tiltX, s.targetX, 0.1)
+        s.tiltY = lerp(s.tiltY, s.targetY, 0.1)
+        s.glowX = lerp(s.glowX, s.targetX, 0.06)
+        s.glowY = lerp(s.glowY, s.targetY, 0.06)
 
         const rx = (s.tiltY - 0.5) * -maxTilt
         const ry = (s.tiltX - 0.5) * maxTilt

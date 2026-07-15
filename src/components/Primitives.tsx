@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { useScroll, useMotionValueEvent, motion, AnimatePresence } from 'motion/react'
 import { GitBranch, Mail, Command } from 'lucide-react'
+import { CompactMusicPlayer } from './music/CompactMusicPlayer'
 import { site } from '../data/site'
 import { useTilt } from '../hooks/useTilt'
 
@@ -14,7 +15,6 @@ const navLinks = [
 
 function useActiveSection(ids: string[]) {
   const [active, setActive] = useState('')
-
   useEffect(() => {
     const handle = () => {
       const off = window.scrollY + window.innerHeight * 0.3
@@ -29,7 +29,6 @@ function useActiveSection(ids: string[]) {
     window.addEventListener('scroll', handle, { passive: true })
     return () => window.removeEventListener('scroll', handle)
   }, [ids])
-
   return active
 }
 
@@ -65,7 +64,7 @@ function SackboyButton() {
         aria-label="Surprise"
         onClick={handleClick}
       >
-        <img src="/sackboy.png" alt="" className="block h-8 w-auto transition-transform duration-300 hover:scale-110" />
+        <img src="/sackboy.png" alt="" className="block h-7 w-auto transition-transform duration-300 hover:scale-110" />
       </a>
       <AnimatePresence>
         {show && (
@@ -74,7 +73,7 @@ function SackboyButton() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed bottom-6 right-6 z-50 rounded-xl border border-blueprint/10 bg-deep/90 px-5 py-3 text-xs text-concrete-light/50 shadow-[0_8px_32px_rgba(0,0,0,0.5)] backdrop-blur-xl"
+            className="fixed bottom-6 right-6 z-50 rounded-xl border border-white/[0.06] bg-deep-elevated/90 px-5 py-3 text-xs text-concrete-light/50 shadow-[0_8px_32px_rgba(0,0,0,0.5)] backdrop-blur-xl"
           >
             Classic Sackboy!  <span className="text-concrete-mid/30">myths</span>
           </motion.div>
@@ -84,7 +83,6 @@ function SackboyButton() {
   )
 }
 
-
 function NavLink({ label, href, active }: { label: string; href: string; active: boolean }) {
   const ref = useTilt<HTMLAnchorElement>(5)
   return (
@@ -92,7 +90,7 @@ function NavLink({ label, href, active }: { label: string; href: string; active:
       ref={ref}
       href={href}
       className={`focus-ring ui-tilt relative rounded-lg px-3.5 py-2 text-xs font-medium tracking-[0.02em] transition-all duration-300 ${
-        active ? 'text-white/90 bg-gold-subtle' : 'text-concrete-light/55 hover:bg-gold-subtle hover:text-white/80'
+        active ? 'text-white/90 bg-gold-subtle' : 'text-concrete-light/55 hover:bg-white/[0.03] hover:text-white/80'
       }`}
     >
       {label}
@@ -115,7 +113,7 @@ function HeaderIconButton({ children, tone, ...rest }: React.ButtonHTMLAttribute
     <button
       ref={ref}
       type={rest.type ?? 'button'}
-      className={`focus-ring ui-tilt flex items-center gap-1.5 rounded-lg px-2.5 py-2 transition-all duration-300 ${base}`}
+      className={`focus-ring ui-tilt flex items-center gap-1.5 rounded-lg px-2.5 py-2 transition-all duration-300 active:scale-[0.97] ${base}`}
       {...rest}
     >
       {children}
@@ -130,7 +128,7 @@ function HeaderIconLink({ children, external, ...rest }: React.AnchorHTMLAttribu
       ref={ref}
       target={external ? '_blank' : undefined}
       rel={external ? 'noreferrer' : undefined}
-      className="focus-ring ui-tilt rounded-lg p-2 text-concrete-light/55 transition-all duration-300 hover:bg-white/[0.04] hover:text-white"
+      className="focus-ring ui-tilt rounded-lg p-2 text-concrete-light/55 transition-all duration-300 hover:bg-white/[0.04] hover:text-white active:scale-[0.97]"
       {...rest}
     >
       {children}
@@ -138,13 +136,12 @@ function HeaderIconLink({ children, external, ...rest }: React.AnchorHTMLAttribu
   )
 }
 
-export function Header() {
+export function Header({ logoRef, onLogoClick, onCodexOpen, onMusicOpen }: { logoRef?: React.RefObject<HTMLElement | null>; onLogoClick?: () => void; onCodexOpen?: () => void; onMusicOpen?: () => void }) {
   const lastY = useRef(0)
   const { scrollY } = useScroll()
   const [hidden, setHidden] = useState(false)
   const [atTop, setAtTop] = useState(true)
   const [paletteOpen, setPaletteOpen] = useState(false)
-
 
   useMotionValueEvent(scrollY, 'change', (y) => {
     setAtTop(y < 20)
@@ -171,21 +168,26 @@ export function Header() {
     <>
       <motion.header
         animate={{ y: hidden ? -120 : 0 }}
-        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
         className="fixed left-0 right-0 top-0 z-30 px-4 pt-4"
       >
         <div
-          className={`mx-auto max-w-6xl rounded-2xl px-5 py-3 transition-all duration-500 ${
+          className={`mx-auto max-w-6xl rounded-2xl px-5 py-3 transition-all duration-700 ${
             atTop
               ? 'bg-transparent'
-              : 'bg-deep/80 border border-white/[0.05] shadow-[0_1px_0_rgba(200,200,200,0.03)] backdrop-blur-xl'
+              : 'bg-deep-elevated/85 border border-white/[0.05] shadow-[0_1px_0_rgba(200,200,200,0.03)] backdrop-blur-2xl'
           }`}
         >
           <nav className="flex items-center justify-between gap-4 text-sm text-concrete-light/70">
             <div className="flex items-center gap-2">
               <SackboyButton />
-              <span className="hidden items-center gap-2 rounded-lg px-3 py-2 text-[11px] font-mono text-concrete-mid/25 md:inline-flex">
-                <span className="safety-beacon h-1.5 w-1.5 rounded-full bg-white/80" />
+              <CompactMusicPlayer onClick={onMusicOpen!} />
+              <span
+                ref={logoRef as React.RefObject<HTMLSpanElement | null>}
+                onClick={onLogoClick}
+                className="hidden cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-[11px] font-mono text-concrete-mid/25 transition-colors hover:text-concrete-mid/40 active:scale-[0.97] md:inline-flex"
+              >
+                <span className="safety-beacon h-1.5 w-1.5 rounded-full bg-gold" />
                 <span>myths@site:~/construction</span>
               </span>
             </div>
@@ -197,6 +199,13 @@ export function Header() {
                   <NavLink key={href} label={label} href={href} active={active} />
                 )
               })}
+              <div className="mx-2 h-4 w-px bg-white/[0.06]" />
+              <button
+                onClick={onCodexOpen}
+                className="focus-ring ui-tilt rounded-lg px-3.5 py-2 text-xs font-medium tracking-[0.02em] text-gold/50 transition-all duration-300 hover:bg-gold-subtle hover:text-gold"
+              >
+                Secrets
+              </button>
             </div>
 
             <div className="flex items-center gap-1">
@@ -216,7 +225,7 @@ export function Header() {
         </div>
       </motion.header>
 
-      {paletteOpen && <CommandPalette onClose={() => setPaletteOpen(false)} />}
+      {paletteOpen && <CommandPalette onClose={() => setPaletteOpen(false)} onCodexOpen={onCodexOpen} />}
     </>
   )
 }
@@ -228,7 +237,7 @@ function PaletteItem({ item, onSelect }: { item: { label: string; desc: string; 
       ref={ref}
       type="button"
       onClick={onSelect}
-      className="ui-tilt flex w-full items-center justify-between rounded-lg px-4 py-2.5 text-left text-sm transition-colors hover:bg-white/[0.04]"
+      className="ui-tilt flex w-full items-center justify-between rounded-lg px-4 py-2.5 text-left text-sm transition-colors hover:bg-white/[0.04] active:scale-[0.98]"
     >
       <div>
         <span className="text-white/80">{item.label}</span>
@@ -241,7 +250,7 @@ function PaletteItem({ item, onSelect }: { item: { label: string; desc: string; 
   )
 }
 
-function CommandPalette({ onClose }: { onClose: () => void }) {
+function CommandPalette({ onClose, onCodexOpen }: { onClose: () => void; onCodexOpen?: () => void }) {
   const [query, setQuery] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -255,6 +264,7 @@ function CommandPalette({ onClose }: { onClose: () => void }) {
     { label: 'Builds', href: '#projects', desc: 'Live from GitHub' },
     { label: 'Plan', href: '#journey', desc: 'Construction phases' },
     { label: 'Contact', href: '#contact', desc: 'Leave a note' },
+    { label: 'Secrets', href: '#codex', desc: 'Hidden feats & achievements' },
     { label: 'GitHub', href: site.github, desc: 'View source code', external: true },
     { label: 'Email', href: `mailto:${site.email}`, desc: 'Direct message', external: true },
   ]
@@ -268,11 +278,13 @@ function CommandPalette({ onClose }: { onClose: () => void }) {
       onClose()
       if (item.external) {
         window.open(item.href, '_blank', 'noopener')
+      } else if (item.href === '#codex') {
+        onCodexOpen?.()
       } else {
         document.querySelector(item.href)?.scrollIntoView({ behavior: 'smooth' })
       }
     },
-    [onClose],
+    [onClose, onCodexOpen],
   )
 
   return (
@@ -294,9 +306,9 @@ function CommandPalette({ onClose }: { onClose: () => void }) {
         initial={{ opacity: 0, y: 20, scale: 0.96 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ type: 'spring', stiffness: 300, damping: 28 }}
-        className="relative w-full max-w-lg overflow-hidden rounded-2xl border border-blueprint/10 bg-deep shadow-[0_32px_80px_rgba(0,0,0,0.6)]"
+        className="relative w-full max-w-lg overflow-hidden rounded-2xl border border-white/[0.06] bg-deep-elevated shadow-[0_32px_80px_rgba(0,0,0,0.6)]"
       >
-        <div className="flex items-center gap-3 border-b border-blueprint/10 px-4 py-3.5">
+        <div className="flex items-center gap-3 border-b border-white/[0.06] px-4 py-3.5">
           <Command size={15} className="shrink-0 text-concrete-mid/35" />
           <input
             ref={inputRef}
@@ -306,7 +318,7 @@ function CommandPalette({ onClose }: { onClose: () => void }) {
             placeholder="Type a command or section..."
             className="w-full bg-transparent text-sm text-white outline-none placeholder:text-concrete-mid/30"
           />
-          <kbd className="rounded-md border border-blueprint/10 bg-white/[0.04] px-1.5 py-0.5 text-[11px] text-concrete-mid/35">ESC</kbd>
+          <kbd className="rounded-md border border-white/[0.06] bg-white/[0.04] px-1.5 py-0.5 text-[11px] text-concrete-mid/35">ESC</kbd>
         </div>
 
         <div className="max-h-64 overflow-y-auto py-2">

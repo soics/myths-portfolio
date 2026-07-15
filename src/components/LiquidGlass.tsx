@@ -5,8 +5,7 @@ interface Props {
   children: ReactNode
   className?: string
   as?: 'section' | 'div' | 'article' | 'span'
-  /** 'panel' = full glass bg+blur, 'ghost' = tilt+glow only, 'hero' = large text glass, 'button' = compact glass button */
-  variant?: 'panel' | 'ghost' | 'hero' | 'button'
+  variant?: 'panel' | 'ghost' | 'hero' | 'button' | 'elevated'
   tilt?: number
   onClick?: (e: React.MouseEvent) => void
 }
@@ -26,13 +25,14 @@ export function LiquidGlass({
     onClick?.(e)
   }
 
-  const baseClasses = 'relative overflow-hidden rounded-2xl transition-shadow duration-500 lg-panel'
+  const baseClasses = 'relative overflow-hidden rounded-[20px] transition-all duration-500 lg-panel'
 
   const variantClasses = {
-    panel: 'bg-deep/60 backdrop-blur-xl border border-white/[0.06]',
+    panel: 'bg-deep-elevated/70 backdrop-blur-xl border border-white/[0.06] shadow-[0_0_0_1px_rgba(255,255,255,0.03)]',
+    elevated: 'bg-deep-elevated/80 backdrop-blur-2xl border border-white/[0.08] shadow-[0_0_0_1px_rgba(255,255,255,0.04)]',
     ghost: 'bg-transparent border-0',
-    hero: 'bg-deep/40 backdrop-blur-lg border border-white/[0.04]',
-    button: 'bg-deep/40 backdrop-blur-md border border-white/[0.04] !rounded-lg !px-4 !py-2',
+    hero: 'bg-deep-elevated/50 backdrop-blur-lg border border-white/[0.04] shadow-[0_0_0_1px_rgba(255,255,255,0.02)]',
+    button: 'bg-deep-elevated/50 backdrop-blur-md border border-white/[0.04] !rounded-xl !px-5 !py-2.5 shadow-[0_0_0_1px_rgba(255,255,255,0.02)]',
   }
 
   return (
@@ -45,23 +45,32 @@ export function LiquidGlass({
         willChange: 'transform',
       }}
     >
+      {/* Ambient glow overlay — follows mouse */}
       <div
         className="pointer-events-none absolute inset-0 -z-10"
         aria-hidden="true"
         style={{
-          background: 'radial-gradient(600px circle at var(--lg-glow-x, 50%) var(--lg-glow-y, 50%), rgba(200,200,200,0.06), transparent 60%)',
+          background: 'radial-gradient(600px circle at var(--lg-glow-x, 50%) var(--lg-glow-y, 50%), rgba(196,164,85,0.04), transparent 60%)',
         }}
       />
+      {/* Top-left shine */}
       <div
-        className="pointer-events-none absolute inset-0 rounded-2xl -z-10"
+        className="pointer-events-none absolute inset-0 rounded-[20px] -z-10"
         aria-hidden="true"
         style={{
-          background: 'linear-gradient(135deg, rgba(200,200,200,0.04) 0%, transparent 40%, transparent 60%, rgba(150,150,150,0.03) 100%)',
+          background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 40%, transparent 60%, rgba(255,255,255,0.02) 100%)',
         }}
       />
+      {/* Ripple overlay for click feedback */}
       <div
         className="pointer-events-none absolute inset-0 -z-10 lg-ripple-overlay"
         aria-hidden="true"
+      />
+      {/* Inner edge highlight — Apple-style */}
+      <div
+        className="pointer-events-none absolute inset-[0.5px] rounded-[19.5px] -z-10"
+        aria-hidden="true"
+        style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)' }}
       />
       {children}
     </Tag>

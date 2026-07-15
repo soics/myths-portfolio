@@ -72,18 +72,18 @@ function SafetyBeacons() {
     <div className="pointer-events-none fixed inset-0 -z-10" aria-hidden="true">
       {/* Top-left beacon */}
       <div className="absolute left-6 top-6 flex items-center gap-2">
-        <div className="safety-beacon h-3 w-3 rounded-full bg-white/90" />
-        <span className="text-[7px] font-mono tracking-[0.2em] text-white/20">SITE ACTIVE</span>
+        <div className="safety-beacon h-3 w-3 rounded-full bg-gold shadow-[0_0_12px_rgba(196,164,85,0.4)]" />
+        <span className="text-[7px] font-mono tracking-[0.2em] text-gold/40">SITE ACTIVE</span>
       </div>
       {/* Top-right beacon */}
       <div className="absolute right-6 top-6 flex items-center gap-2">
-        <div className="safety-beacon-delayed h-3 w-3 rounded-full bg-white/90" />
-        <span className="text-[7px] font-mono tracking-[0.2em] text-white/20">WORKING</span>
+        <div className="safety-beacon-delayed h-3 w-3 rounded-full bg-gold shadow-[0_0_12px_rgba(196,164,85,0.4)]" />
+        <span className="text-[7px] font-mono tracking-[0.2em] text-gold/40">WORKING</span>
       </div>
       {/* Bottom-left beacon */}
       <div className="absolute bottom-6 left-6 flex items-center gap-2">
-        <div className="safety-beacon-delayed h-2 w-2 rounded-full bg-white/60" />
-        <span className="text-[6px] font-mono tracking-[0.15em] text-white/10">CAUTION</span>
+        <div className="safety-beacon-delayed h-2 w-2 rounded-full bg-gold/70 shadow-[0_0_8px_rgba(196,164,85,0.3)]" />
+        <span className="text-[6px] font-mono tracking-[0.15em] text-gold/30">CAUTION</span>
       </div>
     </div>
   )
