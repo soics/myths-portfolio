@@ -1,5 +1,5 @@
-import { useCallback, useEffect } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
+import { useCallback, useEffect, useRef } from 'react'
+import { motion } from 'motion/react'
 import {
   X, ExternalLink, Disc3,
 } from 'lucide-react'
@@ -8,16 +8,25 @@ import { AudioVisualizer } from './AudioVisualizer'
 
 const PLAYLIST_ID = '66NGizgGbDz1c6P5WO3EQB'
 
-export function ExpandedMusicRoom({ onClose }: { onClose: () => void }) {
+export function ExpandedMusicRoom({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const playlist = useMusicStore((s) => s.playlist)
+  const prevOpen = useRef(isOpen)
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key === 'Escape') onClose()
   }, [onClose])
 
   useEffect(() => {
+    if (isOpen && !prevOpen.current) {
+      document.body.style.overflow = 'hidden'
+    } else if (!isOpen && prevOpen.current) {
+      document.body.style.overflow = ''
+    }
+    prevOpen.current = isOpen
+  }, [isOpen])
+
+  useEffect(() => {
     window.addEventListener('keydown', handleKeyDown)
-    document.body.style.overflow = 'hidden'
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
       document.body.style.overflow = ''
@@ -25,18 +34,16 @@ export function ExpandedMusicRoom({ onClose }: { onClose: () => void }) {
   }, [handleKeyDown])
 
   return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.3 }}
-        className="fixed inset-0 z-[80] flex items-center justify-center bg-black/80 backdrop-blur-2xl"
-        role="dialog"
-        aria-modal="true"
-        aria-label="Music player"
-        onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
-      >
+    <motion.div
+      initial={false}
+      animate={isOpen ? { opacity: 1, pointerEvents: 'auto' as const } : { opacity: 0, pointerEvents: 'none' as const }}
+      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+      className="fixed inset-0 z-[80] flex items-center justify-center bg-black/80 backdrop-blur-2xl"
+      role="dialog"
+      aria-modal={isOpen}
+      aria-label="Music player"
+      onClick={(e) => { if (isOpen && e.target === e.currentTarget) onClose() }}
+    >
         <AudioVisualizer intensity={1.2} />
 
         <motion.div
@@ -84,17 +91,22 @@ export function ExpandedMusicRoom({ onClose }: { onClose: () => void }) {
             </div>
           </div>
 
-          <div className="w-full max-w-md">
+          <div
+            className="w-full max-w-md rounded-2xl overflow-hidden border border-white/[0.06]"
+          >
             <iframe
               src={`https://open.spotify.com/embed/playlist/${PLAYLIST_ID}?utm_source=generator&theme=0`}
               width="100%"
-              height="352"
+              height="80"
               allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
               loading="eager"
-              className="rounded-2xl"
+              className="block"
               title="Spotify player"
             />
           </div>
+          <p className="text-[10px] font-mono text-white/20 text-center">
+            Music continues playing after closing
+          </p>
 
           <div className="flex items-center gap-3">
             <a
@@ -111,8 +123,7 @@ export function ExpandedMusicRoom({ onClose }: { onClose: () => void }) {
           <p className="text-[10px] font-mono text-white/10 text-center max-w-xs leading-relaxed">
             Press <kbd className="rounded bg-white/[0.04] px-1 py-0.5 text-white/20">Esc</kbd> to close
           </p>
-        </motion.div>
       </motion.div>
-    </AnimatePresence>
+    </motion.div>
   )
 }

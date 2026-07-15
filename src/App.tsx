@@ -20,6 +20,7 @@ import { useAchievementEggs, injectEggStyles } from './lib/achievement-eggs'
 import { useAchievements } from './lib/AchievementContext'
 import { SpotifyEngine } from './components/music/SpotifyEngine'
 import { ExpandedMusicRoom } from './components/music/ExpandedMusicRoom'
+import { PersistentEmbed } from './components/music/PersistentEmbed'
 import './styles/globals.css'
 
 const EchoPrism = lazy(() => import('./components/easter-eggs/EchoPrism').then(m => ({ default: m.EchoPrism })))
@@ -136,7 +137,6 @@ function MainApp() {
 
   const handleLoadingFinish = useCallback(() => setLoading(false), [])
 
-  const logoRef = useRef<HTMLElement | null>(null)
   const nameRef = useRef<HTMLElement | null>(null)
   const nameInputRef = useRef<HTMLInputElement | null>(null)
 
@@ -145,32 +145,6 @@ function MainApp() {
     window.addEventListener('popstate', handler)
     return () => window.removeEventListener('popstate', handler)
   }, [])
-
-  const [codexClickCount, setCodexClickCount] = useState(0)
-  const codexTimerRef = useRef<number>(0)
-
-  const handleCodexGesture = useCallback(() => {
-    setCodexClickCount(prev => {
-      const next = prev + 1
-      clearTimeout(codexTimerRef.current)
-      codexTimerRef.current = window.setTimeout(() => setCodexClickCount(0), 2000)
-      return next
-    })
-  }, [])
-
-  useEffect(() => {
-    if (codexClickCount >= 3) {
-      const handler = (e: KeyboardEvent) => {
-        if (e.key === 'a' || e.key === 'A') {
-          setCodexOpen(true)
-          setCodexClickCount(0)
-          window.removeEventListener('keydown', handler)
-        }
-      }
-      window.addEventListener('keydown', handler)
-      return () => window.removeEventListener('keydown', handler)
-    }
-  }, [codexClickCount])
 
   useEffect(() => {
     if (currentRoute === '/codex') {
@@ -194,7 +168,7 @@ function MainApp() {
     }
   }, [])
 
-  const { recordSigil, recordSigilGate } = useAchievementEggs({ logoRef, nameRef, nameInputRef })
+  const { recordSigil, recordSigilGate } = useAchievementEggs({ nameRef, nameInputRef })
 
   const handleFooterClick = useCallback(() => {
     const next = footerClicks + 1
@@ -289,7 +263,7 @@ function MainApp() {
       <SkipLink />
       <ScrollProgress />
       <BackgroundAccent />
-      <Header logoRef={logoRef} onLogoClick={handleCodexGesture} onCodexOpen={() => setCodexOpen(true)} onMusicOpen={() => setMusicOpen(true)} />
+      <Header onCodexOpen={() => setCodexOpen(true)} onMusicOpen={() => setMusicOpen(true)} />
       <main id="main-content">
         <section id="top">
           <Hero nameRef={nameRef} />
@@ -338,8 +312,9 @@ function MainApp() {
         }
       }} />}
 
-      {musicOpen && <ExpandedMusicRoom onClose={() => setMusicOpen(false)} />}
+      <ExpandedMusicRoom isOpen={musicOpen} onClose={() => setMusicOpen(false)} />
 
+      <PersistentEmbed />
       <SpotifyEngine />
       <UnlockToast />
     </>
