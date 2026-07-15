@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import {
   X, ExternalLink, Disc3,
@@ -6,9 +6,10 @@ import {
 import { useMusicStore } from '../../lib/music-store'
 import { AudioVisualizer } from './AudioVisualizer'
 
+const PLAYLIST_ID = '66NGizgGbDz1c6P5WO3EQB'
+
 export function ExpandedMusicRoom({ onClose }: { onClose: () => void }) {
   const playlist = useMusicStore((s) => s.playlist)
-  const [embedLoaded, setEmbedLoaded] = useState(false)
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key === 'Escape') onClose()
@@ -22,8 +23,6 @@ export function ExpandedMusicRoom({ onClose }: { onClose: () => void }) {
       document.body.style.overflow = ''
     }
   }, [handleKeyDown])
-
-  const PLAYLIST_ID = '66NGizgGbDz1c6P5WO3EQB'
 
   return (
     <AnimatePresence>
@@ -85,29 +84,17 @@ export function ExpandedMusicRoom({ onClose }: { onClose: () => void }) {
             </div>
           </div>
 
-          <div
-            className={`w-full max-w-md transition-all duration-500 ${embedLoaded ? 'opacity-100' : 'opacity-0'}`}
-          >
+          <div className="w-full max-w-md">
             <iframe
               src={`https://open.spotify.com/embed/playlist/${PLAYLIST_ID}?utm_source=generator&theme=0`}
               width="100%"
               height="352"
               allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-              loading="lazy"
+              loading="eager"
               className="rounded-2xl"
               title="Spotify player"
-              onLoad={() => setEmbedLoaded(true)}
             />
           </div>
-
-          {!embedLoaded && (
-            <div className="flex h-[352px] w-full max-w-md items-center justify-center rounded-2xl bg-white/[0.02] border border-white/[0.04]">
-              <div className="flex flex-col items-center gap-3">
-                <div className="size-8 animate-pulse rounded-full bg-gold/20" />
-                <span className="text-xs font-mono text-white/20">loading player...</span>
-              </div>
-            </div>
-          )}
 
           <div className="flex items-center gap-3">
             <a
