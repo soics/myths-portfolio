@@ -1566,6 +1566,24 @@ function useSigilGate() {
 }
 
 // ────────────────────────────────────────────────────────────
+// #45 — Crash Landing (detect survived browser crash)
+// ────────────────────────────────────────────────────────────
+function useCrashLanding() {
+  const { unlockAchievement, isUnlocked } = useAchievements()
+
+  useEffect(() => {
+    if (isUnlocked('blue_screen_of_death')) return
+    if (typeof window === 'undefined') return
+
+    const flag = localStorage.getItem('myths-portfolio:crashed')
+    if (flag === 'true') {
+      localStorage.removeItem('myths-portfolio:crashed')
+      unlockAchievement('blue_screen_of_death')
+    }
+  }, [unlockAchievement, isUnlocked])
+}
+
+// ────────────────────────────────────────────────────────────
 // Main hook — activates all eggs
 // ────────────────────────────────────────────────────────────
 export function useAchievementEggs(options?: {
@@ -1611,6 +1629,7 @@ export function useAchievementEggs(options?: {
   useSilentType()
   usePolymath()
   useEyeOfProvidence()
+  useCrashLanding()
 
   // Return externally wired helpers
   const { recordSigil } = usePantheonKey()

@@ -25,6 +25,7 @@ import './styles/globals.css'
 
 const EchoPrism = lazy(() => import('./components/easter-eggs/EchoPrism').then(m => ({ default: m.EchoPrism })))
 const SignalRoom = lazy(() => import('./components/easter-eggs/SignalRoom').then(m => ({ default: m.SignalRoom })))
+const Crashed = lazy(() => import('./components/easter-eggs/Crashed').then(m => ({ default: m.Crashed })))
 
 const SECTION_ZONES = [
   { id: 'top',     accent: '212,212,212', name: 'blueprint'    },
@@ -126,7 +127,7 @@ function MainApp() {
   const signalRoomActive = useStore((s) => s.signalRoomActive)
   const setEchoPrismActive = useStore((s) => s.setEchoPrismActive)
   const setSignalRoomActive = useStore((s) => s.setSignalRoomActive)
-  const [footerClicks, setFooterClicks] = useState(0)
+  const [crashedActive, setCrashedActive] = useState(false)
   const [codexOpen, setCodexOpen] = useState(false)
   const [currentRoute, setCurrentRoute] = useState(window.location.pathname)
   const [loading, setLoading] = useState(true)
@@ -171,13 +172,8 @@ function MainApp() {
   const { recordSigil, recordSigilGate } = useAchievementEggs({ nameRef, nameInputRef })
 
   const handleFooterClick = useCallback(() => {
-    const next = footerClicks + 1
-    setFooterClicks(next)
-    if (next >= 3) {
-      setFooterClicks(0)
-      setSignalRoomActive(true)
-    }
-  }, [footerClicks, setSignalRoomActive])
+    setCrashedActive(true)
+  }, [])
 
   useEffect(() => {
     const handle = () => {
@@ -302,6 +298,9 @@ function MainApp() {
       </Suspense>
       <Suspense fallback={null}>
         <SignalRoom active={signalRoomActive} onClose={() => setSignalRoomActive(false)} />
+      </Suspense>
+      <Suspense fallback={null}>
+        <Crashed active={crashedActive} onDismiss={() => setCrashedActive(false)} />
       </Suspense>
 
       {codexOpen && <CodexPanel onClose={() => {

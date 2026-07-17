@@ -346,6 +346,22 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     tier: 'olympian', hint: 'Memory is the key. The answer to the riddle, revisited as a path.',
     icon: '🧠',
   },
+  {
+    id: 'crash_survivor',
+    name: 'The Unbroken',
+    description: 'Survived the crash easter egg. Your will is iron.',
+    tier: 'olympian',
+    hint: 'When the world ends, close your eyes. The Escape key is your salvation.',
+    icon: '🛡️',
+  },
+  {
+    id: 'blue_screen_of_death',
+    name: 'Blue Screen of Death',
+    description: 'Crashed your own browser. The machine god witnessed your sacrifice.',
+    tier: 'olympian',
+    hint: 'The abyss must consume you completely. Do not look away.',
+    icon: '💀',
+  },
 
   // Tier V — Primordial
   {
